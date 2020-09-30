@@ -5,6 +5,11 @@ import numpy as np
 import h5py as h5
 import time
 
+def extend_path( dir=None ):
+  if not dir: dir = os.getcwd()
+  subDirectories = [x[0] for x in os.walk(dir) if x[0].find('.git')<0 ]
+  sys.path.extend(subDirectories)
+
 
 def print_mpi( text, rank, size,  mpi_comm):
   for i in range(size):

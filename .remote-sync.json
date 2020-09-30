@@ -1,0 +1,16 @@
+{
+  "uploadOnSave": true,
+  "useAtomicWrites": false,
+  "deleteLocal": false,
+  "hostname": "shamrock.ucsc.edu",
+  "ignore": [
+    ".remote-sync.json",
+    ".git/**"
+  ],
+  "watch": [],
+  "transport": "scp",
+  "port": "22",
+  "target": "simulation_analysis",
+  "username": "bruno",
+  "useAgent": true
+}

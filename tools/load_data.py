@@ -5,6 +5,22 @@ import h5py as h5
 import numpy as np
 
 
+def load_analysis_data( n_file, input_dir ):
+  file_name = input_dir + f'{n_file}_analysis.h5'
+  file = h5.File( file_name, 'r' ) 
+
+  data_out = {}
+  attrs = file.attrs
+  for key in attrs:
+    data_out[key] = file.attrs[key][0]
+
+  data_out['phase_diagram'] = {}  
+  phase_diagram = file['phase_diagram']
+  for key in phase_diagram.attrs:
+    data_out['phase_diagram'][key] = phase_diagram.attrs[key][0]
+  data_out['phase_diagram']['data'] = phase_diagram['data'][...] 
+  return data_out
+
 def get_domain_block( proc_grid, box_size, grid_size ):
   np_x, np_y, np_z = proc_grid
   Lx, Ly, Lz = box_size
