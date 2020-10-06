@@ -207,8 +207,8 @@ precision = np.float32
 Lbox = 5000    #kpc/h
 proc_grid = [ 2, 2, 2]
 box_size = [ Lbox, Lbox, Lbox ]
-grid_size = [ 512, 512, 512 ]
-subgrid = [ [0, 512], [0, 512], [0, 512] ] 
+grid_size = [ 512, 512, 512 ] #Size of the simulation grid
+subgrid = [ [0, 512], [0, 512], [0, 512] ] #Size of the volume to load
 data = load_snapshot_data_distributed( n_snapshot, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True )
 density = data[data_type]['density']  
   
