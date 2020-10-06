@@ -92,7 +92,12 @@ def select_ids_to_load( subgrid, domain, proc_grid ):
   return list(set_ids)
 
 
-def load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid, domain, precision, proc_grid, show_progess=True ):
+def load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True ):
+  
+  
+  # Get the doamin domain_decomposition
+  domain = get_domain_block( proc_grid, box_size, grid_size )
+  
   # Find the ids to load 
   ids_to_load = select_ids_to_load( subgrid, domain, proc_grid )
 
@@ -117,7 +122,10 @@ def load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid, do
   data_out = {}
   data_out[data_type] = {}
   for field in fields:
-    data_all = np.zeros( dims_all, dtype=precision )
+    data_particels = False
+    if field in ['pos_x', 'pos_y', 'pos_z', 'vel_x', 'vel_y', 'vel_z']: data_particels = True 
+    if not data_particels: data_all = np.zeros( dims_all, dtype=precision )
+    else: data_all = []
     added_header = False
     n_to_load = len(ids_to_load)
     for i, nBox in enumerate(ids_to_load):
@@ -126,9 +134,11 @@ def load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid, do
       if data_type == 'hydro': inFileName = '{0}.{1}.{2}'.format(nSnap, name_base, nBox)
     
       inFile = h5.File( inDir + inFileName, 'r')
-      print( ' Loading: ' + inDir + inFileName )
+      available_fields = inFile.keys()
       head = inFile.attrs
       if added_header == False:
+        print( ' Loading: ' + inDir + inFileName )
+        print( f' Available Fields:  {available_fields}')
         for h_key in list(head.keys()):
           if h_key in ['dims', 'dims_local', 'offset', 'bounds', 'domain', 'dx', ]: continue
           data_out[h_key] = head[h_key][0]
@@ -140,32 +150,65 @@ def load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid, do
         sys.stdout. write(terminalString)
         sys.stdout.flush() 
     
-      procStart_x, procStart_y, procStart_z = head['offset']
-      procEnd_x, procEnd_y, procEnd_z = head['offset'] + head['dims_local']
-      # Substract the offsets
-      procStart_x -= boundaries['x'][0]
-      procEnd_x   -= boundaries['x'][0]
-      procStart_y -= boundaries['y'][0]
-      procEnd_y   -= boundaries['y'][0]
-      procStart_z -= boundaries['z'][0]
-      procEnd_z   -= boundaries['z'][0]
-      procStart_x, procEnd_x = int(procStart_x), int(procEnd_x)
-      procStart_y, procEnd_y = int(procStart_y), int(procEnd_y)
-      procStart_z, procEnd_z = int(procStart_z), int(procEnd_z)
-      data_local = inFile[field][...]
-      data_all[ procStart_x:procEnd_x, procStart_y:procEnd_y, procStart_z:procEnd_z] = data_local
+      if not data_particels:
+        procStart_x, procStart_y, procStart_z = head['offset']
+        procEnd_x, procEnd_y, procEnd_z = head['offset'] + head['dims_local']
+        # Substract the offsets
+        procStart_x -= boundaries['x'][0]
+        procEnd_x   -= boundaries['x'][0]
+        procStart_y -= boundaries['y'][0]
+        procEnd_y   -= boundaries['y'][0]
+        procStart_z -= boundaries['z'][0]
+        procEnd_z   -= boundaries['z'][0]
+        procStart_x, procEnd_x = int(procStart_x), int(procEnd_x)
+        procStart_y, procEnd_y = int(procStart_y), int(procEnd_y)
+        procStart_z, procEnd_z = int(procStart_z), int(procEnd_z)
+        data_local = inFile[field][...]
+        data_all[ procStart_x:procEnd_x, procStart_y:procEnd_y, procStart_z:procEnd_z] = data_local
+      
+      else:
+        data_local = inFile[field][...]
+        data_all.append( data_local )
     
-    # Trim off the excess data on the boundaries:
-    trim_x_l = subgrid[0][0] - boundaries['x'][0]
-    trim_x_r = boundaries['x'][1] - subgrid[0][1]  
-    trim_y_l = subgrid[1][0] - boundaries['y'][0]
-    trim_y_r = boundaries['y'][1] - subgrid[1][1]  
-    trim_z_l = subgrid[2][0] - boundaries['z'][0]
-    trim_z_r = boundaries['z'][1] - subgrid[2][1]  
-    trim_x_l, trim_x_r = int(trim_x_l), int(trim_x_r) 
-    trim_y_l, trim_y_r = int(trim_y_l), int(trim_y_r) 
-    trim_z_l, trim_z_r = int(trim_z_l), int(trim_z_r) 
-    data_output = data_all[trim_x_l:nx-trim_x_r, trim_y_l:ny-trim_y_r, trim_z_l:nz-trim_z_r,  ]
-    data_out[data_type][field] = data_output
+    if not data_particels:
+      # Trim off the excess data on the boundaries:
+      trim_x_l = subgrid[0][0] - boundaries['x'][0]
+      trim_x_r = boundaries['x'][1] - subgrid[0][1]  
+      trim_y_l = subgrid[1][0] - boundaries['y'][0]
+      trim_y_r = boundaries['y'][1] - subgrid[1][1]  
+      trim_z_l = subgrid[2][0] - boundaries['z'][0]
+      trim_z_r = boundaries['z'][1] - subgrid[2][1]  
+      trim_x_l, trim_x_r = int(trim_x_l), int(trim_x_r) 
+      trim_y_l, trim_y_r = int(trim_y_l), int(trim_y_r) 
+      trim_z_l, trim_z_r = int(trim_z_l), int(trim_z_r) 
+      data_output = data_all[trim_x_l:nx-trim_x_r, trim_y_l:ny-trim_y_r, trim_z_l:nz-trim_z_r,  ]
+      data_out[data_type][field] = data_output
+    else:
+      data_all = np.concatenate( data_all )
+      data_out[data_type][field] = data_all
     if show_progess: print("")
   return data_out
+
+
+# dataDir = '/raid/bruno/data/'
+dataDir = '/data/groups/comp-astro/bruno/'
+inDir = dataDir + 'cosmo_sims/256_hydro_50Mpc/'
+
+
+n_snapshot = 59
+
+# data_type = 'hydro'
+data_type = 'particles'
+
+fields = ['density', 'pos_x']
+
+precision = np.float32
+
+Lbox = 5000    #kpc/h
+proc_grid = [ 2, 2, 2]
+box_size = [ Lbox, Lbox, Lbox ]
+grid_size = [ 512, 512, 512 ]
+subgrid = [ [0, 512], [0, 512], [0, 512] ] 
+data = load_snapshot_data_distributed( n_snapshot, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True )
+density = data[data_type]['density']  
+  
