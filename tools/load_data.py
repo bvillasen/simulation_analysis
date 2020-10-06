@@ -195,7 +195,7 @@ dataDir = '/data/groups/comp-astro/bruno/'
 inDir = dataDir + 'cosmo_sims/256_hydro_50Mpc/'
 
 
-n_snapshot = 59
+n_snapshot = 29
 
 # data_type = 'hydro'
 data_type = 'particles'
