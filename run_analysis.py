@@ -44,17 +44,26 @@ for n_file in indices_to_generate:
   fit_values = fit_thermal_parameters_mcmc( n_file, values_to_fit, fit_dir )
 
 
-
-
-
-
+# #Load Snapshot Data
 # 
-# n_data = 1
-# nrows = 1
-# ncols = n_data
-# fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(9*ncols,8*nrows))
+# # dataDir = '/raid/bruno/data/'
+# dataDir = '/data/groups/comp-astro/bruno/'
+# inDir = dataDir + 'cosmo_sims/256_hydro_50Mpc/output_files/'
 # 
-# im = ax.imshow( np.log10(pd)[::-1], extent=[log_dens_min, log_dens_max, log_temp_min, log_temp_max] )
 # 
-# file_name = output_dir + f'phase_diagram_{n_file}.png'
-# fig.savefig( file_name, dpi=300 )
+# n_snapshot = 29
+# 
+# # data_type = 'hydro'
+# data_type = 'particles'
+# 
+# fields = ['density', 'pos_x']
+# 
+# precision = np.float32
+# 
+# Lbox = 5000    #kpc/h
+# proc_grid = [ 2, 2, 2]
+# box_size = [ Lbox, Lbox, Lbox ]
+# grid_size = [ 256, 256, 256 ] #Size of the simulation grid
+# subgrid = [ [0, 256], [0, 256], [0, 256] ] #Size of the volume to load
+# data = load_snapshot_data_distributed( n_snapshot, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True )
+# density = data[data_type]['density']  
