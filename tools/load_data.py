@@ -192,7 +192,7 @@ def load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid,  p
 
 # dataDir = '/raid/bruno/data/'
 dataDir = '/data/groups/comp-astro/bruno/'
-inDir = dataDir + 'cosmo_sims/256_hydro_50Mpc/'
+inDir = dataDir + 'cosmo_sims/256_hydro_50Mpc/output_files/'
 
 
 n_snapshot = 29
