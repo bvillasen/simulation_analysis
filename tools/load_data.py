@@ -26,7 +26,7 @@ def get_domain_block( proc_grid, box_size, grid_size ):
   Lx, Ly, Lz = box_size
   nx_g, ny_g, nz_g = grid_size
   dx, dy, dz = Lx/np_x, Ly/np_y, Lz/np_z
-  nx_l, ny_l, nz_l = nx_g//np_x, ny_g//np_z, nz_g//np_z,
+  nx_l, ny_l, nz_l = nx_g//np_x, ny_g//np_y, nz_g//np_z,
 
   nprocs = np_x * np_y * np_z
   domain = {}
@@ -53,7 +53,7 @@ def get_domain_block( proc_grid, box_size, grid_size ):
         domain[pId]['box']['center_z'] = ( zMin + zMax )/2.
         gxMin, gxMax = i*nx_l, (i+1)*nx_l
         gyMin, gyMax = j*ny_l, (j+1)*ny_l
-        gzMin, gzMax = k*ny_l, (k+1)*ny_l
+        gzMin, gzMax = k*nz_l, (k+1)*nz_l
         domain[pId]['grid']['x'] = [gxMin, gxMax]
         domain[pId]['grid']['y'] = [gyMin, gyMax]
         domain[pId]['grid']['z'] = [gzMin, gzMax]
