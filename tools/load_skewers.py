@@ -50,3 +50,10 @@ skewer_axis = 'x'
 n_skewers = 100
 data_skewers = load_skewers_single_axis(n_skewers, skewer_axis,  nSnap, input_dir, set_random_seed=True, print_out=True )
 current_z = data_skewers['current_z']
+
+
+skewer_id = 0
+skewer_density     = data_skewers['density'][skewer_id]
+skewer_HI_density  = data_skewers['HI_density'][skewer_id]
+skewer_temperature = data_skewers['temperature'][skewer_id]
+skewer_velocity    = data_skewers['velocity'][skewer_id]
