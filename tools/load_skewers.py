@@ -47,6 +47,6 @@ input_dir = dataDir + 'cosmo_sims/2048_hydro_50Mpc/skewers_pchw18/'
 nSnap = 169
 
 skewer_axis = 'x'
-n_skewers = 2000
+n_skewers = 100
 data_skewers = load_skewers_single_axis(n_skewers, skewer_axis,  nSnap, input_dir, set_random_seed=True, print_out=True )
 current_z = data_skewers['current_z']
