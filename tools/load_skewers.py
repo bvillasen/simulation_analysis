@@ -37,10 +37,6 @@ def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_ra
 
 
 
-
-
-
-
 dataDir = '/data/groups/comp-astro/bruno/'
 input_dir = dataDir + 'cosmo_sims/2048_hydro_50Mpc/skewers_pchw18/'
 
