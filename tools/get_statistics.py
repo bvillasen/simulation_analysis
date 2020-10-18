@@ -7,7 +7,7 @@ currentDirectory = os.getcwd()
 dataDirectory = currentDirectory + "/data_src/"
 sys.path.extend([  dataDirectory ] )
 from tools import *
-from load_data_cholla_distributed import load_snapshot_data_distributed
+from load_data import load_snapshot_data_distributed
 
 nPoints = 1024
 
