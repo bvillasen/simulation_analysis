@@ -35,7 +35,7 @@ fields = ['density' ]
 
 
 
-nFiles = 170
+nFiles = 17*2
 indices = range(nFiles)
 indices_to_generate = split_indices( indices, rank,  n_procs )
 if len(indices_to_generate) == 0: exit()
@@ -54,24 +54,36 @@ for nSnap in indices_to_generate:
   box_size = [ Lbox, Lbox, Lbox ]
   grid_size = [ nPoints, nPoints, nPoints ] #Size of the simulation grid
   subgrid = [ [0, nPoints], [0, nPoints], [0, nPoints] ] #Size of the volume to load
-  # data = load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True, get_statistics=True )
-  # if stats == None:
-  #   stats = {}
-  #   for field in fields:
-  #     stats[field] = {}
-  #     stats[field]['min_vals'] = []
-  #     stats[field]['max_vals'] = []
-  # for field in fields:
-  #   stats[field]['min_vals'].append( data[data_type]['statistics'][field]['min'] )
-  #   stats[field]['max_vals'].append( data[data_type]['statistics'][field]['max']  )
+  data = load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True, get_statistics=True )
+  if stats == None:
+    stats = {}
+    for field in fields:
+      stats[field] = {}
+      stats[field]['min_vals'] = []
+      stats[field]['max_vals'] = []
+  for field in fields:
+    stats[field]['min_vals'].append( data[data_type]['statistics'][field]['min'] )
+    stats[field]['max_vals'].append( data[data_type]['statistics'][field]['max']  )
+
+snapshots = np.array( snapshots )
+for field in fields:
+  stats[field]['min_vals'] = np.array(stats[field]['min_vals'])
+  stats[field]['max_vals'] = np.array(stats[field]['max_vals']) 
 
 if use_mpi:
-  snapshots = np.array( snapshots )
   snapshots_all = comm.gather( snapshots, root=0 )
-  if rank == 0: 
-    snapshots_all = np.concatenate( snapshots_all)
-    print( snapshots_all )
-
+  stats_all = {}
+  for field in fields:
+    stats_all[field]['min_vals'] = comm.gather( stats[field]['min_vals'], root=0 )
+    stats_all[field]['max_vals'] = comm.gather( stats[field]['max_vals'], root=0 )
+if rank == 0: 
+  snapshots_all = np.concatenate( snapshots_all)
+  sort_indxs = np.argsort( snapshots_all )
+  for field inf fields:
+    stats_all[field]['min_vals'] = np.concatenate( stats_all[field]['min_vals'] )[sort_indxs]
+    stats_all[field]['max_vals'] = np.concatenate( stats_all[field]['max_vals'] )[sort_indxs]
+    print(stats_all[field]['min_vals'] )
+    print(stats_all[field]['max_vals'] )
 
 # print( "nSnapshot {0}:  {1} {2}".format( nSnapshot, stats[field]['min_vals'], stats[field]['max_vals']  )
 # for field in fields:
