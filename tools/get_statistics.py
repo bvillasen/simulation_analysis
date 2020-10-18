@@ -35,14 +35,18 @@ fields = ['density' ]
 
 
 
-nFiles = 17*2
+nFiles = 17
 indices = range(nFiles)
 indices_to_generate = split_indices( indices, rank,  n_procs )
 if len(indices_to_generate) == 0: exit()
 
 print( f'pID:{rank}  indxs:{indices_to_generate}' )
 
-stats = None
+stats = {}
+for field in fields:
+  stats[field] = {}
+  stats[field]['min_vals'] = []
+  stats[field]['max_vals'] = []
 snapshots = []
 for nSnap in indices_to_generate:
 
@@ -55,12 +59,6 @@ for nSnap in indices_to_generate:
   grid_size = [ nPoints, nPoints, nPoints ] #Size of the simulation grid
   subgrid = [ [0, nPoints], [0, nPoints], [0, nPoints] ] #Size of the volume to load
   data = load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True, get_statistics=True )
-  if stats == None:
-    stats = {}
-    for field in fields:
-      stats[field] = {}
-      stats[field]['min_vals'] = []
-      stats[field]['max_vals'] = []
   for field in fields:
     stats[field]['min_vals'].append( data[data_type]['statistics'][field]['min'] )
     stats[field]['max_vals'].append( data[data_type]['statistics'][field]['max']  )
@@ -74,6 +72,7 @@ if use_mpi:
   snapshots_all = comm.gather( snapshots, root=0 )
   stats_all = {}
   for field in fields:
+    stats_all[field] = {}
     stats_all[field]['min_vals'] = comm.gather( stats[field]['min_vals'], root=0 )
     stats_all[field]['max_vals'] = comm.gather( stats[field]['max_vals'], root=0 )
 if rank == 0: 
