@@ -6,7 +6,7 @@ currentDirectory = os.getcwd()
 srcDirectory = currentDirectory + "/src/"
 dataDirectory = currentDirectory + "/data_src/"
 sys.path.extend([ srcDirectory, dataDirectory ] )
-from tools import create_directory
+from tools import create_directory, split_indices
 from load_data import load_snapshot_data_distributed
 
 
