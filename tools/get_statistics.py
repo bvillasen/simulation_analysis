@@ -42,36 +42,36 @@ if len(indices_to_generate) == 0: exit()
 
 print( f'pID:{rank}  indxs:{indices_to_generate}' )
 
-# stats = None
-# for nSnap in range(nFiles):
-# 
-#   precision = np.float32
-#   Lbox = 5000    #kpc/h
-#   if nPoints == 1024: proc_grid = [ 4, 2, 2]
-#   if nPoints == 2048: proc_grid = [ 8, 8, 8]
-#   box_size = [ Lbox, Lbox, Lbox ]
-#   grid_size = [ nPoints, nPoints, nPoints ] #Size of the simulation grid
-#   subgrid = [ [0, nPoints], [0, nPoints], [0, nPoints] ] #Size of the volume to load
-#   data = load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True, get_statistics=True )
-# 
-#   if stats == None:
-#     stats = {}
-#     for field in fields:
-#       stats[field] = {}
-#       stats[field]['min_vals'] = []
-#       stats[field]['max_vals'] = []
-#   for field in fields:
-#     # print( data_cholla.keys())
-#     # data = data_cholla[field][...]
-#     # stats[field]['min_vals'].append( data.min() )
-#     # stats[field]['max_vals'].append( data.max() )
-#     # data = data_cholla[field]
-#     # stats[field]['min_vals'].append( data.attrs['min'] )
-#     # stats[field]['max_vals'].append( data.attrs['max'] )
-#     stats[field]['min_vals'].append( data[data_type]['statistics'][field]['min'] )
-#     stats[field]['max_vals'].append( data[data_type]['statistics'][field]['max']  )
-# 
-# # print( "nSnapshot {0}:  {1} {2}".format( nSnapshot, stats[field]['min_vals'], stats[field]['max_vals']  )
+stats = None
+snapshots = []
+for nSnap in range(nFiles):
+
+  snapshots.append(nSnap)
+  precision = np.float32
+  Lbox = 5000    #kpc/h
+  if nPoints == 1024: proc_grid = [ 4, 2, 2]
+  if nPoints == 2048: proc_grid = [ 8, 8, 8]
+  box_size = [ Lbox, Lbox, Lbox ]
+  grid_size = [ nPoints, nPoints, nPoints ] #Size of the simulation grid
+  subgrid = [ [0, nPoints], [0, nPoints], [0, nPoints] ] #Size of the volume to load
+  # data = load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True, get_statistics=True )
+  # if stats == None:
+  #   stats = {}
+  #   for field in fields:
+  #     stats[field] = {}
+  #     stats[field]['min_vals'] = []
+  #     stats[field]['max_vals'] = []
+  # for field in fields:
+  #   stats[field]['min_vals'].append( data[data_type]['statistics'][field]['min'] )
+  #   stats[field]['max_vals'].append( data[data_type]['statistics'][field]['max']  )
+
+if use_mpi:
+  snapshots_all = comm.gather( snapshots, root=0 )
+  
+  if rank == 0: print( snapshots_all )
+
+
+# print( "nSnapshot {0}:  {1} {2}".format( nSnapshot, stats[field]['min_vals'], stats[field]['max_vals']  )
 # for field in fields:
 #   stats[field]['min_vals'] = np.array( stats[field]['min_vals'] )
 #   stats[field]['max_vals'] = np.array( stats[field]['max_vals'] )
@@ -91,7 +91,3 @@ print( f'pID:{rank}  indxs:{indices_to_generate}' )
 # 
 # 
 # outFile.close()
-# # 
-# # 
-# # 
-# # 
