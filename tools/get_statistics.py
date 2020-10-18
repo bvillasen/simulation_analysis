@@ -44,7 +44,7 @@ print( f'pID:{rank}  indxs:{indices_to_generate}' )
 
 stats = None
 snapshots = []
-for nSnap in range(nFiles):
+for nSnap in range(indices_to_generate):
 
   snapshots.append(nSnap)
   precision = np.float32
