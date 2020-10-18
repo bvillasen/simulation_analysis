@@ -88,10 +88,10 @@ if rank == 0:
   outFile = h5.File( outFileName, 'w' )
   for field in fields:
     group = outFile.create_group( field )
-    group.attrs['min_global'] = stats[field]['min_global']
-    group.attrs['max_global'] = stats[field]['max_global']
-    group.create_dataset( 'min_vals', data =stats[field]['min_vals'] )
-    group.create_dataset( 'max_vals', data =stats[field]['max_vals'] )
+    group.attrs['min_global'] = stats_all[field]['min_global']
+    group.attrs['max_global'] = stats_all[field]['max_global']
+    group.create_dataset( 'min_vals', data=stats_all[field]['min_vals'] )
+    group.create_dataset( 'max_vals', data=stats_all[field]['max_vals'] )
   outFile.close()
   print( f"Saved File: {outFileName}")
 
