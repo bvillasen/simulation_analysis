@@ -24,7 +24,7 @@ else:
 nPoints = 1024
 dataDir = '/data/groups/comp-astro/bruno/'
 inDir = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/output_files_pchw18/'.format(nPoints)
-outDir = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/output_files_pchw18/statistics/'.format(nPoints)
+outDir = inDir + 'statistics/'.format(nPoints)
 if rank == 0: create_directory( outDir )
 
 
@@ -81,26 +81,17 @@ if rank == 0:
   for field in fields:
     stats_all[field]['min_vals'] = np.concatenate( stats_all[field]['min_vals'] )[sort_indxs]
     stats_all[field]['max_vals'] = np.concatenate( stats_all[field]['max_vals'] )[sort_indxs]
-    print(stats_all[field]['min_vals'] )
-    print(stats_all[field]['max_vals'] )
+    stats_all[field]['min_global'] = stats_all[field]['min_vals'].min()
+    stats_all[field]['max_global'] = stats_all[field]['max_vals'].max()
 
-# print( "nSnapshot {0}:  {1} {2}".format( nSnapshot, stats[field]['min_vals'], stats[field]['max_vals']  )
-# for field in fields:
-#   stats[field]['min_vals'] = np.array( stats[field]['min_vals'] )
-#   stats[field]['max_vals'] = np.array( stats[field]['max_vals'] )
-#   stats[field]['min_global'] = stats[field]['min_vals'].min()
-#   stats[field]['max_global'] = stats[field]['max_vals'].max()
-#   print( '{0}: min:{1}'.format( fields, stats[field]['min_vals']  ))
-#   print( '{0}: max:{1}'.format( fields, stats[field]['max_vals']  ))
-# 
-# outFileName = 'stats_{0}.h5'.format(data_type)
-# outFile = h5.File( outDir + outFileName, 'w' )
-# for field in fields:
-#   group = outFile.create_group( field )
-#   group.attrs['min_global'] = stats[field]['min_global']
-#   group.attrs['max_global'] = stats[field]['max_global']
-#   group.create_dataset( 'min_vals', data =stats[field]['min_vals'] )
-#   group.create_dataset( 'max_vals', data =stats[field]['max_vals'] )
-# 
-# 
-# outFile.close()
+  outFileName = outDir + 'stats_{0}.h5'.format(data_type)
+  outFile = h5.File( outFileName, 'w' )
+  for field in fields:
+    group = outFile.create_group( field )
+    group.attrs['min_global'] = stats[field]['min_global']
+    group.attrs['max_global'] = stats[field]['max_global']
+    group.create_dataset( 'min_vals', data =stats[field]['min_vals'] )
+    group.create_dataset( 'max_vals', data =stats[field]['max_vals'] )
+  outFile.close()
+  print( f"Saved File: {outFileName}")
+
