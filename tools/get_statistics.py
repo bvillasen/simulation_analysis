@@ -68,7 +68,7 @@ for nSnap in indices_to_generate:
 if use_mpi:
   snapshots = np.array( snapshots )
   snapshots_all = comm.gather( snapshots, root=0 )
-  
+  snapshots_all = np.concatenate( snapshots_all)
   if rank == 0: print( snapshots_all )
 
 
