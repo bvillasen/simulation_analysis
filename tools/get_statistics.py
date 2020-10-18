@@ -66,6 +66,7 @@ for nSnap in indices_to_generate:
   #   stats[field]['max_vals'].append( data[data_type]['statistics'][field]['max']  )
 
 if use_mpi:
+  snapshots = np.array( snapshots )
   snapshots_all = comm.gather( snapshots, root=0 )
   
   if rank == 0: print( snapshots_all )
