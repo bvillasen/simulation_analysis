@@ -35,7 +35,7 @@ fields = ['density' ]
 
 
 
-nFiles = 17
+nFiles = 170
 indices = range(nFiles)
 indices_to_generate = split_indices( indices, rank,  n_procs )
 if len(indices_to_generate) == 0: exit()

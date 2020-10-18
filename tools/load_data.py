@@ -93,7 +93,7 @@ def select_ids_to_load( subgrid, domain, proc_grid ):
 
 
 
-def load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True, get_statistics=False ):
+def load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True, get_statistics=False, print_fields=False ):
   
   
   # Get the doamin domain_decomposition
@@ -143,7 +143,7 @@ def load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid,  p
       head = inFile.attrs
       if added_header == False:
         print( ' Loading: ' + inDir + inFileName )
-        print( f' Available Fields:  {available_fields}')
+        if print_fields: print( f' Available Fields:  {available_fields}')
         for h_key in list(head.keys()):
           if h_key in ['dims', 'dims_local', 'offset', 'bounds', 'domain', 'dx', ]: continue
           data_out[h_key] = head[h_key][0]
