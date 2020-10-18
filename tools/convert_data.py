@@ -7,7 +7,7 @@ srcDirectory = currentDirectory + "/src/"
 dataDirectory = currentDirectory + "/data_src/"
 sys.path.extend([ srcDirectory, dataDirectory ] )
 from tools import create_directory
-from load_data_cholla_distributed import load_snapshot_data_distributed
+from load_data import load_snapshot_data_distributed
 
 
 use_mpi = True
