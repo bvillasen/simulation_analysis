@@ -79,7 +79,7 @@ if use_mpi:
 if rank == 0: 
   snapshots_all = np.concatenate( snapshots_all)
   sort_indxs = np.argsort( snapshots_all )
-  for field inf fields:
+  for field in fields:
     stats_all[field]['min_vals'] = np.concatenate( stats_all[field]['min_vals'] )[sort_indxs]
     stats_all[field]['max_vals'] = np.concatenate( stats_all[field]['max_vals'] )[sort_indxs]
     print(stats_all[field]['min_vals'] )
