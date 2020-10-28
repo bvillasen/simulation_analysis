@@ -16,7 +16,7 @@ from ics_grid import expand_data_grid_to_cholla
 # data_dir = '/raid/bruno/data/'
 data_dir = '/data/groups/comp-astro/bruno/'
 input_dir = data_dir + 'cosmo_sims/enzo/512_hydro_50Mpc/ics/'
-output_dir = data_dir + 'cosmo_sims/512_hydro_50Mpc/ics_8/'
+output_dir = data_dir + 'cosmo_sims/sim_grid/512_50Mpc/ics_8/'
 print(f'Input Dir: {input_dir}' )
 print(f'Output Dir: {output_dir}' )
 create_directory( output_dir )
@@ -71,9 +71,10 @@ data_enzo['gas']['Energy'] = gas_E
 
 
 Lbox = 50000.0
+nPoints = 512
 proc_grid = [ 2, 2, 2]
 box_size = [ Lbox, Lbox, Lbox ]
-grid_size = [ 512, 512, 512 ]
+grid_size = [ nPoints, nPoints, nPoints ]
 output_base_name = '{0}_particles.h5'.format(nSnap)
 generate_ics_particles(data_enzo, output_dir, output_base_name, proc_grid, box_size, grid_size)
 
