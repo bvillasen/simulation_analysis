@@ -1,0 +1,120 @@
+import sys, os
+import numpy as np
+from scipy.special import erf
+import constants_cgs as cgs
+
+def get_Doppler_parameter( T ):
+  b = np.sqrt( 2* cgs.K_b / cgs.M_p * T )
+  return b
+
+  
+#Copy ghost cells to extend periodic boundaries   
+def extend_periodic( arr, n_ghost):
+  n = len(arr)
+  arr_periodic = np.zeros( n + 2*n_ghost )
+  arr_periodic[n_ghost:n+n_ghost] = arr
+  arr_periodic[:n_ghost] = arr[-n_ghost:]
+  arr_periodic[-n_ghost:] = arr[:n_ghost]
+  return arr_periodic
+  
+
+
+def get_optical_depth_velocity( current_z, H, dr, dv, n_HI_los, vel_peculiar_los, temp_los, space='redshift', method='error_function' ):
+  # Lymann Alpha Parameters
+  Lya_lambda = 1.21567e-5 #cm  Rest wave length of the Lyman Alpha Transition
+  Lya_nu = cgs.c / Lya_lambda
+  f_12 = 0.416 #Oscillator strength
+  Lya_sigma = np.pi * cgs.e_charge**2 / cgs.M_e / cgs.c * f_12
+  H_cgs = H * 1e5 / cgs.kpc 
+  dr_cgs = dr * cgs.kpc
+  
+  #Extend Ghost cells for periodic boundaries
+  n = len(n_HI_los)
+  n_ghost = int( 0.1 * n )
+  n_HI = extend_periodic( n_HI_los, n_ghost)
+  vel_peculiar = extend_periodic( vel_peculiar_los, n_ghost )
+  temp = extend_periodic( temp_los, n_ghost) 
+  
+  r_proper = (np.linspace( -n_ghost, n+n_ghost-1, n+2*n_ghost) + 0.5 )* dr
+  vel_Hubble = H * r_proper * 1e5
+  dv_Hubble = vel_Hubble[1] - vel_Hubble[0]
+  
+  n_points = len( n_HI )
+  
+  print( f'Space: {space}')
+  if space == 'real': velocity = vel_Hubble
+  elif space == 'redshift': velocity = vel_Hubble + vel_peculiar
+  else: 
+    print ('ERROR: Invalid space ( Real or Redshift )')
+    return None
+  
+  
+  b_all = get_Doppler_parameter( temp ) 
+  
+  tau_los = np.zeros(n_points) #Initialize arrays of zeros for the total optical delpth along the line of sight
+    
+    
+  if method=='error_function':
+    #Loop over each cell
+    for j in range(n_points):
+      #Get  local values of the cell
+      v_j = vel_Hubble[j]                      #Hubble Velocity of the cell
+      y_l = ( ( v_j - 0.5 * H_cgs * dr_cgs ) - velocity ) / b_all
+      y_r = ( ( v_j + 0.5 * H_cgs * dr_cgs ) - velocity ) / b_all
+      tau_val = Lya_sigma * Lya_lambda  / H_cgs  * np.sum( n_HI * ( erf(y_r) - erf(y_l) ) ) / 2
+      tau_los[j] = tau_val 
+            
+  # Trim the ghost cells from the global optical depth 
+  tau_los    = tau_los[n_ghost:-n_ghost]
+  vel_Hubble = vel_Hubble[n_ghost:-n_ghost]
+  return tau_los, vel_Hubble
+
+
+
+def compute_optical_depth( cosmology, box, skewer, space='redshift', method='error_function' ):
+  H0 = cosmology['H0'] 
+  Omega_M = cosmology['Omega_M']
+  Omega_L = cosmology['Omega_L']
+  current_z = cosmology['current_z']
+  cosmo_h = H0 / 100.
+  H0 = H0 / 1000     #km/s/kpc
+  
+  Lbox_x, Lbox_y, Lbox_z = box['Lbox']
+  if  Lbox_x != Lbox_y: print( 'Warning: Lbox is not the same for X Y Z')
+  if  Lbox_x != Lbox_z: print( 'Warning: Lbox is not the same for X Y Z')
+  Lbox = Lbox_x
+  
+  HI_density  = skewer['HI_density']
+  velocity    = skewer['velocity']
+  temperature = skewer['temperature']
+  
+  
+  nPoints = len( HI_density )
+  
+  #Proper length
+  current_a = 1./(current_z + 1)
+  R = current_a * Lbox / cosmo_h
+  nx = nPoints
+  dr = R / nx
+  
+  a_dot = np.sqrt( Omega_M/current_a + Omega_L*current_a**2  ) * H0 
+  H = a_dot / current_a
+  dens_HI_los = HI_density / (current_a)**3
+  temp_los = temperature
+  vel_los = velocity.copy() 
+  
+  dv = H * dr
+  
+  #Convert to CGS Units
+  dens_HI_los *=  cgs.Msun / cgs.kpc**3 * cosmo_h**2
+  n_HI_los = dens_HI_los / cgs.M_p
+  vel_los_cms = vel_los * 1e5 
+  dv_cms = dv * 1e5
+  # print( f'dv_Hubble: {dv_cms}')
+  
+  tau, vel_Hubble = get_optical_depth_velocity( current_z,  H, dr, dv_cms, n_HI_los, vel_los_cms, temp_los, space=space, method=method )
+  data_out = {}
+  data_out['vel_Hubble'] = vel_Hubble
+  data_out['tau'] = tau
+    
+  return data_out

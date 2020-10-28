@@ -7,7 +7,7 @@ from tools import *
 #Append analysis directories to path
 extend_path()
 from load_data import load_analysis_data
-from fit_phase_diagram import fit_thermal_parameters_mcmc, get_density_tyemperature_values_to_fit
+from phase_diagram_functions import fit_thermal_parameters_mcmc, get_density_tyemperature_values_to_fit
 
 #Parse Command Parameters
 args = sys.argv[1:]
@@ -33,6 +33,7 @@ if rank == 0:
 if use_mpi: comm.Barrier()
 
 
+
 indices = range(150)
 indices_to_generate = split_indices( indices, rank,  n_procs )
 if len(indices_to_generate) == 0: exit()
@@ -44,26 +45,3 @@ for n_file in indices_to_generate:
   fit_values = fit_thermal_parameters_mcmc( n_file, values_to_fit, fit_dir )
 
 
-# #Load Snapshot Data
-# 
-# # dataDir = '/raid/bruno/data/'
-# dataDir = '/data/groups/comp-astro/bruno/'
-# inDir = dataDir + 'cosmo_sims/256_hydro_50Mpc/output_files/'
-# 
-# 
-# n_snapshot = 29
-# 
-# # data_type = 'hydro'
-# data_type = 'particles'
-# 
-# fields = ['density', 'pos_x']
-# 
-# precision = np.float32
-# 
-# Lbox = 5000    #kpc/h
-# proc_grid = [ 2, 2, 2]
-# box_size = [ Lbox, Lbox, Lbox ]
-# grid_size = [ 256, 256, 256 ] #Size of the simulation grid
-# subgrid = [ [0, 256], [0, 256], [0, 256] ] #Size of the volume to load
-# data = load_snapshot_data_distributed( n_snapshot, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True )
-# density = data[data_type]['density']  

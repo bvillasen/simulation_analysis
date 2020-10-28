@@ -5,20 +5,49 @@ import h5py as h5
 import numpy as np
 
 
-def load_analysis_data( n_file, input_dir ):
+def load_analysis_data( n_file, input_dir, phase_diagram=True, lya_statistics=True, load_skewer=False ):
   file_name = input_dir + f'{n_file}_analysis.h5'
   file = h5.File( file_name, 'r' ) 
 
   data_out = {}
   attrs = file.attrs
-  for key in attrs:
-    data_out[key] = file.attrs[key][0]
-
-  data_out['phase_diagram'] = {}  
-  phase_diagram = file['phase_diagram']
-  for key in phase_diagram.attrs:
-    data_out['phase_diagram'][key] = phase_diagram.attrs[key][0]
-  data_out['phase_diagram']['data'] = phase_diagram['data'][...] 
+  # print( attrs.keys() )
+  
+  data_out['box'] = {}
+  data_out['box']['Lbox'] = attrs['Lbox']
+  
+  
+  data_out['cosmology'] = {}
+  data_out['cosmology']['H0'] = attrs['H0'][0]
+  data_out['cosmology']['Omega_L'] = attrs['Omega_L'][0]
+  data_out['cosmology']['Omega_M'] = attrs['Omega_M'][0]
+  data_out['cosmology']['current_z'] = attrs['current_z'][0]
+  data_out['cosmology']['current_a'] = attrs['current_a'][0]
+  
+  
+  if phase_diagram:
+    data_out['phase_diagram'] = {}  
+    phase_diagram = file['phase_diagram']
+    for key in phase_diagram.attrs:
+      data_out['phase_diagram'][key] = phase_diagram.attrs[key][0]
+    data_out['phase_diagram']['data'] = phase_diagram['data'][...] 
+    
+  if lya_statistics:
+    data_out['lya_statistics'] = {}
+    lya_statistics = file['lya_statistics']
+    data_out['lya_statistics']['n_skewers'] = lya_statistics.attrs['n_skewers'][0]
+    data_out['lya_statistics']['Flux_mean'] = lya_statistics.attrs['Flux_mean'][0]
+  
+    if load_skewer:
+      skewer = lya_statistics['skewer']
+      data_out['lya_statistics']['skewer'] = {}
+      data_out['lya_statistics']['skewer']['HI_density']       = skewer['HI_density'][...]
+      data_out['lya_statistics']['skewer']['velocity']         = skewer['velocity'][...]
+      data_out['lya_statistics']['skewer']['temperature']      = skewer['temperature'][...]
+      data_out['lya_statistics']['skewer']['optical_depth']    = skewer['optical_depth'][...]
+      data_out['lya_statistics']['skewer']['vel_Hubble']       = skewer['vel_Hubble'][...]
+      data_out['lya_statistics']['skewer']['transmitted_flux'] = skewer['transmitted_flux'][...]
+  file.close()
   return data_out
 
 def get_domain_block( proc_grid, box_size, grid_size ):
