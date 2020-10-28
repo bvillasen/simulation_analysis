@@ -1,7 +1,7 @@
 import os, sys
 import h5py as h5
 import numpy as np
-from domain_decomposition import *
+from load_data import get_domain_block
 
 
 def generate_ics_particles( data_in, outDir, outputBaseName, proc_grid, box_size, grid_size ):
