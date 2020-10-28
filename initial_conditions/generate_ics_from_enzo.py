@@ -16,7 +16,7 @@ from ics_grid import expand_data_grid_to_cholla
 # Box Size
 Lbox = 50000.0    #kpc
 nPoints = 512
-nBoxes  = 8
+nBoxes  = 16
 
 # data_dir = '/raid/bruno/data/'
 data_dir = '/data/groups/comp-astro/bruno/'
