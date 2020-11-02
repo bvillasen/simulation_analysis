@@ -5,7 +5,7 @@ import h5py as h5
 import numpy as np
 
 
-def load_analysis_data( n_file, input_dir, phase_diagram=True, lya_statistics=True, load_skewer=False ):
+def load_analysis_data( n_file, input_dir, phase_diagram=True, lya_statistics=True, load_skewer=False, load_fit=False ):
   file_name = input_dir + f'{n_file}_analysis.h5'
   file = h5.File( file_name, 'r' ) 
 
@@ -31,6 +31,25 @@ def load_analysis_data( n_file, input_dir, phase_diagram=True, lya_statistics=Tr
     for key in phase_diagram.attrs:
       data_out['phase_diagram'][key] = phase_diagram.attrs[key][0]
     data_out['phase_diagram']['data'] = phase_diagram['data'][...] 
+    
+  if load_fit:
+    fit_dir = input_dir + 'fit_mcmc/'
+    fit_file_name = fit_dir + f'fit_{n_file}.pkl'
+    fit_file = open(fit_file_name, 'rb')
+    mcmc_stats = pickle.load(fit_file)
+    mcmc_T0 = mcmc_stats['T0']['mean']
+    mcmc_T0_sigma = mcmc_stats['T0']['standard deviation']
+    mcmc_gamma = mcmc_stats['gamma']['mean']
+    mcmc_gamma_sigma = mcmc_stats['gamma']['standard deviation']
+    T0 = 10**mcmc_T0
+    delta_T0 =  T0 * np.log(10) * mcmc_T0_sigma
+    gamma = mcmc_gamma
+    delta_gamma = mcmc_gamma_sigma
+    data_out['phase_diagram']['fit'] = {}
+    data_out['phase_diagram']['T0'] = T0
+    data_out['phase_diagram']['delta_T0'] = delta_T0
+    data_out['phase_diagram']['gamma'] = gamma
+    data_out['phase_diagram']['delta_gamma'] = delta_gamma
     
   if lya_statistics:
     data_out['lya_statistics'] = {}
