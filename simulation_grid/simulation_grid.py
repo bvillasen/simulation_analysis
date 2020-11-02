@@ -263,7 +263,7 @@ class Simulation_Grid:
     file_name = sim_dir + 'UVB_rates.h5'
     print( f' Loading File: {file_name}')
     file = h5.File( file_name, 'r' )
-    rates = fule['UVBRates']
+    rates = file['UVBRates']
     rates_out = {}
     for root_key in rates.keys():
       rates_out[root_key] = {}
