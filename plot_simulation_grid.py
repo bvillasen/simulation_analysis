@@ -29,6 +29,7 @@ scales_He = [ 1., .9, .8, .7, .6, .5 ]
 SG.Load_Grid_Analysis_Data( sim_ids=sim_ids, load_fit=True )
 
 
+font_size = 15
 
 nrows = 1
 ncols = 1
@@ -40,7 +41,6 @@ for sim_id in sim_ids:
   label = r'$\beta_{HeII}$' + ' $= {0}$'.format(scales_He[sim_id])
   ax.plot( z, T0 , label=label )
 
-font_size = 13 
 ax.set_ylabel( r'$T_0$', fontsize=font_size  )
 ax.set_xlabel( r'$z$', fontsize=font_size )
 leg = ax.legend(loc=1, frameon=False, fontsize=font_size)
@@ -63,11 +63,13 @@ for sim_id in sim_ids:
   z = SG.Grid[sim_id]['analysis']['z']
   F = SG.Grid[sim_id]['analysis']['F_mean']
   tau = - np.log( F )
-  ax.plot( z, tau )
+  label = r'$\beta_{HeII}$' + ' $= {0}$'.format(scales_He[sim_id])
+  ax.plot( z, tau, label=label )
 
 
-ax.set_ylabel( r'$\tau_{eff}$' )
-ax.set_xlabel( r'$z$' )
+ax.set_ylabel( r'$\tau_{eff}$', fontsize=font_size )
+ax.set_xlabel( r'$z$', fontsize=font_size )
+leg = ax.legend(loc=1, frameon=False, fontsize=font_size)
 ax.set_xlim( 2, 6 )
 ax.set_yscale('log')
 ax.set_ylim( 0.1, 10 )
