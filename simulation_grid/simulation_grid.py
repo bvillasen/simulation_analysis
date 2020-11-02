@@ -261,9 +261,10 @@ class Simulation_Grid:
   def Load_Simulation_UVB_Rates( self, sim_id ):
     sim_dir = self.Get_Simulation_Directory( sim_id )
     file_name = sim_dir + 'UVB_rates.h5'
+    print( f' Loading File: {file_name}')
     file = h5.File( file_name, 'r' )
     rates = fule['UVBRates']
-    rates_out = {}\
+    rates_out = {}
     for root_key in rates.keys():
       rates_out[root_key] = {}
       data_group = rates[root_key]
