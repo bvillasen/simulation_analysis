@@ -10,8 +10,8 @@ from simulation_grid import Simulation_Grid
 # cholla_dir = '/home/bruno/cholla/'    
 # root_dir = '/raid/bruno/data/cosmo_sims/sim_grid/test/'
 
-cholla_dir = '/home/bruno/cholla/'    
-root_dir = '/raid/bruno/data/cosmo_sims/sim_grid/test/'
+root_dir   = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
+cholla_dir = '/home/brvillas/cholla/'    
 
 
 
@@ -47,7 +47,7 @@ sim_params['zu_bcnd'] = 1
 sim_params['lya_skewers_stride'] = 8
 sim_params['init'] = 'Read_File'
 sim_params['nfile'] = 1
-sim_params['indir'] = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/ics/512_50Mpc/ics_8_z20/'
+sim_params['indir'] = root_dir + 'ics/512_50Mpc/ics_8_z20/'
 sim_params['scale_outputs_file'] = cholla_dir + 'scale_output_files/outputs_single_output_z2.txt'
 sim_params['analysis_scale_outputs_file'] = cholla_dir + 'scale_output_files/outputs_cosmo_analysis_150.txt'
 
