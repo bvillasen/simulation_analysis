@@ -40,7 +40,7 @@ for sim_id in sim_ids:
   label = r'$beta_{HeII}$' + ' = {0}$'.format(scales_He[sim_id])
   ax.plot( z, T0 , label=label )
 
-
+font_size = 13 
 ax.set_ylabel( r'$T_0$', fontsize=font_size  )
 ax.set_xlabel( r'$z$', fontsize=font_size )
 leg = ax.legend(loc=1, frameon=False, fontsize=font_size)
