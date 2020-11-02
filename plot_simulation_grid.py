@@ -32,7 +32,7 @@ nrows = 1
 ncols = 1
 fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,2.5*nrows))
 
-for sim_id in sim_id:
+for sim_id in sim_ids:
   z = SG.Grid[sim_id]['analysis']['z']
   T0 = SG.Grid[sim_id]['analysis']['T0']
   ax.plot( z, T0 )
@@ -52,7 +52,7 @@ ncols = 1
 fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,2.5*nrows))
 
 
-for sim_id in sim_id:
+for sim_id in sim_ids:
   z = SG.Grid[sim_id]['analysis']['z']
   F = SG.Grid[sim_id]['analysis']['F_mean']
   tau = - np.log( F )
