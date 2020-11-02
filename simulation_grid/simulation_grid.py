@@ -236,7 +236,7 @@ class Simulation_Grid:
     for n_file in indices:
       n_file = int(n_file)
       data = load_analysis_data( n_file, input_dir, phase_diagram=False, lya_statistics=True, load_skewer=False, load_fit=True )
-      z = data['current_z']
+      z = data['cosmology']['current_z']
       T0 = data['phase_diagram']['fit']['T0']
       gamma = data['phase_diagram']['fit']['gamma']
       F_mean = data['lya_statistics']['Flux_mean']
