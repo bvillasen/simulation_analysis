@@ -202,11 +202,13 @@ class Simulation_Grid:
     print( f' N_Analysis_Files: {n_files}' )
     
     for n_file in indices:
+      if n_file > 0: continue
       n_file = int(n_file)
       print( f' Fitting File: {n_file} ') 
       data = load_analysis_data( n_file, input_dir )
       values_to_fit = get_density_tyemperature_values_to_fit( data['phase_diagram'], delta_min=-1, delta_max=1, n_samples_line=50, fraction_enclosed=0.70 )
-
+      fit_values = fit_thermal_parameters_mcmc( n_file, values_to_fit, fit_dir )
+      
 
 
 
