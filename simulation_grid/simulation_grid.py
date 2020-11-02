@@ -89,7 +89,7 @@ class Simulation_Grid:
         param_indx = param_indices[param_id]
         param_val = parameters[param_id]['values'][param_indx]
         sim_params[param_name] = param_val
-      sim_grid['parameters'] = sim_params
+      sim_grid[sim_id]['parameters'] = sim_params
       
     self.Grid = sim_grid
     
