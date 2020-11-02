@@ -175,23 +175,12 @@ class Simulation_Grid:
       self.Create_UVB_Rates_File( sim_id )
       
   def Submit_Simulation_Job( self, sim_id ):
-    cwd  = os.getcwd()
     sim_dir = self.Get_Simulation_Directory( sim_id )
-    
-    
     job = self.job_parameters
-    n_mpi = job['n_mpi']
-    n_tasks_per_node = job['n_tasks_per_node']
-    command = job['command']
-    parameter_file = job['command_params']
     partition = job['partition']
-    
     partition_key = partition
     if partition == 'comp-astro': partition_key = 'comp'
-    
-    os.chdir( sim_dir )
-    command = f'mpirunlux {partition_key} {n_mpi} {n_tasks_per_node} {command} {parameter_file}'
+    command = f'submit_script {partition_key} {sim_dir}submit_job_lux'
     print( f' Submitting: {command}' )
-    os.chdir( cwd )
     
   
