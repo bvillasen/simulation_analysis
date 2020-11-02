@@ -107,6 +107,17 @@ class Simulation_Grid:
     name = simulation['key']
     sim_dir = root_dir + name + '/'
     return sim_dir
+
+  def Create_Directories_for_Simulation( self, sim_id ):
+    sim_dir = self.Get_Simulation_Directory( sim_id )
+    
+    directories = ['analysis_files', 'snapshot_files' ]
+    for dir in directories:
+      create_directory( sim_dir + dir )
+      
+  def Create_Directories_for_Simulations( self ):
+    for sim_id in self.Grid.keys():
+      self.Create_Directories_for_Simulation( sim_id )    
   
   def Create_Simulation_Parameter_File( self, sim_id, save_file=True ):
     
