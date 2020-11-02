@@ -2,6 +2,7 @@ import os, sys
 import numpy as np
 sys.path.append('tools')
 from tools import *
+import subprocess
 #Append analysis directories to path
 extend_path()
 from parameters_UVB_rates import param_UVB_Rates
@@ -182,5 +183,13 @@ class Simulation_Grid:
     if partition == 'comp-astro': partition_key = 'comp'
     command = f'submit_script {partition_key} {sim_dir}submit_job_lux'
     print( f' Submitting: {command}' )
+    subprocess.call([ command.split() ])
     
   
+
+
+
+
+
+
+
