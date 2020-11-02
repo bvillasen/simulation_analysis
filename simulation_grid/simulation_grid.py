@@ -268,8 +268,11 @@ class Simulation_Grid:
     for root_key in rates.keys():
       rates_out[root_key] = {}
       data_group = rates[root_key]
-      for key in data_group.keys():
-        rates_out[root_key][key] = data_group[key][...]
+      if root_key in [ 'Chemistry', 'Photoheating']:
+        for key in data_group.keys():
+          rates_out[root_key][key] = data_group[key][...]
+      else:
+        rates_out[root_key] = data_group[...]
     self.Grid[sim_id]['UVB_rates'] = rates_out
     
     
