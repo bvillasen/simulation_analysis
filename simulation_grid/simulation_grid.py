@@ -195,7 +195,7 @@ class Simulation_Grid:
     fit_dir = input_dir + 'fit_mcmc/'
     create_directory( fit_dir )
     
-    files = [f for f in listdir(inDir) if (isfile(join(inDir, f)) and ( f.find('_analysys') > 0) ) ]
+    files = [f for f in listdir(input_dir) if (isfile(join(input_dir, f)) and ( f.find('_analysys') > 0) ) ]
     n_files = len( files )
     print( f' N_Analysis_Files: {n_files}' )
     
