@@ -8,6 +8,9 @@ extend_path()
 from parameters_UVB_rates import param_UVB_Rates
 from submit_job_scripts import Create_Submit_Job_Script_Lux
 from generate_grackle_uvb_file import Generate_Modified_Rates_File
+from load_data import load_analysis_data
+from phase_diagram_functions import fit_thermal_parameters_mcmc, get_density_tyemperature_values_to_fit
+
 
 def Combine_List_Pair( a, b ):
   output = []
@@ -186,6 +189,13 @@ class Simulation_Grid:
     # subprocess.call( command.split() )
     os.system( command ) 
   
+  def Fit_Simulation_Phase_Diagram( self, sim_id ):
+    sim_dir = self.Get_Simulation_Directory( sim_id )
+    input_dir = sim_dir + 'analysis_files/'
+    fit_dir = input_dir + 'fit_mcmc/'
+    create_directory( fit_dir )
+    
+    
 
 
 
