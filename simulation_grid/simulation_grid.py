@@ -204,6 +204,9 @@ class Simulation_Grid:
     print( f' Submitting: {command}' )
     # subprocess.call( command.split() )
     os.system( command )
+    f = open("run_ouput.log", "a")
+    f.write('Job Submitted.')
+    f.close()
     os.chdir( cwd ) 
   
   def Fit_Simulation_Phase_Diagram( self, sim_id ):

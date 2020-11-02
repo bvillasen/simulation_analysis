@@ -24,7 +24,7 @@ def Create_Submit_Job_Script_Lux( job_params, save_file=True, file_name='submit_
 #SBATCH --nodes={n_nodes}               
 #SBATCH --ntasks-per-node={n_tasks_per_node}     
 #SBATCH --time={time}          
-#SBATCH --output={output}_%j.log   
+#SBATCH --output={output}.log   
 
 module load hdf5/1.10.6
 module load cuda10.2/10.2
