@@ -47,10 +47,10 @@ def load_analysis_data( n_file, input_dir, phase_diagram=True, lya_statistics=Tr
     gamma = mcmc_gamma
     delta_gamma = mcmc_gamma_sigma
     data_out['phase_diagram']['fit'] = {}
-    data_out['phase_diagram']['T0'] = T0
-    data_out['phase_diagram']['delta_T0'] = delta_T0
-    data_out['phase_diagram']['gamma'] = gamma
-    data_out['phase_diagram']['delta_gamma'] = delta_gamma
+    data_out['phase_diagram']['fit']['T0'] = T0
+    data_out['phase_diagram']['fit']['delta_T0'] = delta_T0
+    data_out['phase_diagram']['fit']['gamma'] = gamma
+    data_out['phase_diagram']['fit']['delta_gamma'] = delta_gamma
     
   if lya_statistics:
     data_out['lya_statistics'] = {}
