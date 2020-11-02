@@ -25,9 +25,9 @@ def load_analysis_data( n_file, input_dir, phase_diagram=True, lya_statistics=Tr
   data_out['cosmology']['current_z'] = attrs['current_z'][0]
   data_out['cosmology']['current_a'] = attrs['current_a'][0]
   
+  if phase_diagram or load_fit:  data_out['phase_diagram'] = {}  
   
   if phase_diagram:
-    data_out['phase_diagram'] = {}  
     phase_diagram = file['phase_diagram']
     for key in phase_diagram.attrs:
       data_out['phase_diagram'][key] = phase_diagram.attrs[key][0]
