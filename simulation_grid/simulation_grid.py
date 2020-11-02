@@ -191,6 +191,7 @@ class Simulation_Grid:
     os.system( command ) 
   
   def Fit_Simulation_Phase_Diagram( self, sim_id ):
+    print( f' Fitting Simulation: {sim_id}')
     sim_dir = self.Get_Simulation_Directory( sim_id )
     input_dir = sim_dir + 'analysis_files/'
     fit_dir = input_dir + 'fit_mcmc/'
@@ -213,6 +214,10 @@ class Simulation_Grid:
       values_to_fit = get_density_tyemperature_values_to_fit( data['phase_diagram'], delta_min=-1, delta_max=1, n_samples_line=50, fraction_enclosed=0.70 )
       fit_values = fit_thermal_parameters_mcmc( n_file, values_to_fit, fit_dir )
       
+  def Fit_Grid_Phase_Diagram( self ):
+    print("Fitting Phase Diagram:")
+    for sim_id in self.Grid.keys():
+      self.Fit_Simulation_Phase_Diagram( sim_id )
 
 
 

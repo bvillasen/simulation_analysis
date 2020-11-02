@@ -71,4 +71,4 @@ SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_par
 
 # SG.Submit_Simulation_Job( 0 )
 
-SG.Fit_Simulation_Phase_Diagram( 0 )
+SG.Fit_Grid_Phase_Diagram( )
