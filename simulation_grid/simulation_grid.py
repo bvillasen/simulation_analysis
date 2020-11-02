@@ -78,6 +78,18 @@ class Simulation_Grid:
         param_key = param['key']
         name += f'_{param_key}{sim_param_indx_grid[sim_id][param_id]}'
       sim_grid[sim_id]['key'] = name 
+
+    
+    for sim_id in range( n_sims ):
+      sim_parameters = {}
+      param_indices = sim_grid[sim_id]['param_indices']
+      for param_id in range(n_param):
+        param = parameters[param_id]
+        param_name = param['name']
+        param_indx = param_indices[param_id]
+        param_val = parameters[param_id]['values'][param_indx]
+        sim_params[param_name] = param_val
+      sim_grid['parameters'] = sim_params
       
     self.Grid = sim_grid
     
