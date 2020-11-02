@@ -203,7 +203,7 @@ class Simulation_Grid:
     print( f'Changed Directory to: {sim_dir}')
     print( f' Submitting: {command}' )
     # subprocess.call( command.split() )
-    # os.system( command )
+    os.system( command )
     os.chdir( cwd ) 
   
   def Fit_Simulation_Phase_Diagram( self, sim_id ):
