@@ -220,6 +220,8 @@ class Simulation_Grid:
       self.Fit_Simulation_Phase_Diagram( sim_id )
       
   def Load_Simulation_Analysis_Data( self, sim_id, load_fit=False  ):
+    print( f' Loading Simulation Analysis: {sim_id}' )
+    
     sim_dir = self.Get_Simulation_Directory( sim_id )
     input_dir = sim_dir + 'analysis_files/'
     files = [f for f in listdir(input_dir) if (isfile(join(input_dir, f)) and ( f.find('_analysis') > 0) ) ]
