@@ -63,7 +63,7 @@ def Write_Rates_Grackle_File( out_file_name, rates ):
   
   out_file = h5.File( out_file_name, 'w' )
   root_group = out_file.create_group( root_key )
-  root_group.create_dataset( 'info', data=rates[root_key]['info'] )
+  root_group.create_dataset( 'Info', data=rates[root_key]['info'] )
   root_group.create_dataset( 'z', data=rates[root_key]['z'] )
   data_keys = [ 'Chemistry', 'Photoheating' ]
   for data_key in data_keys:
