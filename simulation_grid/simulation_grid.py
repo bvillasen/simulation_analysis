@@ -190,7 +190,7 @@ class Simulation_Grid:
     if partition == 'comp-astro': partition_key = 'comp'
     
     os.chdir( sim_dir )
-    command = f'mpirunlux {partition_key} {n_mpi} {n_tasks_per_node} {cholla_command} {parameter_file}'
+    command = f'mpirunlux {partition_key} {n_mpi} {n_tasks_per_node} {command} {parameter_file}'
     print( f' Submitting: {command}' )
     os.chdir( cwd )
     
