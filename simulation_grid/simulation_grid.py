@@ -169,3 +169,8 @@ class Simulation_Grid:
     out_file_name = sim_dir + 'UVB_rates.h5'
     Generate_Modified_Rates_File( grackle_in_file_name, out_file_name, scale_HI, scale_HeII, deltaZ_HI, deltaZ_HeII  )
           
+  def Create_UVB_Rates_Files( self ):
+    print("Creating UVB Rates Files:")
+    for sim_id in self.Grid.keys():
+      self.Create_UVB_Rates_File( sim_id )
+  
