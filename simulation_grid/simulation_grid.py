@@ -257,6 +257,21 @@ class Simulation_Grid:
     
     for sim_id in sim_ids:
       self.Load_Simulation_Analysis_Data( sim_id, load_fit=load_fit  )
+  
+  def Load_Simulation_UVB_Rates( self, sim_id ):
+    sim_dir = self.Get_Simulation_Directory( sim_id )
+    file_name = sim_dir + 'UVB_rates.h5'
+    file = h5.File( file_name, 'r' )
+    rates = fule['UVBRates']
+    rates_out = {}\
+    for root_key in rates.keys():
+      rates_out[root_key] = {}
+      data_group = rates[root_key]
+      for key in data_group.keys():
+        rates_out[root_key][key] = data_group[key][...]
+    self.Grid[sim_id]['UVB_rates'] = rates_out
+    
+    
     
 
 
