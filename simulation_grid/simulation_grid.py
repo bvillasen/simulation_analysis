@@ -250,7 +250,11 @@ class Simulation_Grid:
     sim_data['F_mean'] = np.array( sim_data['F_mean'] )
     self.Grid[sim_id]['analysis'] = sim_data
 
-
-
+  def Load_Grid_Analysis_Data( self, sim_ids=None, load_fit=False  ):
+    if sim_ids == None:  sim_ids = self.Grid.keys()
+    
+    for sim_id in sim_ids:
+      Load_Simulation_Analysis_Data( self, sim_id, load_fit=load_fit  )
+    
 
 
