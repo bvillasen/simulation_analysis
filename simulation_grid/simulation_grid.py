@@ -218,7 +218,37 @@ class Simulation_Grid:
     print("Fitting Phase Diagram:")
     for sim_id in self.Grid.keys():
       self.Fit_Simulation_Phase_Diagram( sim_id )
-
+      
+  def Load_Simulation_Analysis_Data( self, sim_id, load_fit=False  ):
+    sim_dir = self.Get_Simulation_Directory( sim_id )
+    input_dir = sim_dir + 'analysis_files/'
+    files = [f for f in listdir(input_dir) if (isfile(join(input_dir, f)) and ( f.find('_analysis') > 0) ) ]
+    indices = [ '{0:03}'.format( int(file.split('_')[0]) ) for file in files ]
+    indices.sort()
+    n_files = len( files )
+    sim_data = {}
+    
+    sim_data['z']      = []
+    sim_data['T0']     = []
+    sim_data['gamma']  = []
+    sim_data['F_mean'] = []
+    
+    for n_file in indices:
+      n_file = int(n_file)
+      data = load_analysis_data( n_file, input_dir, phase_diagram=False, lya_statistics=True, load_skewer=False, load_fit=True )
+      z = data['current_z']
+      T0 = data['phase_diagram']['fit']['T0']
+      gamma = data['phase_diagram']['fit']['gamma']
+      F_mean = data['lya_statistics']['Flux_mean']
+      sim_data['z'].append(z)
+      sim_data['T0'].append(T0)
+      sim_data['gamma'].append(gamma)
+      sim_data['F_mean'].append(F_mean)
+    sim_data['z'] = np.array( sim_data['z'] )
+    sim_data['T0'] = np.array( sim_data['T0'] )
+    sim_data['gamma'] = np.array( sim_data['gamma'] )
+    sim_data['F_mean'] = np.array( sim_data['F_mean'] )
+    self.Grid[sim_id]['analysis'] = sim_data
 
 
 

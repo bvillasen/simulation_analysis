@@ -12,3 +12,5 @@ output_dir = root_dir + 'figures/'
 create_directory( output_dir )
 
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
+
+SG.Load_Simulation_Analysis_Data( 0 )
