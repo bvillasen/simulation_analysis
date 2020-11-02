@@ -37,7 +37,7 @@ fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,8*nrows))
 for sim_id in sim_ids:
   z = SG.Grid[sim_id]['analysis']['z']
   T0 = SG.Grid[sim_id]['analysis']['T0']
-  label = r'$beta_{HeII} = {0}$'.format(scales_He[sim_id])
+  label = r'$beta_{HeII}$' + ' = {0}$'.format(scales_He[sim_id])
   ax.plot( z, T0 , label=label )
 
 
