@@ -1,4 +1,5 @@
 import os, sys
+from pathlib import Path
 import numpy as np
 sys.path.append('tools')
 from tools import *
@@ -203,7 +204,11 @@ class Simulation_Grid:
     
     for n_file in indices:
       n_file = int(n_file)
-      if n_file > 0: continue
+      fit_file = fit_dir + f'fit_{n_file}.pkl'
+      file_path = Path(fit_file)
+      if my_file.is_file():
+        print( f' Skiping File: {n_file} ') 
+        continue
       print( f' Fitting File: {n_file} ') 
       data = load_analysis_data( n_file, input_dir )
       values_to_fit = get_density_tyemperature_values_to_fit( data['phase_diagram'], delta_min=-1, delta_max=1, n_samples_line=50, fraction_enclosed=0.70 )
