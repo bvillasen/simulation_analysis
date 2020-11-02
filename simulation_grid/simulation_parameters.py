@@ -1,5 +1,7 @@
 
 
+root_dir   = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
+
 n_points = 512
 Lbox = 50000.0 # kpc
 
