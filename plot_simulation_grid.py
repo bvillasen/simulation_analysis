@@ -25,9 +25,9 @@ create_directory( output_dir )
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
 
 
-sim_ids = [ 0, 1, 2, 3, 4, 5 ]
-scales_He = [ 1., .9, .8, .7, .6, .5 ]
-SG.Load_Grid_Analysis_Data( sim_ids=sim_ids, load_fit=True )
+# sim_ids = [ 0, 1, 2, 3, 4, 5 ]
+# scales_He = [ 1., .9, .8, .7, .6, .5 ]
+# SG.Load_Grid_Analysis_Data( sim_ids=sim_ids, load_fit=True )
 
 SG.Load_Simulation_UVB_Rates( 0 )
 
