@@ -31,7 +31,7 @@ SG.Load_Grid_Analysis_Data( sim_ids=sim_ids, load_fit=True )
 
 nrows = 1
 ncols = 1
-fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,2.5*nrows))
+fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,8*nrows))
 
 for sim_id in sim_ids:
   z = SG.Grid[sim_id]['analysis']['z']
@@ -41,7 +41,7 @@ for sim_id in sim_ids:
 ax.set_ylabel( r'$T_0$' )
 ax.set_xlabel( r'$z$' )
 ax.set_xlim( 2, 8 )
-
+ax.set_ylim( 8000, 18000)
 figure_name = output_dir + 'grid_phase_diagram.png'
 fig.savefig( figure_name, bbox_inches='tight', dpi=300 )
 print( f'Saved Figure: {figure_name}' )
@@ -52,7 +52,7 @@ print( f'Saved Figure: {figure_name}' )
 
 nrows = 1
 ncols = 1
-fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,2.5*nrows))
+fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,8*nrows))
 
 
 for sim_id in sim_ids:
@@ -65,7 +65,8 @@ for sim_id in sim_ids:
 ax.set_ylabel( r'$\tau_{eff}$' )
 ax.set_xlabel( r'$z$' )
 ax.set_xlim( 2, 6 )
-
+ax.set_yscale('log')
+ax.set_ylim( 0.1, 10 )
 
 figure_name = output_dir + 'grid_optical_depth.png'
 fig.savefig( figure_name, bbox_inches='tight', dpi=300 )
