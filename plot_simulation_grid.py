@@ -6,10 +6,9 @@ from tools import *
 extend_path()
 from parameters_UVB_rates import param_UVB_Rates
 from simulation_grid import Simulation_Grid
-from simulation_parameters import sim_params, job_params
+from simulation_parameters import *
 
 
-root_dir   = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
 output_dir = root_dir + 'figures/'
 create_directory( output_dir )
 

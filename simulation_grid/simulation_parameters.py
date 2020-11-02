@@ -1,6 +1,8 @@
 
 
+
 root_dir   = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
+cholla_dir = '/home/brvillas/cholla/'    
 
 n_points = 512
 Lbox = 50000.0 # kpc
