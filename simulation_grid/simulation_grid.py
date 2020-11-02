@@ -196,11 +196,15 @@ class Simulation_Grid:
     job = self.job_parameters
     partition = job['partition']
     partition_key = partition
+    cwd = os.getcwd()
+    os.chdir( sim_dir )
     if partition == 'comp-astro': partition_key = 'comp'
-    command = f'submit_script {partition_key} {sim_dir}submit_job_lux'
+    command = f'submit_script {partition_key} submit_job_lux'
+    print( f'Changed Directory to: {sim_dir}')
     print( f' Submitting: {command}' )
     # subprocess.call( command.split() )
-    os.system( command ) 
+    # os.system( command )
+    os.chdir( cwd ) 
   
   def Fit_Simulation_Phase_Diagram( self, sim_id ):
     print( f' Fitting Simulation: {sim_id}')
