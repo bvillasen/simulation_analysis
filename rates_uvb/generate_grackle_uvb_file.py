@@ -62,7 +62,7 @@ def Write_Rates_Grackle_File( out_file_name, rates ):
   print( f'  Writing {info}' )
   
   len_info = len(info)
-  type_info = f'S|{len_info}'
+  type_info = f'|S{len_info}'
   info = np.array(info, dtype=type_info )
   out_file = h5.File( out_file_name, 'w' )
   root_group = out_file.create_group( root_key )
