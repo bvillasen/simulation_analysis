@@ -60,7 +60,7 @@ job_params['n_tasks_per_node'] = 1
 job_params['time'] = '2:00:00'
 job_params['output'] = 'output'
 job_params['command'] = cholla_dir + 'cholla'
-job_params['command_params'] = 'params.txt'
+job_params['command_params'] = 'param.txt'
 
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
 SG.Create_Grid_Directory_Structure()
@@ -69,6 +69,6 @@ SG.Create_All_Submit_Job_Scripts()
 SG.Create_All_Parameter_Files()
 SG.Create_UVB_Rates_Files()
 
-SG.Submit_Simulation_Job( 0 )
+# SG.Submit_Simulation_Job( 0 )
 
 
