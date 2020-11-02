@@ -63,10 +63,9 @@ job_params['command'] = cholla_dir + 'cholla'
 job_params['command_params'] = 'params.txt'
 
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
-
-# SG.Create_Grid_Directory_Structure()
-# SG.Create_All_Submit_Job_Scripts()
-# SG.Create_All_Parameter_Files()
+SG.Create_Grid_Directory_Structure()
+SG.Create_All_Submit_Job_Scripts()
+SG.Create_All_Parameter_Files()
 
 
 
