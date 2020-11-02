@@ -196,7 +196,7 @@ class Simulation_Grid:
     create_directory( fit_dir )
     
     files = [f for f in listdir(input_dir) if (isfile(join(input_dir, f)) and ( f.find('_analysis') > 0) ) ]
-    indices = [ '{0:03}'.format(int(file.split('_')[0]) for file in files ]
+    indices = [ '{0:03}'.format( int(file.split('_')[0]) ) for file in files ]
     indices.sort()
     n_files = len( files )
     print( f' N_Analysis_Files: {n_files}' )
