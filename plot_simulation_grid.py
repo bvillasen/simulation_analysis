@@ -38,7 +38,9 @@ for sim_id in sim_ids:
   T0 = SG.Grid[sim_id]['analysis']['T0']
   ax.plot( z, T0 )
 
-
+ax.set_ylabel( r'$T_0$' )
+ax.set_xlabel( r'$z$' )
+ax.set_xlim( 2, 8 )
 
 figure_name = output_dir + 'grid_phase_diagram.png'
 fig.savefig( figure_name, bbox_inches='tight', dpi=300 )
@@ -59,6 +61,10 @@ for sim_id in sim_ids:
   tau = - np.log( F )
   ax.plot( z, tau )
 
+
+ax.set_ylabel( r'$\tau_{eff}$' )
+ax.set_xlabel( r'$z$' )
+ax.set_xlim( 2, 6 )
 
 
 figure_name = output_dir + 'grid_optical_depth.png'
