@@ -69,6 +69,6 @@ SG.Create_All_Submit_Job_Scripts()
 SG.Create_All_Parameter_Files()
 SG.Create_UVB_Rates_Files()
 
-
+SG.Submit_Simulation_Job( 0 )
 
 
