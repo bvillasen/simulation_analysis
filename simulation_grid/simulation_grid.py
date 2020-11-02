@@ -254,7 +254,7 @@ class Simulation_Grid:
     if sim_ids == None:  sim_ids = self.Grid.keys()
     
     for sim_id in sim_ids:
-      self.Load_Simulation_Analysis_Data( self, sim_id, load_fit=load_fit  )
+      self.Load_Simulation_Analysis_Data( sim_id, load_fit=load_fit  )
     
 
 
