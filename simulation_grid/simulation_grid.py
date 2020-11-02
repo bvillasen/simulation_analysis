@@ -183,7 +183,7 @@ class Simulation_Grid:
     if partition == 'comp-astro': partition_key = 'comp'
     command = f'submit_script {partition_key} {sim_dir}submit_job_lux'
     print( f' Submitting: {command}' )
-    subprocess.call([ command.split() ])
+    subprocess.call( command.split() )
     
   
 
