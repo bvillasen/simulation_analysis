@@ -179,7 +179,7 @@ class Simulation_Grid:
     sim_dir = self.Get_Simulation_Directory( sim_id )
     
     
-    job = sef.job_params
+    job = self.job_params
     n_mpi = job['n_mpi']
     n_tasks_per_node = jo['n_tasks_per_node']
     command = job['command']
