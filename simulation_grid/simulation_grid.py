@@ -201,7 +201,7 @@ class Simulation_Grid:
     print( f' N_Analysis_Files: {n_files}' )
     
     for file in files:
-      n_snap = int(file.split('_')[0])
+      n_file = int(file.split('_')[0])
       print( f' Fitting File: {n_file} ') 
       data = load_analysis_data( n_file, input_dir )
       values_to_fit = get_density_tyemperature_values_to_fit( data['phase_diagram'], delta_min=-1, delta_max=1, n_samples_line=50, fraction_enclosed=0.70 )
