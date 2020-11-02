@@ -206,7 +206,7 @@ class Simulation_Grid:
       n_file = int(n_file)
       fit_file = fit_dir + f'fit_{n_file}.pkl'
       file_path = Path(fit_file)
-      if my_file.is_file():
+      if file_path.is_file():
         print( f' Skiping File: {n_file} ') 
         continue
       print( f' Fitting File: {n_file} ') 
