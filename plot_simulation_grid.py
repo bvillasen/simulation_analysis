@@ -16,4 +16,4 @@ SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_par
 
 
 sim_ids = [ 0, 1 ]
-Load_Grid_Analysis_Data( self, sim_ids=sim_ids, load_fit=True )
+SG.Load_Grid_Analysis_Data( self, sim_ids=sim_ids, load_fit=True )
