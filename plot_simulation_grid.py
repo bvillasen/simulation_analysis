@@ -40,8 +40,8 @@ for sim_id in sim_ids:
 
 ax.set_ylabel( r'$T_0$' )
 ax.set_xlabel( r'$z$' )
-ax.set_xlim( 2, 8 )
-ax.set_ylim( 8000, 18000)
+ax.set_xlim( 2, 14 )
+ax.set_ylim( 1000, 18000)
 figure_name = output_dir + 'grid_phase_diagram.png'
 fig.savefig( figure_name, bbox_inches='tight', dpi=300 )
 print( f'Saved Figure: {figure_name}' )
