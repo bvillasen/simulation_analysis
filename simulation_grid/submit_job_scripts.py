@@ -17,8 +17,7 @@ def Create_Submit_Job_Script_Lux( job_params, save_file=True, file_name='submit_
   command_params = job_params['command_params']
   sim_directory = job_params['sim_directory']
   
-  submit_str = f"""
-#!/bin/bash          
+  submit_str = f"""#!/bin/bash          
 #SBATCH --job-name={job_name}    
 #SBATCH --partition={partition}       
 #SBATCH --ntasks={n_mpi_tasks}             
