@@ -3,6 +3,7 @@ from os import listdir
 from os.path import isfile, join
 import h5py as h5
 import numpy as np
+import pickle
 
 
 def load_analysis_data( n_file, input_dir, phase_diagram=True, lya_statistics=True, load_skewer=False, load_fit=False ):
