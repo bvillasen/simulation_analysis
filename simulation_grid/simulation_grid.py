@@ -191,7 +191,7 @@ class Simulation_Grid:
     
     os.chdir( sim_dir )
     command = f'mpirunlux {partition_key} {n_mpi} {n_tasks_per_node} {cholla_command} {parameter_file}'
-    print f" Submitting: {command}"
+    print( f' Submitting: {command}' )
     os.chdir( cwd )
     
   
