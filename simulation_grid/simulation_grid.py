@@ -181,7 +181,7 @@ class Simulation_Grid:
     
     job = self.job_parameters
     n_mpi = job['n_mpi']
-    n_tasks_per_node = jo['n_tasks_per_node']
+    n_tasks_per_node = job['n_tasks_per_node']
     command = job['command']
     parameter_file = job['command_params']
     partition = job['partition']
