@@ -24,20 +24,21 @@ else:
   n_procs = 1
 
 data_dir = '/raid/bruno/data/'
-input_dir = data_dir + 'cosmo_sims/256_hydro_50Mpc/analysis_files/'
-output_dir = data_dir + 'cosmo_sims/256_hydro_50Mpc/analysis_files/figures/'
+input_dir = data_dir + 'cosmo_sims/sim_grid/512_p19/analysis_files/'
+output_dir = input_dir + 'figures/'
 if rank == 0: create_directory( output_dir )
 if use_mpi: comm.Barrier()
 
 
 
-n_snapshot = 0
-data = load_analysis_data( n_snapshot, input_dir, phase_diagram=False, lya_statistics=True )
+n_snapshot = 3
+data = load_analysis_data( n_snapshot, input_dir, phase_diagram=False, lya_statistics=True, load_skewer=True )
 cosmology = data['cosmology']
 
 box = data['box'] 
 skewer = data['lya_statistics']['skewer']
-HI_density = skewer['HI_density']
+# skewer['HI_density'] *= 1e-5
+HI_density = skewer['HI_density'] 
 tau_cholla = skewer['optical_depth']
 vel_Hubble_cholla = skewer['vel_Hubble'] 
 temperature = skewer['temperature'] 
@@ -67,7 +68,7 @@ ax.plot( tau_data['vel_Hubble'],velocity )
 
 ax =  ax_l[2]
 ax.plot( tau_data['vel_Hubble'], temperature )
-ax.set_yscale('log')
+# ax.set_yscale('log')
 
 ax =  ax_l[3]
 ax.plot( tau_data['vel_Hubble'], tau_cholla )
