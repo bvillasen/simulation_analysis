@@ -69,7 +69,7 @@ for sim_id in sim_ids:
 
 ax.set_ylabel( r'$\tau_{eff}$', fontsize=font_size )
 ax.set_xlabel( r'$z$', fontsize=font_size )
-leg = ax.legend(loc=1, frameon=False, fontsize=font_size)
+leg = ax.legend(loc=2, frameon=False, fontsize=font_size)
 ax.set_xlim( 2, 6 )
 ax.set_yscale('log')
 ax.set_ylim( 0.1, 10 )
