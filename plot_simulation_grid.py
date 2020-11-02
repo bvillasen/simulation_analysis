@@ -1,5 +1,6 @@
 import os, sys
 import numpy as np
+import matplotlib.pyplot as plt
 sys.path.append('tools')
 from tools import *
 #Append analysis directories to path
