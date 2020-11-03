@@ -338,6 +338,19 @@ class Simulation_Grid:
     print( f'Running:   {running} / {n}' )
     print( f'Finished:  {finished} / {n}' )
     print( f'Error:     {error} / {n}' )
+    
+    
+  def Delete_Simulation_Snapshots( self, sim_id ):
+    sim_dir = self.Get_Simulation_Directory( sim_id )
+    command = f'rm {sim_dir}snapshot_files/*'
+    os.system( command )
+    print ( f'Deleted {sim_grid}/snapshot_files')
+    
+  
+  def Delete_Grid_Snapshots( self ):
+    sim_ids = self.Grid.keys()
+    for sim_id in sim_ids:
+      self.Delete_Simulation_Snapshots( sim_id )
   
     
     
