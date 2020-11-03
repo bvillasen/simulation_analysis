@@ -301,7 +301,7 @@ class Simulation_Grid:
     if file_path.is_file():
       file = open( file_name, 'r' )
       lines = file.read()
-      last_line = linesp[-1]
+      last_line = lines[-1]
       if last_line == 'Job Submitted.': status = 'submitted'
       elif last_line == 'Starting calculations.': status = 'running'
       else: status = 'error'
