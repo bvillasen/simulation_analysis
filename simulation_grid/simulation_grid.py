@@ -314,7 +314,7 @@ class Simulation_Grid:
     return status
     
   def Get_Grid_Status( self ):
-    print( 'Grid Status: ')
+    print( '\nGrid Status: ')
     sim_ids = self.Grid.keys()
     n = len(sim_ids)
     submitted = 0
