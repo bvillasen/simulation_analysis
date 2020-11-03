@@ -330,9 +330,9 @@ class Simulation_Grid:
         error += 1
       print( f' id: {sim_id}    status: {status}')
     print( f'Submitted: {submitted} / {n}' )
+    print( f'Running:   {running} / {n}' )
     print( f'Finished:  {finisehd} / {n}' )
-    print( f'Running:  {running} / {n}' )
-    print( f'Error:  {error} / {n}' )
+    print( f'Error:     {error} / {n}' )
   
     
     
