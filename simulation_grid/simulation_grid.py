@@ -204,7 +204,7 @@ class Simulation_Grid:
     print( f' Submitting: {command}' )
     # subprocess.call( command.split() )
     os.system( command )
-    f = open("run_ouput.log", "a")
+    f = open("run_output.log", "a")
     f.write('Job Submitted.\n')
     f.close()
     os.chdir( cwd ) 
