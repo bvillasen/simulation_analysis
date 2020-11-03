@@ -302,9 +302,10 @@ class Simulation_Grid:
       file = open( file_name, 'r' )
       lines = file.readlines()
       last_line = lines[-1]
-      print( last_line )
-      if last_line.find('Job Submitted') >= 0: status = 'submitted'
-      elif last_line.find('Starting calculations') >= 0: status = 'running'
+      if last_line.find('Job Submitted') >= 0:
+        status = 'submitted'
+      elif last_line.find('Starting calculations') >= 0: 
+        status = 'running'
       else: status = 'error'
     else:
       status = 'not submitted'
@@ -313,11 +314,25 @@ class Simulation_Grid:
   def Get_Grid_Status( self ):
     print( 'Grid Status: ')
     sim_ids = self.Grid.keys()
+    n = len(sim_ids)
+    submitted = 0
+    running = 0
+    error = 0
+    finisehd = 0
     for sim_id in sim_ids:
       status = self.Get_Simulation_Status( sim_id )
       self.Grid[sim_id]['status'] = status
+      if status == 'submitted': submitted += 1
+      if status == 'running': 
+        submitted += 1
+        running += 1
+      if status == 'error':
+        error += 1
       print( f' id: {sim_id}    status: {status}')
-    
+    print( f'Submitted: {submitted} / {n}' )
+    print( f'Finished:  {finisehd} / {n}' )
+    print( f'Running:  {running} / {n}' )
+    print( f'Error:  {error} / {n}' )
   
     
     
