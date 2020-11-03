@@ -18,6 +18,8 @@ SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_par
 # SG.Create_All_Parameter_Files()
 # SG.Create_UVB_Rates_Files()
 
+SG.Get_Grid_Status()
+
 # SG.Submit_Simulation_Job( 0 )
 
 # SG.Fit_Grid_Phase_Diagram( )
