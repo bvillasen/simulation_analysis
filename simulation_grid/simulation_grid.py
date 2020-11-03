@@ -344,7 +344,7 @@ class Simulation_Grid:
     sim_dir = self.Get_Simulation_Directory( sim_id )
     command = f'rm {sim_dir}snapshot_files/*'
     os.system( command )
-    print ( f'Deleted {sim_dir}/snapshot_files')
+    print ( f'Deleted {sim_dir}snapshot_files')
     
   
   def Delete_Grid_Snapshots( self ):
