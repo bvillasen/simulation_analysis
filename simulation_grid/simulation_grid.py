@@ -294,6 +294,31 @@ class Simulation_Grid:
         rates_out[root_key] = data_group[...]
     self.Grid[sim_id]['UVB_rates'] = rates_out
     
+  def Get_Simulation_Status( self, sim_id ):
+    sim_dir = self.Get_Simulation_Directory( sim_id )
+    file_name = sim_dir + 'run_output.log'
+    file_path = Path( file_name)
+    if file_path.is_file():
+      file = open( file_name, 'r' )
+      lines = f.read()
+      last_line = linesp[-1]
+      if last_line == 'Job Submitted.': status = 'submitted'
+      elif last_line == 'Starting calculations.': status = 'running'
+      else: status = 'error'
+    else:
+      status = 'not submitted'
+    return status
+    
+  def Get_Grid_Status( self ):
+    print( 'Grid Status: ')
+    sim_ids = self.Grid.keys()
+    for sim_id in sim_ids:
+      status = self.Get_Simulation_Status( sim_id )
+      self.Grid[sim_id]['status'] = status
+      print( f' id: {sim_id}    status: {status}')
+    
+  
+    
     
     
 
