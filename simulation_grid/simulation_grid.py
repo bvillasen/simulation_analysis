@@ -306,6 +306,8 @@ class Simulation_Grid:
         status = 'submitted'
       elif last_line.find('Starting calculations') >= 0: 
         status = 'running'
+      elif last_line.find('Simulation completed successfully.') >= 0: 
+        status = 'finished'
       else: status = 'error'
     else:
       status = 'not submitted'
@@ -318,7 +320,7 @@ class Simulation_Grid:
     submitted = 0
     running = 0
     error = 0
-    finisehd = 0
+    finished = 0
     for sim_id in sim_ids:
       status = self.Get_Simulation_Status( sim_id )
       self.Grid[sim_id]['status'] = status
@@ -326,12 +328,15 @@ class Simulation_Grid:
       if status == 'running': 
         submitted += 1
         running += 1
+      if status == 'finished': 
+        submitted += 1
+        finished += 1
       if status == 'error':
         error += 1
       print( f' id: {sim_id}    status: {status}')
     print( f'Submitted: {submitted} / {n}' )
     print( f'Running:   {running} / {n}' )
-    print( f'Finished:  {finisehd} / {n}' )
+    print( f'Finished:  {finished} / {n}' )
     print( f'Error:     {error} / {n}' )
   
     
