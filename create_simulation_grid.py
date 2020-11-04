@@ -18,6 +18,8 @@ SG.Create_All_Submit_Job_Scripts()
 SG.Create_All_Parameter_Files()
 SG.Create_UVB_Rates_Files()
 
+sim_ids = SG.Grid.keys()
+for sim_id in sim_ids:
+  SG.Submit_Simulation_Job( sim_id )
 
-
-# SG.Get_Grid_Status()
+SG.Get_Grid_Status()
