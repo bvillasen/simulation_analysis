@@ -293,6 +293,12 @@ class Simulation_Grid:
       else:
         rates_out[root_key] = data_group[...]
     self.Grid[sim_id]['UVB_rates'] = rates_out
+  
+  def Load_Grid_UVB_Rates( self ):
+    print( 'Loading UVB Rates Files')
+    sim_ids = self.Grid.keys()
+    for sim_id in sim_ids:
+      self.Load_Simulation_UVB_Rates( sim_id )
     
   def Get_Simulation_Status( self, sim_id ):
     sim_dir = self.Get_Simulation_Directory( sim_id )
@@ -352,8 +358,7 @@ class Simulation_Grid:
     for sim_id in sim_ids:
       self.Delete_Simulation_Snapshots( sim_id )
   
-    
-    
+
     
 
 

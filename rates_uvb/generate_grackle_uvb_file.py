@@ -46,8 +46,8 @@ def Modify_Rates_From_Grackle_File( grackle_file_name, scale_HI, scale_HeII, del
   
   
   rates_data['UVBRates']['Chemistry']['k24'] *= scale_HI
-  rates_data['UVBRates']['Chemistry']['k25'] *= scale_HI
-  rates_data['UVBRates']['Chemistry']['k26'] *= scale_HeII
+  rates_data['UVBRates']['Chemistry']['k26'] *= scale_HI
+  rates_data['UVBRates']['Chemistry']['k25'] *= scale_HeII
 
   rates_data['UVBRates']['Photoheating']['piHI']   *= scale_HI
   rates_data['UVBRates']['Photoheating']['piHeI']  *= scale_HI
