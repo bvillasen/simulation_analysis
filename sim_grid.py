@@ -7,7 +7,7 @@ extend_path()
 from parameters_UVB_rates import param_UVB_Rates
 from simulation_grid import Simulation_Grid
 from simulation_parameters import *
-from Plot_UVB_Rates import Plot_Grid_UVB_Rates
+from plot_UVB_Rates import Plot_Grid_UVB_Rates
 
 
 create_directory( root_dir )
