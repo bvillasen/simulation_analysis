@@ -14,6 +14,10 @@ if system == 'Shamrock':
   cholla_dir = '/home/bruno/cholla/'    
 
 
+
+figures_dir = root_dir + 'figures/'
+
+
 n_points = 512
 Lbox = 50000.0 # kpc
 
