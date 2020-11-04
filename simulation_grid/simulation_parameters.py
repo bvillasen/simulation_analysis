@@ -1,8 +1,18 @@
 
 
+system = 'Lux'
+# system = 'Shamrock'
 
-root_dir   = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
-cholla_dir = '/home/brvillas/cholla/'    
+
+
+if system == 'Lux':
+  root_dir   = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
+  cholla_dir = '/home/brvillas/cholla/'    
+
+if system == 'Shamrock':
+  root_dir   = '/raid/bruno/data/cosmo_sims/sim_grid/'
+  cholla_dir = '/home/bruno/cholla/'    
+
 
 n_points = 512
 Lbox = 50000.0 # kpc
