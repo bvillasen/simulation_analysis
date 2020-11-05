@@ -58,7 +58,7 @@ if use_mpi: comm.Barrier()
 if rank == 0:
   files_fit = [f for f in listdir(fit_dir) if ( f.find('fit_') >= 0)  ]
   n_files_fit = len( files_fit )
-  if rank == 0: print( f' N_Fit_Files: {n_files_fit}' )
+  if rank == 0: print( f' Fitted Fles: {n_files_fit} / {n_files}' )
   if n_files_fit != n_files:
     print( f'ERROR: Fit files not match N_Files: {input_dir}' )
     exit(-1) 
