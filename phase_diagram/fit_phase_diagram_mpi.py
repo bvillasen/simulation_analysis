@@ -55,7 +55,7 @@ for n_file in indices_to_generate:
 
 if use_mpi: comm.Barrier()
 if rank == 0:
-  files_fit = [f for f in listdir(fit_dir) if (isfile(join(fit_dir, f)) and ( f.find('fit_') >= 0) ) ]
+  files_fit = [f for f in listdir(fit_dir) if ( f.find('fit_') >= 0) ) ]
   n_files_fit = len( files_fit )
   if rank == 0: print( f' N_Fit_Files: {n_files_fit}' )
   if n_files_fit != n_files:
