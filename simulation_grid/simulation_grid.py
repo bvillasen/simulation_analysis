@@ -395,7 +395,8 @@ class Simulation_Grid:
       
   def Get_Queue_Staus( self ):
     command = [ 'squeue', '--user=brvillas' ]
-    queue = subprocess.check_output( command ).split('\n')
+    queue = subprocess.check_output( command )
+    queue = queue.split('\n')
     return queue
 
   
