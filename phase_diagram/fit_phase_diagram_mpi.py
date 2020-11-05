@@ -43,6 +43,11 @@ if len(indices_to_generate) == 0: exit()
 # print(f'Generating: {rank} {indices_to_generate}\n' ) 
 
 for n_file in indices_to_generate:
+  fit_file = fit_dir + f'fit_{n_file}.pkl'
+  file_path = Path(fit_file)
+  if file_path.is_file():
+    print( f' Skiping File: {n_file} ') 
+    continue
   data = load_analysis_data( n_file, input_dir )
   values_to_fit = get_density_tyemperature_values_to_fit( data['phase_diagram'], delta_min=-1, delta_max=1, n_samples_line=50, fraction_enclosed=0.70 )
   fit_values = fit_thermal_parameters_mcmc( n_file, values_to_fit, fit_dir )
