@@ -40,7 +40,7 @@ if rank == 0: print( f' N_Analysis_Files: {n_files}' )
 
 indices_to_generate = split_indices( indices, rank,  n_procs )
 if len(indices_to_generate) == 0: exit()
-print(f'Generating: {rank} {indices_to_generate}\n' ) 
+# print(f'Generating: {rank} {indices_to_generate}\n' ) 
 
 for n_file in indices_to_generate:
   data = load_analysis_data( n_file, input_dir )
