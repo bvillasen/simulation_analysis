@@ -377,16 +377,14 @@ class Simulation_Grid:
     for sim_id in sim_ids:
       self.Delete_Simulation_Snapshots( sim_id )
   
-  
-  
- def Delete_Simulation_Output_Files( self, sim_id ):
-   sim_dir = self.Get_Simulation_Directory( sim_id )
-   command = f'rm {sim_dir}output.log'
-   os.system( command )
-   print ( f'Deleted {sim_dir}output.log')   
-   command = f'rm {sim_dir}run_output.log'
-   os.system( command )
-   print ( f'Deleted {sim_dir}run_output.log')
+  def Delete_Simulation_Output_Files( self, sim_id ):
+    sim_dir = self.Get_Simulation_Directory( sim_id )
+    command = f'rm {sim_dir}output.log'
+    os.system( command )
+    print ( f'Deleted {sim_dir}output.log')   
+    command = f'rm {sim_dir}run_output.log'
+    os.system( command )
+    print ( f'Deleted {sim_dir}run_output.log')
    
   def Delete_Grid_Output_files( self ):
     sim_ids = self.Grid.keys()
