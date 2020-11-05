@@ -23,7 +23,7 @@ SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_par
 
 # SG.Submit_Simulation_Job( 0 )
 
-sim_ids = SG.Grid.sim_ids
+sim_ids = SG.sim_ids
 for sim_id in sim_ids:
   if sim_id == 0: continue
   SG.Submit_Simulation_Job( sim_id )
