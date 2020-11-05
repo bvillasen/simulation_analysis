@@ -14,7 +14,7 @@ args = sys.argv[1:]
 n_args = len(args)
 
 input_dir = args[0]
-fit_dir = input_dir + '/fit_mcmc/'
+fit_dir = input_dir + 'fit_mcmc/'
 
 use_mpi = True
 if use_mpi:

@@ -248,7 +248,8 @@ class Simulation_Grid:
     n_mpi = 10
     cwd = os.getcwd()
     run_file = cwd + '/phase_diagram/fit_phase_diagram_mpi.py'
-    command = f'mpirunlux {n_mpi} {n_mpi} python {run_file}'
+    parameters = sim_grid + 'analysis_files/'
+    command = f'mpirunlux {n_mpi} {n_mpi} python {run_file} {parameters}'
     print( f' Submitting: {command}' )
     os.system( command )
     
