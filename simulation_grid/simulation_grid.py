@@ -386,6 +386,13 @@ class Simulation_Grid:
     print ( f'Deleted {sim_dir}snapshot_files')
     
   
+  def Delete_Simulation_Fit_Files( self, sim_id ):
+    sim_dir = self.Get_Simulation_Directory( sim_id )
+    command = f'rm {sim_dir}analysis_files/fit_mcmc/*'
+    os.system( command )
+    print ( f'Deleted {sim_dir}analysis_files/fit_mcmc/')
+    
+  
   def Delete_Grid_Snapshots( self ):
     sim_ids = self.Grid.keys()
     for sim_id in sim_ids:
