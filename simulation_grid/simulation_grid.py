@@ -348,22 +348,31 @@ class Simulation_Grid:
     running = 0
     error = 0
     finished = 0
+    failed = 0
+    queue_line = ''
     for sim_id in sim_ids:
       status = self.Get_Simulation_Status( sim_id )
       self.Grid[sim_id]['status'] = status
       if status == 'submitted': submitted += 1
       if status == 'running': 
         submitted += 1
-        running += 1
+        sim_in_queue, q_line = self.Find_Simulation_In_Queue( sim_id )
+        if sim_in_queue:
+          running += 1
+          queue_line = q_line
+        else:
+          status = 'failed'
+          failed += 1
       if status == 'finished': 
         submitted += 1
         finished += 1
       if status == 'error':
         error += 1
-      print( f' id: {sim_id}    status: {status}')
+      print( f' id: {sim_id}    status: {status} {queue_line}')
     print( f'Submitted: {submitted} / {n}' )
     print( f'Running:   {running} / {n}' )
     print( f'Finished:  {finished} / {n}' )
+    print( f'Failed:    {failed} / {n}' )
     print( f'Error:     {error} / {n}' )
     
     
@@ -396,8 +405,21 @@ class Simulation_Grid:
   def Get_Queue_Staus( self ):
     command = [ 'squeue', '--user=brvillas' ]
     queue = str( subprocess.check_output( command ) )
-    queue = queue.split('\n')
+    queue = queue.split('\\n')
     return queue
+    
+  def Find_Simulation_In_Queue( self, sim_id, queue ):
+    sim_key = 'S{0:03}'.format(sim_id)
+    sim_in_queue = False
+    queue_line = None
+    for line in queue:
+      indx = line.find( sim_key )
+      if indx >= 0:
+        sim_in_queue =  True
+        queue_line = line
+        break
+    return sim_in_queue, queue_line
+        
 
   
     
