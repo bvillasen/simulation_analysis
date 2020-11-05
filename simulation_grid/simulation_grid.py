@@ -351,8 +351,8 @@ class Simulation_Grid:
     error = 0
     finished = 0
     failed = 0
-    queue_line = ''
     for sim_id in sim_ids:
+      queue_line = ''
       status = self.Get_Simulation_Status( sim_id )
       self.Grid[sim_id]['status'] = status
       if status == 'submitted': submitted += 1
