@@ -36,6 +36,7 @@ class Simulation_Grid:
   Grid = None
   job_parameters = None
   simulation_parameters = None
+  sim_ids = None
   
   def __init__( self, job_params=None, sim_params=None, parameters=None, dir=None ):
     print("Initializing Simulation Grid:")
@@ -92,6 +93,7 @@ class Simulation_Grid:
       sim_grid[sim_id]['parameters'] = sim_parameters
       
     self.Grid = sim_grid
+    self.sim_ids = self.Grid.keys()
     
   def Create_Grid_Directory_Structure( self ):
     n_sims = self.n_simulations
