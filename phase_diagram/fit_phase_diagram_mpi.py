@@ -54,7 +54,7 @@ if rank == 0:
   n_files_fit = len( files_fit )
   if rank == 0: print( f' N_Fit_Files: {n_files_fit}' )
   if n_files_fit != n_files:
-    print( "ERROR: Fit files doesn't match N_Files")
+    print( f'ERROR: Fit files not match N_Files: {input_dir}' )
     exit(-1) 
   
   print(f'Successfully fit: {input_dir}')
