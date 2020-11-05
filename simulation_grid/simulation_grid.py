@@ -250,8 +250,7 @@ class Simulation_Grid:
     run_file = cwd + '/phase_diagram/fit_phase_diagram_mpi.py'
     command = f'mpirunlux {n_mpi} {n_mpi} python {run_file}'
     print( f' Submitting: {command}' )
-    # subprocess.call( command.split() )
-    # os.system( command )
+    os.system( command )
     
       
   def Load_Simulation_Analysis_Data( self, sim_id, load_fit=False  ):

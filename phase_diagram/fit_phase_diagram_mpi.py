@@ -13,6 +13,9 @@ from phase_diagram_functions import fit_thermal_parameters_mcmc, get_density_tye
 args = sys.argv[1:]
 n_args = len(args)
 
+input_dir = args[0]
+fit_dir = input_dir + '/fit_mcmc/'
+
 use_mpi = True
 if use_mpi:
   from mpi4py import MPI
@@ -23,15 +26,20 @@ else:
   rank = 0
   n_procs = 1
 
-# data_dir = '/raid/bruno/data/'
-# input_dir = data_dir + 'cosmo_sims/sim_grid/512_50Mpc_pchw19/analysis_files/'
-# output_dir = data_dir + 'cosmo_sims/sim_grid/512_50Mpc_pchw19/figures/phase_diagram/'
-# fit_dir = input_dir + 'fit_mcmc/'
-# if rank == 0:
-#   create_directory( fit_dir )
-#   create_directory( output_dir )
-# if use_mpi: comm.Barrier()
-# 
+
+if rank == 0:
+  create_directory( fit_dir )
+  create_directory( output_dir )
+if use_mpi: comm.Barrier()
+
+
+files = [f for f in listdir(input_dir) if (isfile(join(input_dir, f)) and ( f.find('_analysis') > 0) ) ]
+indices = [ '{0:03}'.format( int(file.split('_')[0]) ) for file in files ]
+indices.sort()
+n_files = len( files )
+if rank == 0: print( f' N_Analysis_Files: {n_files}' )
+
+
 # 
 # 
 # indices = range(150)
