@@ -28,9 +28,7 @@ else:
   n_procs = 1
 
 
-if rank == 0:
-  create_directory( fit_dir )
-  create_directory( output_dir )
+if rank == 0: create_directory( fit_dir )
 if use_mpi: comm.Barrier()
 
 
