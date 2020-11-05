@@ -361,6 +361,7 @@ class Simulation_Grid:
           elem = q_line[0]
           while elem == " ":
             q_line = q_line[1:]
+            elem = q_line[0]
           queue_line = q_line
         else:
           status = 'failed'
