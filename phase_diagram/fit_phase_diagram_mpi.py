@@ -10,34 +10,35 @@ from load_data import load_analysis_data
 from phase_diagram_functions import fit_thermal_parameters_mcmc, get_density_tyemperature_values_to_fit
 
 #Parse Command Parameters
-args = sys.argv[1:]
-n_args = len(args)
-
-input_dir = args[0]
-fit_dir = input_dir + 'fit_mcmc/'
-
-use_mpi = True
-if use_mpi:
-  from mpi4py import MPI
-  comm = MPI.COMM_WORLD
-  rank = comm.Get_rank()
-  n_procs = comm.Get_size()
-else:
-  rank = 0
-  n_procs = 1
-
-
-if rank == 0:
-  create_directory( fit_dir )
-  create_directory( output_dir )
-if use_mpi: comm.Barrier()
-
-
-files = [f for f in listdir(input_dir) if (isfile(join(input_dir, f)) and ( f.find('_analysis') > 0) ) ]
-indices = [ '{0:03}'.format( int(file.split('_')[0]) ) for file in files ]
-indices.sort()
-n_files = len( files )
-if rank == 0: print( f' N_Analysis_Files: {n_files}' )
+print(sys.argv)
+# args = sys.argv[1:]
+# n_args = len(args)
+# 
+# input_dir = args[0]
+# fit_dir = input_dir + 'fit_mcmc/'
+# 
+# use_mpi = True
+# if use_mpi:
+#   from mpi4py import MPI
+#   comm = MPI.COMM_WORLD
+#   rank = comm.Get_rank()
+#   n_procs = comm.Get_size()
+# else:
+#   rank = 0
+#   n_procs = 1
+# 
+# 
+# if rank == 0:
+#   create_directory( fit_dir )
+#   create_directory( output_dir )
+# if use_mpi: comm.Barrier()
+# 
+# 
+# files = [f for f in listdir(input_dir) if (isfile(join(input_dir, f)) and ( f.find('_analysis') > 0) ) ]
+# indices = [ '{0:03}'.format( int(file.split('_')[0]) ) for file in files ]
+# indices.sort()
+# n_files = len( files )
+# if rank == 0: print( f' N_Analysis_Files: {n_files}' )
 
 
 # 
