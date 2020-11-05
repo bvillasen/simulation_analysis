@@ -46,3 +46,15 @@ for n_file in indices_to_generate:
   data = load_analysis_data( n_file, input_dir )
   values_to_fit = get_density_tyemperature_values_to_fit( data['phase_diagram'], delta_min=-1, delta_max=1, n_samples_line=50, fraction_enclosed=0.70 )
   fit_values = fit_thermal_parameters_mcmc( n_file, values_to_fit, fit_dir )
+
+
+if use_mpi: comm.Barrier()
+if rank == 0:
+  files_fit = [f for f in listdir(fit_dir) if (isfile(join(input_dir, f)) and ( f.find('fit_') >= 0) ) ]
+  n_files_fit = len( files_fit )
+  if rank == 0: print( f' N_Fit_Files: {n_files_fit}' )
+  if n_files_fit != n_files:
+    print( "ERROR: Fit files doesn't match N_Files")
+    exit(-1) 
+  
+  print(f'Successfully fit: {input_dir}')
