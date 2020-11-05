@@ -241,13 +241,12 @@ class Simulation_Grid:
       self.Fit_Simulation_Phase_Diagram( sim_id )
 
 
-  def Fit_Simulation_Phase_Diagram_MPI( self, sim_id ):
+  def Fit_Simulation_Phase_Diagram_MPI( self, sim_id, n_mpi=10  ):
     print( f' Fitting Simulation: {sim_id}')
     sim_dir = self.Get_Simulation_Directory( sim_id )
     input_dir = sim_dir + 'analysis_files/'
     fit_dir = input_dir + 'fit_mcmc/'
     create_directory( fit_dir )
-    n_mpi = 10
     cwd = os.getcwd()
     run_file = cwd + '/phase_diagram/fit_phase_diagram_mpi.py'
     parameters = sim_dir + 'analysis_files/'
