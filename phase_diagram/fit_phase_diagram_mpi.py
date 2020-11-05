@@ -10,7 +10,6 @@ from load_data import load_analysis_data
 from phase_diagram_functions import fit_thermal_parameters_mcmc, get_density_tyemperature_values_to_fit
 
 #Parse Command Parameters
-print(sys.argv)
 args = sys.argv[1:]
 n_args = len(args)
 
@@ -39,12 +38,9 @@ n_files = len( files )
 if rank == 0: print( f' N_Analysis_Files: {n_files}' )
 
 
-# 
-# 
-# indices = range(150)
-# indices_to_generate = split_indices( indices, rank,  n_procs )
-# if len(indices_to_generate) == 0: exit()
-# # print(f'Generating: {rank} {indices_to_generate}\n' ) 
+indices_to_generate = split_indices( indices, rank,  n_procs )
+if len(indices_to_generate) == 0: exit()
+print(f'Generating: {rank} {indices_to_generate}\n' ) 
 # 
 # for n_file in indices_to_generate:
 #   data = load_analysis_data( n_file, input_dir )
