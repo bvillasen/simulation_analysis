@@ -249,7 +249,8 @@ class Simulation_Grid:
     cwd = os.getcwd()
     run_file = cwd + '/phase_diagram/fit_phase_diagram_mpi.py'
     parameters = sim_dir + 'analysis_files/'
-    command = f'mpirunlux {n_mpi} {n_mpi} python {run_file} {parameters}'
+    command = f'mpirun -n {n_mpi} --map-by ppr:{n_mpi}:node --oversubscribe python {run_file} {parameters}'
+    # command = f'mpirunlux {n_mpi} {n_mpi} python {run_file} {parameters}'
     print( f' Submitting: {command}' )
     os.system( command )
     
