@@ -341,7 +341,6 @@ class Simulation_Grid:
   def Get_Grid_Status( self ):
     print( '\nGrid Status: ')
     queue = self.Get_Queue_Staus()
-    print( queue )
     sim_ids = self.Grid.keys()
     n = len(sim_ids)
     submitted = 0
@@ -359,6 +358,9 @@ class Simulation_Grid:
         sim_in_queue, q_line = self.Find_Simulation_In_Queue( sim_id, queue )
         if sim_in_queue:
           running += 1
+          elem = q_line[0]
+          while elem == " ":
+            q_line = [1:]
           queue_line = q_line
         else:
           status = 'failed'
@@ -368,7 +370,7 @@ class Simulation_Grid:
         finished += 1
       if status == 'error':
         error += 1
-      print( f' id: {sim_id}    status: {status} {queue_line}')
+      print( f' id: {sim_id}    status: {status}   {queue_line}')
     print( f'Submitted: {submitted} / {n}' )
     print( f'Running:   {running} / {n}' )
     print( f'Finished:  {finished} / {n}' )
