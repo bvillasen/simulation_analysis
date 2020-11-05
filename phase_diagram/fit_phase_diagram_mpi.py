@@ -41,10 +41,8 @@ if rank == 0: print( f' N_Analysis_Files: {n_files}' )
 indices_to_generate = split_indices( indices, rank,  n_procs )
 if len(indices_to_generate) == 0: exit()
 print(f'Generating: {rank} {indices_to_generate}\n' ) 
-# 
-# for n_file in indices_to_generate:
-#   data = load_analysis_data( n_file, input_dir )
-#   values_to_fit = get_density_tyemperature_values_to_fit( data['phase_diagram'], delta_min=-1, delta_max=1, n_samples_line=50, fraction_enclosed=0.70 )
-#   fit_values = fit_thermal_parameters_mcmc( n_file, values_to_fit, fit_dir )
-# 
-# 
+
+for n_file in indices_to_generate:
+  data = load_analysis_data( n_file, input_dir )
+  values_to_fit = get_density_tyemperature_values_to_fit( data['phase_diagram'], delta_min=-1, delta_max=1, n_samples_line=50, fraction_enclosed=0.70 )
+  fit_values = fit_thermal_parameters_mcmc( n_file, values_to_fit, fit_dir )
