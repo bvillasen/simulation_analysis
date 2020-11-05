@@ -340,6 +340,8 @@ class Simulation_Grid:
     
   def Get_Grid_Status( self ):
     print( '\nGrid Status: ')
+    queue = self.Get_Queue_Staus()
+    print( queue )
     sim_ids = self.Grid.keys()
     n = len(sim_ids)
     submitted = 0
@@ -390,6 +392,12 @@ class Simulation_Grid:
     sim_ids = self.Grid.keys()
     for sim_id in sim_ids:
       self.Delete_Simulation_Output_Files( sim_id )
+      
+  def Get_Queue_Staus( self ):
+    command = [ 'squeue', '--user=brvillas' ]
+    queue = subprocess.check_output( command )
+    return queue
+
   
     
 
