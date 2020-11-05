@@ -356,7 +356,7 @@ class Simulation_Grid:
       if status == 'submitted': submitted += 1
       if status == 'running': 
         submitted += 1
-        sim_in_queue, q_line = self.Find_Simulation_In_Queue( sim_id )
+        sim_in_queue, q_line = self.Find_Simulation_In_Queue( sim_id, queue )
         if sim_in_queue:
           running += 1
           queue_line = q_line
