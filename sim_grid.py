@@ -15,15 +15,7 @@ create_directory( figures_dir )
 
 
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
-SG.Get_Grid_Status()
+SG.Get_Grid_Status( check_queue=False )
 
-# SG.Fit_Simulation_Phase_Diagram_MPI( 0 )
-
-# SG.Load_Grid_UVB_Rates()
-# Plot_Grid_UVB_Rates( SG, figures_dir )
 
 # SG.Load_Grid_Analysis_Data( )
-
-
-
-

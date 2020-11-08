@@ -9,6 +9,7 @@ from parameters_UVB_rates import param_UVB_Rates
 from simulation_grid import Simulation_Grid
 from simulation_parameters import *
 from data_thermal_history import *
+from data_optical_depth import *
 
 import matplotlib
 matplotlib.use('Agg') 
@@ -25,13 +26,12 @@ create_directory( output_dir )
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
 
 
-
-scales_He = [ 1., .9, .8, .7, .6, .5 ]
+scales_He = SG.parameters[0]['values']
 sim_ids = SG.sim_ids
 SG.Load_Grid_Analysis_Data( sim_ids=sim_ids, load_fit=True )
 
 data_sets = [ data_thermal_history_Gaikwad_2020a, data_thermal_history_Gaikwad_2020b ]
-error_colors = [ 'C9', 'C1']
+error_colors = [ 'C9', 'C0', 'C1']
 font_size = 15
 
 nrows = 1
@@ -78,15 +78,26 @@ for sim_id in sim_ids:
   F = SG.Grid[sim_id]['analysis']['F_mean']
   tau = - np.log( F )
   label = r'$\beta_{HeII}$' + ' $= {0}$'.format(scales_He[sim_id])
-  ax.plot( z, tau, label=label )
+  ax.plot( z, tau, label=label, zorder=1 )
+
+data_sets = [ data_optical_depth_Boera_2019, data_optical_depth_Becker_2013, data_optical_depth_Bosman_2018 ]
+for i,data_set in enumerate(data_sets):
+  data_name = data_set['name']
+  data_x = data_set['z']
+  data_mean = data_set['tau'].astype(np.float) 
+  data_error_p = data_set['tau_sigma_p']
+  data_error_m = data_set['tau_sigma_m']
+  data_error = np.array([ data_error_m, data_error_p ]).astype(np.float) 
+  ax.errorbar( data_x, data_mean, yerr=data_error, fmt='none',  alpha=1, ecolor= error_colors[i], zorder=2)
+  ax.scatter( data_x, data_mean, label=data_name, alpha=1, color= error_colors[i], zorder=2) 
 
 
 ax.set_ylabel( r'$\tau_{eff}$', fontsize=font_size )
 ax.set_xlabel( r'$z$', fontsize=font_size )
-leg = ax.legend(loc=2, frameon=False, fontsize=font_size)
+leg = ax.legend(loc=2, frameon=False, fontsize=13)
 ax.set_xlim( 2, 6 )
 ax.set_yscale('log')
-ax.set_ylim( 0.1, 10 )
+ax.set_ylim( 0.1, 8 )
 
 figure_name = output_dir + 'grid_optical_depth.png'
 fig.savefig( figure_name, bbox_inches='tight', dpi=300 )

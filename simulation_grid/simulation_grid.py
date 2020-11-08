@@ -341,9 +341,9 @@ class Simulation_Grid:
       status = 'not submitted'
     return status
     
-  def Get_Grid_Status( self ):
+  def Get_Grid_Status( self, check_queue=True ):
     print( '\nGrid Status: ')
-    queue = self.Get_Queue_Staus()
+    if check_queue:  queue = self.Get_Queue_Staus()
     sim_ids = self.Grid.keys()
     n = len(sim_ids)
     submitted = 0
