@@ -6,7 +6,7 @@ param_UVB_Rates = {}
 param_UVB_Rates[0] = {}
 param_UVB_Rates[0]['key'] = 'A'
 param_UVB_Rates[0]['name'] = 'scale_He'
-param_UVB_Rates[0]['values'] = [ 1.0 ]
+param_UVB_Rates[0]['values'] = [ 0.45 ]
 
 param_UVB_Rates[1] = {}
 param_UVB_Rates[1]['key'] = 'B'

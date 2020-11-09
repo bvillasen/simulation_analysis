@@ -27,6 +27,7 @@ SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_par
 
 
 scales_He = SG.parameters[0]['values']
+scales_H  = SG.parameters[1]['values']
 sim_ids = SG.sim_ids
 SG.Load_Grid_Analysis_Data( sim_ids=sim_ids, load_fit=True )
 
@@ -41,7 +42,8 @@ fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,8*nrows))
 for sim_id in sim_ids:
   z = SG.Grid[sim_id]['analysis']['z']
   T0 = SG.Grid[sim_id]['analysis']['T0']
-  label = r'$\beta_{HeII}$' + ' $= {0}$'.format(scales_He[sim_id])
+  # label = r'$\beta_{HeII}$' + ' $= {0}$'.format(scales_He[sim_id])
+  label = r'$\beta_{H}$' + ' $= {0}$'.format(scales_H[sim_id])
   ax.plot( z, T0 , label=label )
 
 
@@ -77,7 +79,8 @@ for sim_id in sim_ids:
   z = SG.Grid[sim_id]['analysis']['z']
   F = SG.Grid[sim_id]['analysis']['F_mean']
   tau = - np.log( F )
-  label = r'$\beta_{HeII}$' + ' $= {0}$'.format(scales_He[sim_id])
+  # label = r'$\beta_{HeII}$' + ' $= {0}$'.format(scales_He[sim_id])
+  label = r'$\beta_{H}$' + ' $= {0}$'.format(scales_H[sim_id])
   ax.plot( z, tau, label=label, zorder=1 )
 
 data_sets = [ data_optical_depth_Boera_2019, data_optical_depth_Becker_2013, data_optical_depth_Bosman_2018 ]
