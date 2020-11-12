@@ -275,6 +275,7 @@ class Simulation_Grid:
     sim_data['T0']     = []
     sim_data['gamma']  = []
     sim_data['F_mean'] = []
+    sim_data['tau'] = []
     
     for n_file in indices:
       n_file = int(n_file)
@@ -283,14 +284,17 @@ class Simulation_Grid:
       T0 = data['phase_diagram']['fit']['T0']
       gamma = data['phase_diagram']['fit']['gamma']
       F_mean = data['lya_statistics']['Flux_mean']
+      tau = data['lya_statistics']['tau']
       sim_data['z'].append(z)
       sim_data['T0'].append(T0)
       sim_data['gamma'].append(gamma)
       sim_data['F_mean'].append(F_mean)
+      sim_data['tau'].append(tau)
     sim_data['z'] = np.array( sim_data['z'] )
     sim_data['T0'] = np.array( sim_data['T0'] )
     sim_data['gamma'] = np.array( sim_data['gamma'] )
     sim_data['F_mean'] = np.array( sim_data['F_mean'] )
+    sim_data['tau'] = np.array( sim_data['tau'] )
     self.Grid[sim_id]['analysis'] = sim_data
 
   def Load_Grid_Analysis_Data( self, sim_ids=None, load_fit=False  ):

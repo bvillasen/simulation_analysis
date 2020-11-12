@@ -1,5 +1,35 @@
 import numpy as np
 
+
+data_keating = np.array( [
+[ 4.2, 0.386215, 0.401744, 0.373139 ],
+[ 4.4, 0.302689, 0.317515, 0.287006 ],
+[ 4.6, 0.235014, 0.25179,  0.218802 ],
+[ 4.8, 0.1695,   0.186972, 0.154833 ],
+[ 5.0, 0.129563, 0.140772, 0.120686 ],
+[ 5.2, 0.109078, 0.115458, 0.102487 ],
+[ 5.4, 0.079947, 0.084354, 0.074827 ],
+[ 5.6, 0.046133, 0.052229, 0.042031 ],
+[ 5.8, 0.020964, 0.023283, 0.017795 ],
+[ 6.0, 0.010206, 0.013067, 0.006533 ] ]).T
+z = data_keating[0]
+F = data_keating[1]
+tau = -np.log(data_keating[1])
+tau_p = -np.log(data_keating[2])
+tau_m = -np.log(data_keating[3])
+tau_error = ( tau_m - tau_p )/2 
+data_optical_depth_Keating_2020 = {
+'name':'Keating et al. (2020)',
+'z': z,
+'tau': tau,
+'tau_sigma': tau_error,
+'tau_sigma_p': tau_p - tau,
+'tau_sigma_m': tau - tau_m
+}
+
+
+
+
 tau_sigma_p = np.array([ 0.04, 0.08, 0.1 ])
 tau_sigma_m = np.array([ 0.04, 0.09, 0.11 ])
 data_optical_depth_Boera_2019 = {

@@ -57,6 +57,7 @@ def load_analysis_data( n_file, input_dir, phase_diagram=True, lya_statistics=Tr
     lya_statistics = file['lya_statistics']
     data_out['lya_statistics']['n_skewers'] = lya_statistics.attrs['n_skewers'][0]
     data_out['lya_statistics']['Flux_mean'] = lya_statistics.attrs['Flux_mean'][0]
+    data_out['lya_statistics']['tau'] = -np.log( data_out['lya_statistics']['Flux_mean'] )
   
     if load_skewer:
       skewer = lya_statistics['skewer']

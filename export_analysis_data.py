@@ -32,7 +32,7 @@ for sim_id in sim_ids:
   data_out[sim_id]['F_mean'] = SG.Grid[sim_id]['analysis']['F_mean']
   data_out[sim_id]['parameters'] = SG.Grid[sim_id]['parameters']
   
-out_file_name = root_dir + 'scale_HeII_T0.pkl'
+out_file_name = root_dir + 'scale_H_T0.pkl'
 f = open( out_file_name, "wb")
 pickle.dump( data_out, f)
 print ( f'Saved File: {out_file_name}' )

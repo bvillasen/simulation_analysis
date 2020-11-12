@@ -10,6 +10,7 @@ from parameters_UVB_rates import param_UVB_Rates
 from simulation_grid import Simulation_Grid
 from simulation_parameters import *
 from mcmc_functions import *
+from mcmc_data_functions import *
 from data_thermal_history import *
 
 
