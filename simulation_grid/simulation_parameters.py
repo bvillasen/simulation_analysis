@@ -1,7 +1,7 @@
 
 
-system = 'Lux'
-# system = 'Shamrock'
+# system = 'Lux'
+system = 'Shamrock'
 
 
 
@@ -10,7 +10,7 @@ if system == 'Lux':
   cholla_dir = '/home/brvillas/cholla/'    
 
 if system == 'Shamrock':
-  root_dir   = '/raid/bruno/data/cosmo_sims/sim_grid/'
+  root_dir   = '/raid/bruno/data/cosmo_sims/sim_grid/scale_H/'
   cholla_dir = '/home/bruno/cholla/'    
 
 

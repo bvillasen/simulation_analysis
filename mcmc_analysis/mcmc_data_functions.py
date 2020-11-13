@@ -104,7 +104,13 @@ def Get_Comparable_T0_Gaikwad():
   comparable['sigma'] = data_sigma
   return comparable
 
-
+def Get_Comparable_Composite_T0_tau():
+  comparable_T0 = Get_Comparable_T0_Gaikwad()
+  comparable_tau = Get_Comparable_Tau()
+  comparable = {}
+  for key in ['z', 'mean', 'sigma']:
+    comparable[key] = np.concatenate( [ comparable_T0[key], comparable_tau[key] ])
+  return comparable
 
 def Get_Comparable_Tau_from_Grid( comparable_data, SG ):
   z_data = comparable_data['z']
