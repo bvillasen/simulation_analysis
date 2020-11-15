@@ -63,7 +63,7 @@ for observable in observables_to_sample:
   
 
 
-output_dir = root_dir + 'fit_results/'
+output_dir = root_dir + 'fit_results_composite/'
 create_directory( output_dir )
 
 
@@ -162,7 +162,7 @@ for plot_type in ['grid', 'sampling']:
   ax.set_ylim( 0.1, 8)
   ax.set_yscale('log')
 
-  figure_name = output_dir + f'fig_{param_name}_{plot_type}.png'
+  figure_name = output_dir + f'fig_composite_{param_name}_{plot_type}.png'
   fig.savefig( figure_name, bbox_inches='tight', dpi=300 )
   print( f'Saved Figure: {figure_name}' )
 

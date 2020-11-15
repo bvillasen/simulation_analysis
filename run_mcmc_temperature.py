@@ -17,100 +17,173 @@ from data_thermal_history import *
 
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
 SG.Load_Grid_Analysis_Data()
+sim_ids = SG.sim_ids
 
-comparable_T0_Gaikwad = Get_Comparable_T0_Gaikwad()
-comparable_T0_grid = Get_Comparable_T0_from_Grid( comparable_T0_Gaikwad, SG )
+comparable_data_T0 = Get_Comparable_T0_Gaikwad()
+comparable_grid_T0 = Get_Comparable_T0_from_Grid( comparable_data_T0, SG )
+
+comparable_data = Get_Comparable_Composite_T0_tau()
+comparable_grid = Get_Comparable_Composite_T0_tau_from_Grid( comparable_data, SG )
+
 
 param_to_fit = 0
+param_name = SG.parameters[param_to_fit]['name']
+param_vals = SG.parameters[param_to_fit]['values']
 
 nIter = 100000 
 nBurn = nIter / 5
 nThin = 1
-model = mcmc_model_1D( param_to_fit, comparable_T0_Gaikwad, comparable_T0_grid, SG )
+model = mcmc_model_1D( param_to_fit, comparable_data_T0, comparable_grid_T0, SG )
 MDL = pymc.MCMC( model )  
 MDL.sample( iter=nIter, burn=nBurn, thin=nThin )
 stats = MDL.stats()
 
+param_stats = stats[param_name]
+param_mean  = param_stats['mean']
+param_sigma = param_stats['standard deviation'] 
+print( f'\n {param_name}: {param_mean}  +- {param_sigma}' )
 
-scale_He_stats = stats['scale_He']
-scale_He_mean = scale_He_stats['mean']
-scale_He_sigma = scale_He_stats['standard deviation']
-T0_stats = stats['mcmc_model_1D']
-T0_mean_mcmc = T0_stats['mean']
-T0_sigma_mcmc = T0_stats['standard deviation']
-
-
-print( f'\n scale_He: {scale_He_mean}  +- {scale_He_sigma}' )
 
 
 n_samples = 10000
-T0_all = []
-for i in range ( n_samples ):
-  scale_He = np.random.normal( scale_He_mean, scale_He_sigma )
-  T0_interp, z_interp = Interpolate_Observable_1D( param_to_fit, 'T0', scale_He,  SG )
-  T0_all.append( T0_interp )
+observables_to_sample = ['T0', 'tau']
 
-T0_all = np.array( T0_all ).T
-T0_mean  = [ T0_vals.mean() for T0_vals in T0_all ]
-T0_sigma = []
-for i in range( len(T0_all) ):
-  T0_sigma_val = np.sqrt( (( T0_all[i] - T0_mean[i] )**2 ).mean() )
-  T0_sigma.append( T0_sigma_val )
-T0_mean  = np.array( T0_mean )
-T0_sigma = np.array( T0_sigma )
+observables = { observable:{} for observable in observables_to_sample }
+for observable in observables_to_sample:
+  observables[observable]['samples'] = []
+  for i in range ( n_samples ):
+    param_val = np.random.normal( param_mean, param_sigma )
+    if param_val < min(param_vals): param_val = min(param_vals)
+    if param_val > max(param_vals): param_val = max(param_vals)
+    observable_interp, z_interp =  Interpolate_Observable_1D( param_to_fit, observable, param_val,  SG )
+    observables[observable]['samples'].append( observable_interp )
+    observables[observable]['z'] = z_interp
+  obs_all = np.array(observables[observable]['samples']).T
+  obs_mean = [ obs_vals.mean() for obs_vals in obs_all ]
+  obs_sigma = []
+  for i in range( len(obs_all) ):
+    obs_sigma.append( np.sqrt( (( obs_all[i] - obs_mean[i] )**2 ).mean() ) )
+  observables[observable]['mean'] = np.array( obs_mean )
+  observables[observable]['sigma'] = np.array( obs_sigma ) 
+
+  
 
 
-output_dir = root_dir + 'fit_parameters/'
+output_dir = root_dir + 'fit_results_temperature/'
 create_directory( output_dir )
 
 
-data_sets = [ data_thermal_history_Gaikwad_2020a, data_thermal_history_Gaikwad_2020b ]
-error_colors = [ 'C9', 'C1']
-font_size = 15
+# plot_type = 'sampling'
+plot_type = 'grid'
 
 nrows = 1
-ncols = 1
-fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,8*nrows))
+ncols = 2
 
-c0 = 'C0'
-alpha = 0.6
-label = 'scale_He= {0:.2}  +- {1:.2}'.format( scale_He_mean, scale_He_sigma )
-ax.fill_between( z_interp, T0_mean + T0_sigma, T0_mean - T0_sigma, alpha=alpha, color=c0)
-ax.plot( z_interp, T0_mean, c=c0, label=label )
+color = 'C0'
+data_color = 'C9'
+font_size = 15
+label_size = 14
+alpha = 0.8
 
 
-for i, data_set in enumerate( data_sets ):
-  data_name = data_set['name']
-  data_x = data_set['z']
-  data_mean = data_set['T0'].astype(np.float) 
-  data_error_p = data_set['T0_sigma_plus']
-  data_error_m = data_set['T0_sigma_minus']
-  data_error = np.array([ data_error_m, data_error_p ]).astype(np.float) 
-  ax.errorbar( data_x, data_mean, yerr=data_error, fmt='none',  alpha=0.8, ecolor= error_colors[i])
-  ax.scatter( data_x, data_mean, label=data_name, alpha=0.8, color= error_colors[i]) 
+for plot_type in ['grid', 'sampling']:
 
-ax.set_ylabel( r'$T_0$', fontsize=font_size  )
-ax.set_xlabel( r'$z$', fontsize=font_size )
-leg = ax.legend(loc=1, frameon=False, fontsize=font_size)
-ax.set_xlim( 2, 12 )
-ax.set_ylim( 3000, 18000)
-figure_name = output_dir + 'mcmc_phase_diagram.png'
-fig.savefig( figure_name, bbox_inches='tight', dpi=300 )
-print( f'Saved Figure: {figure_name}' )
-# 
-# 
-# 
-# 
-# 
-# cwd = os.getcwd()
-# os.chdir( output_dir )
-# 
-# out_file_name = output_dir + 'fit_mcmc.pkl'
-# f = open( out_file_name, "wb")
-# pickle.dump( stats, f)
-# print ( f'Saved File: {out_file_name}' )
-# 
-# pymc.Matplot.plot(MDL)  
-# 
-# os.chdir( cwd )  
-# 
+  fig, ax_l = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,8*nrows))
+
+  ax = ax_l[0]
+  obs_name = 'T0'
+  obs_z     = observables[obs_name]['z']
+  obs_mean  = observables[obs_name]['mean']
+  obs_sigma = observables[obs_name]['sigma'] 
+
+  if plot_type == 'sampling':
+    label = '{0} = {1:.2}'.format(param_name, param_mean) + r' $\pm$ '+ '{0:.2}'.format( param_sigma )
+    ax.fill_between( obs_z, obs_mean + obs_sigma, obs_mean - obs_sigma, alpha=alpha, color=color, zorder=1)
+    ax.plot( obs_z, obs_mean, c=color, label=label, zorder=1 )
+
+  if plot_type == 'grid':
+    for sim_id in sim_ids:
+      data_sim = SG.Grid[sim_id]['analysis']
+      z = data_sim['z']
+      obs_vals = data_sim[obs_name]
+      param_val = SG.Grid[sim_id]['parameters'][param_name]
+      if param_name == 'scale_He': label_param = r'$\beta_{HeII}$' 
+      if param_name == 'scale_H': label_param = r'$\beta_{HI}$' 
+      if param_name == 'deltaZ_He': label_param = r'$\Delta z_{HeII}$' 
+      if param_name == 'deltaZ_H': label_param = r'$\Delta z_{HI}$' 
+      label =  label_param + ' $= {0}$'.format(param_val)
+      ax.plot( z, obs_vals , label=label, zorder=1 )
+
+  data_set = comparable_data[obs_name]
+  data_z = data_set['z']
+  data_mean = data_set['mean'] 
+  data_error = data_set['sigma'] 
+  ax.errorbar( data_z, data_mean, yerr=data_error, fmt='none',  alpha=0.8, ecolor= data_color, zorder=2)
+  ax.scatter( data_z, data_mean, label='Data for MCMC fit', alpha=0.8, color= data_color, zorder=2) 
+
+  ax.tick_params(axis='both', which='major', direction='in', labelsize=label_size )
+  ax.tick_params(axis='both', which='minor', direction='in' )
+  ax.set_ylabel( r'$T_0   \,\,\, [\,\mathrm{K}\,]$', fontsize=font_size  )
+  ax.set_xlabel( r'$z$', fontsize=font_size )
+  leg = ax.legend(loc=1, frameon=False, fontsize=font_size)
+  ax.set_xlim( 2, 12 )
+  ax.set_ylim( 3000, 18000)
+
+
+  ax = ax_l[1]
+  obs_name = 'tau'
+  obs_z     = observables[obs_name]['z']
+  obs_mean  = observables[obs_name]['mean']
+  obs_sigma = observables[obs_name]['sigma'] 
+
+  if plot_type == 'sampling':
+    label = '{0} = {1:.2}'.format(param_name, param_mean) + r' $\pm$ '+ '{0:.2}'.format( param_sigma )
+    ax.fill_between( obs_z, obs_mean + obs_sigma, obs_mean - obs_sigma, alpha=alpha, color=color, zorder=1)
+    ax.plot( obs_z, obs_mean, c=color, label=label, zorder=1 )
+
+  if plot_type == 'grid':
+    for sim_id in sim_ids:
+      data_sim = SG.Grid[sim_id]['analysis']
+      z = data_sim['z']
+      obs_vals = data_sim[obs_name]
+      param_val = SG.Grid[sim_id]['parameters'][param_name]
+      if param_name == 'scale_H': label_param = r'$\beta_{HI}$' 
+      if param_name == 'scale_He': label_param = r'$\beta_{HeII}$' 
+      label =  label_param + ' $= {0}$'.format(param_val)
+      ax.plot( z, obs_vals , label=label, zorder=1 )
+
+  data_set = comparable_data[obs_name]
+  data_z = data_set['z']
+  data_mean = data_set['mean'] 
+  data_error = data_set['sigma'] 
+  ax.errorbar( data_z, data_mean, yerr=data_error, fmt='none',  alpha=0.8, ecolor= data_color, zorder=2)
+  ax.scatter( data_z, data_mean, label='Data', alpha=0.8, color= data_color, zorder=2) 
+
+  ax.tick_params(axis='both', which='major', direction='in', labelsize=label_size )
+  ax.tick_params(axis='both', which='minor', direction='in' )
+  ax.set_ylabel( r'$\tau_{eff}$', fontsize=font_size  )
+  ax.set_xlabel( r'$z$', fontsize=font_size )
+  leg = ax.legend(loc=2, frameon=False, fontsize=font_size)
+  ax.set_xlim( 2, 6 )
+  ax.set_ylim( 0.1, 8)
+  ax.set_yscale('log')
+
+  figure_name = output_dir + f'fig_temperature_{param_name}_{plot_type}.png'
+  fig.savefig( figure_name, bbox_inches='tight', dpi=300 )
+  print( f'Saved Figure: {figure_name}' )
+
+
+
+
+
+cwd = os.getcwd()
+os.chdir( output_dir )
+
+out_file_name = output_dir + 'fit_mcmc.pkl'
+f = open( out_file_name, "wb")
+pickle.dump( stats, f)
+print ( f'Saved File: {out_file_name}' )
+
+pymc.Matplot.plot(MDL)  
+
+os.chdir( cwd )  
