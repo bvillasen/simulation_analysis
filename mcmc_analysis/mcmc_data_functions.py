@@ -108,9 +108,27 @@ def Get_Comparable_Composite_T0_tau():
   comparable_T0 = Get_Comparable_T0_Gaikwad()
   comparable_tau = Get_Comparable_Tau()
   comparable = {}
+  comparable['T0'] = comparable_T0
+  comparable['tau'] = comparable_tau
   for key in ['z', 'mean', 'sigma']:
     comparable[key] = np.concatenate( [ comparable_T0[key], comparable_tau[key] ])
   return comparable
+
+
+def Get_Comparable_Composite_T0_tau_from_Grid( comparable_data, SG ):
+  comparable_T0_data = comparable_data['T0']
+  comparable_tau_data = comparable_data['tau']
+  comparable_T0_grid = Get_Comparable_T0_from_Grid( comparable_T0_data, SG )
+  comparable_tau_grid = Get_Comparable_Tau_from_Grid( comparable_tau_data, SG )
+  comparable_grid = {}
+  sim_ids = SG.sim_ids
+  for sim_id in sim_ids:
+    comparable_grid[sim_id] = {}
+    comparable_grid[sim_id]['T0'] = comparable_T0_grid[sim_id]
+    comparable_grid[sim_id]['tau'] = comparable_tau_grid[sim_id]
+    for key in ['z', 'mean']:
+      comparable_grid[sim_id][key] = np.concatenate( [ comparable_T0_grid[sim_id][key], comparable_tau_grid[sim_id][key] ])
+  return comparable_grid
 
 def Get_Comparable_Tau_from_Grid( comparable_data, SG ):
   z_data = comparable_data['z']
