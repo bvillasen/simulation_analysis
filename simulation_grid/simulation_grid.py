@@ -359,7 +359,19 @@ class Simulation_Grid:
       queue_line = ''
       status = self.Get_Simulation_Status( sim_id )
       self.Grid[sim_id]['status'] = status
-      if status == 'submitted': submitted += 1
+      if status == 'submitted': 
+        submitted += 1
+        sim_in_queue, q_line = self.Find_Simulation_In_Queue( sim_id, queue )
+        if sim_in_queue:
+          running += 1
+          elem = q_line[0]
+          while elem == " ":
+            q_line = q_line[1:]
+            elem = q_line[0]
+          queue_line = q_line
+        else:
+          status = 'failed'
+          failed += 1
       if status == 'running': 
         submitted += 1
         sim_in_queue, q_line = self.Find_Simulation_In_Queue( sim_id, queue )
