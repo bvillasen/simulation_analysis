@@ -399,6 +399,7 @@ class Simulation_Grid:
     
   def Cancel_Simulation_Job( self, sim_id ):
     status = self.Get_Simulation_Status( sim_id )
+    queue = self.Get_Queue_Staus()
     sim_in_queue, q_line = self.Find_Simulation_In_Queue( sim_id, queue )
     if sim_in_queue:
       job_id = q_line.split( ' ')[0]
