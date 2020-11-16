@@ -401,7 +401,7 @@ class Simulation_Grid:
     sim_ids = self.sim_ids
     self.Get_Grid_Status()
     for sim_id in sim_ids:
-      status = self.Grid[sim_id]
+      status = self.Grid[sim_id]['status']
       print( f' {sim_id}: {status}')
       if status in ['failed', 'error', 'not submitted']:
         print( f'Submiting: {sim_id}')
