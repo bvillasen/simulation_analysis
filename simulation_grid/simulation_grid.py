@@ -402,7 +402,7 @@ class Simulation_Grid:
     for sim_id in sim_ids:
       status = self.Get_Simulation_Status( sim_id )
       if status in ['failed', 'error']:
-        print f"Submiting: {sim_id}"
+        print( f'Submiting: {sim_id}')
         self.Submit_Simulation_Job( sim_id )
       
   
