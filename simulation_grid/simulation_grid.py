@@ -402,7 +402,11 @@ class Simulation_Grid:
     queue = self.Get_Queue_Staus()
     sim_in_queue, q_line = self.Find_Simulation_In_Queue( sim_id, queue )
     if sim_in_queue:
-      print( q_line )
+      elem = q_line[0]
+      while elem == " ":
+        q_line = q_line[1:]
+        elem = q_line[0]
+      print( q_line.split( ' ') )
       job_id = q_line.split( ' ')[0]
       command = f'scancel {job_id}'
       print( command )
