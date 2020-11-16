@@ -16,7 +16,7 @@ param_UVB_Rates[1]['values'] = [  0.9 ]
 param_UVB_Rates[2] = {}
 param_UVB_Rates[2]['key'] = 'C'
 param_UVB_Rates[2]['name'] = 'deltaZ_He'
-param_UVB_Rates[2]['values'] = [ 0.36   ]
+param_UVB_Rates[2]['values'] = [ 0.052  ]
 
 param_UVB_Rates[3] = {}
 param_UVB_Rates[3]['key'] = 'D'

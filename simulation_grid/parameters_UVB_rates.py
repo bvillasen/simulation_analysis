@@ -16,9 +16,22 @@ param_UVB_Rates[1]['values'] = [  0.9 ]
 param_UVB_Rates[2] = {}
 param_UVB_Rates[2]['key'] = 'C'
 param_UVB_Rates[2]['name'] = 'deltaZ_He'
-param_UVB_Rates[2]['values'] = [ 0.36   ]
+param_UVB_Rates[2]['values'] = [ 0.052  ]
 
 param_UVB_Rates[3] = {}
 param_UVB_Rates[3]['key'] = 'D'
 param_UVB_Rates[3]['name'] = 'deltaZ_H'
 param_UVB_Rates[3]['values'] = [ -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0 ]
+
+
+from simulation_parameters import grid_name, system
+if sysrem == 'Shamrock':
+  from parameters_UVB_rates_scale_He  import param_UVB_Rates as param_UVB_Rates_scale_He
+  from parameters_UVB_rates_scale_H   import param_UVB_Rates as param_UVB_Rates_scale_H
+  from parameters_UVB_rates_deltaZ_He import param_UVB_Rates as param_UVB_Rates_deltaZ_He
+  from parameters_UVB_rates_deltaZ_H  import param_UVB_Rates as param_UVB_Rates_deltaZ_H
+
+  if grid_name == 'scale_He':  param_UVB_Rates = param_UVB_Rates_scale_He
+  if grid_name == 'scale_H':   param_UVB_Rates = param_UVB_Rates_scale_H
+  if grid_name == 'deltaZ_He': param_UVB_Rates = param_UVB_Rates_deltaZ_He
+  if grid_name == 'deltaZ_H':  param_UVB_Rates = param_UVB_Rates_deltaZ_H

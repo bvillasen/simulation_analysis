@@ -19,3 +19,6 @@ SG.Get_Grid_Status( check_queue=True )
 
 
 # SG.Load_Grid_Analysis_Data( )
+
+# SG.Load_Grid_UVB_Rates()
+# Plot_Grid_UVB_Rates( SG, figures_dir )

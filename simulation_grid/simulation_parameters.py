@@ -1,16 +1,19 @@
 
 
-system = 'Lux'
-# system = 'Shamrock'
+# system = 'Lux'
+system = 'Shamrock'
 
-
+# grid_name = 'scale_He'
+# grid_name = 'scale_H'
+# grid_name = 'deltaZ_He'
+grid_name = 'deltaZ_H'
 
 if system == 'Lux':
   root_dir   = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
   cholla_dir = '/home/brvillas/cholla/'    
 
 if system == 'Shamrock':
-  root_dir   = '/raid/bruno/data/cosmo_sims/sim_grid/scale_H/'
+  root_dir   = f'/raid/bruno/data/cosmo_sims/sim_grid/{grid_name}/'
   cholla_dir = '/home/bruno/cholla/'    
 
 
