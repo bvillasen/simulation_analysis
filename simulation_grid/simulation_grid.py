@@ -406,11 +406,10 @@ class Simulation_Grid:
       while elem == " ":
         q_line = q_line[1:]
         elem = q_line[0]
-      print( q_line.split( ' ') )
       job_id = q_line.split( ' ')[0]
       command = f'scancel {job_id}'
       print( command )
-      # os.system( command )
+      os.system( command )
       
   def Cancel_Grid_Jobs( self ):
     sim_ids = self.sim_ids
