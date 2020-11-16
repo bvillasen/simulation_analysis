@@ -397,6 +397,15 @@ class Simulation_Grid:
     print( f'Failed:    {failed} / {n}' )
     print( f'Error:     {error} / {n}' )
     
+  def Submit_Grid_Jobs( self ):
+    sim_ids = self.sim_ids
+    for sim_id in sim_ids:
+      status = self.Get_Simulation_Status( sim_id ):
+      if status in ['failed', 'error']:
+        print f"Submiting: {sim_id}"
+        self.Submit_Simulation_Job( sim_id )
+      
+  
     
   def Delete_Simulation_Snapshots( self, sim_id ):
     sim_dir = self.Get_Simulation_Directory( sim_id )
