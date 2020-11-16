@@ -363,7 +363,6 @@ class Simulation_Grid:
         submitted += 1
         sim_in_queue, q_line = self.Find_Simulation_In_Queue( sim_id, queue )
         if sim_in_queue:
-          running += 1
           elem = q_line[0]
           while elem == " ":
             q_line = q_line[1:]
