@@ -397,6 +397,20 @@ class Simulation_Grid:
     print( f'Failed:    {failed} / {n}' )
     print( f'Error:     {error} / {n}' )
     
+  def Cancel_Simulation_Job( self, sim_id ):
+    status = self.Get_Simulation_Status( sim_id )
+    sim_in_queue, q_line = self.Find_Simulation_In_Queue( sim_id, queue )
+    if sim_in_queue:
+      job_id = q_line.split( ' ')[0]
+      command = f'scancel {job_id}'
+      print( command )
+      # os.system( command )
+      
+  def Cancel_Grid_Jobs( self ):
+    sim_ids = self.sim_ids
+    for sim_id in sim_ids:
+      self.Cancel_Simulation_Job( sim_id )
+    
   def Submit_Grid_Jobs( self ):
     sim_ids = self.sim_ids
     self.Get_Grid_Status()
