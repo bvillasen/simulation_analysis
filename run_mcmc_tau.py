@@ -26,7 +26,7 @@ comparable_data = Get_Comparable_Composite_T0_tau()
 comparable_grid = Get_Comparable_Composite_T0_tau_from_Grid( comparable_data, SG )
 
 
-param_to_fit = 1
+param_to_fit = 3
 param_name = SG.parameters[param_to_fit]['name']
 param_vals = SG.parameters[param_to_fit]['values']
 

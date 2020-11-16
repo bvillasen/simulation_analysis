@@ -21,7 +21,7 @@ def Load_Grackle_File( grackle_file_name ):
   return data_out
   
   
-def Shift_UVB_Rates( delta_z, rates, param_name ):
+def Shift_UVB_Rates( delta_z, rates, param_name, interp_log=True ):
   keys_He = { 'Chemistry':['k25'], 'Photoheating':['piHeII']}
   keys_H  = { 'Chemistry':['k24', 'k26'], 'Photoheating':['piHI', 'piHeI']}
   if param_name == 'scale_H': keys = keys_H
@@ -35,7 +35,9 @@ def Shift_UVB_Rates( delta_z, rates, param_name ):
   for root_key in root_keys:
     for key in keys[root_key]:
       rate_0 = rates[root_key][key].copy()
+      if interp_log: rate_0 = np.log10( rate_0 )
       rate_new = np.interp( z_0, z_new, rate_0 )
+      if interp_log: rate_new = 10**rate_new
       rates[root_key][key] = rate_new
 
 
