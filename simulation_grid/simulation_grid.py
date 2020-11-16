@@ -399,8 +399,9 @@ class Simulation_Grid:
     
   def Submit_Grid_Jobs( self ):
     sim_ids = self.sim_ids
+    self.Get_Grid_Status()
     for sim_id in sim_ids:
-      status = self.Get_Simulation_Status( sim_id )
+      status = self.Grid[sim_id]
       print( f' {sim_id}: {status}')
       if status in ['failed', 'error', 'not submitted']:
         print( f'Submiting: {sim_id}')
