@@ -390,6 +390,7 @@ class Simulation_Grid:
       if status == 'error':
         error += 1
       print( f' id: {sim_id}    status: {status}   {queue_line}')
+      self.Grid[sim_id]['status'] = status
     print( f'Submitted: {submitted} / {n}' )
     print( f'Running:   {running} / {n}' )
     print( f'Finished:  {finished} / {n}' )
