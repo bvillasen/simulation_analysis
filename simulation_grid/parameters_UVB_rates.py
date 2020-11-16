@@ -25,7 +25,7 @@ param_UVB_Rates[3]['values'] = [ -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0 ]
 
 
 from simulation_parameters import grid_name, system
-if sysrem == 'Shamrock':
+if system == 'Shamrock':
   from parameters_UVB_rates_scale_He  import param_UVB_Rates as param_UVB_Rates_scale_He
   from parameters_UVB_rates_scale_H   import param_UVB_Rates as param_UVB_Rates_scale_H
   from parameters_UVB_rates_deltaZ_He import param_UVB_Rates as param_UVB_Rates_deltaZ_He
