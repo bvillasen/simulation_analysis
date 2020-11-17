@@ -6,7 +6,8 @@ system = 'Lux'
 # grid_name = 'scale_He'
 # grid_name = 'scale_H'
 # grid_name = 'deltaZ_He'
-grid_name = 'deltaZ_H'
+# grid_name = 'deltaZ_H'
+# grid_name = 'grid_small'
 
 if system == 'Lux':
   root_dir   = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
