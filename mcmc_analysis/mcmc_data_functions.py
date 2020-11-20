@@ -14,6 +14,109 @@ from data_optical_depth import *
 
 
 
+def are_floats_equal( a, b, epsilon=1e-10 ):
+  if np.abs( a - b ) < epsilon: return True
+  else: return False
+    
+  
+  
+def Find_Parameter_Value_Near_IDs( param_id, param_value, parameters ):
+  param_name = parameters[param_id]['name']    
+  grid_param_values = np.array(parameters[param_id]['values'])
+  param_min = grid_param_values.min() 
+  param_max = grid_param_values.max()
+  if param_value < param_min or param_value > param_max:
+    print( f'ERROR: Paramneter Value outside {param_name} Range: [ {param_min} , {param_max} ] ')
+    exit(-1)
+  p_val_id_l, p_val_id_r = 0, 0
+  diff_l, diff_r = -np.inf, np.inf
+  for v_id, p_val in enumerate(grid_param_values):
+    diff = p_val - param_value
+    if diff > 0 and diff < diff_r: p_val_id_r, diff_r = v_id, diff
+    if diff < 0 and diff > diff_l: p_val_id_l, diff_l = v_id, diff  
+    if diff == 0: 
+      if i < len(grid_param_values) -1:
+        param_id_l = v_id
+        param_id_r = v_id + 1
+      else:
+        param_id_l = v_id - 1
+        param_id_r = v_id
+      break
+  return p_val_id_l, p_val_id_r
+        
+
+
+def Get_Parameter_Grid( param_values, parameters ):
+  parameter_grid = {}
+  for p_id, p_val in enumerate(param_values):
+    parameter_grid[p_id] = {}
+    v_id_l, v_id_r = Find_Parameter_Value_Near_IDs( p_id, p_val, parameters )
+    parameter_grid[p_id]['v_id_l'] = v_id_l
+    parameter_grid[p_id]['v_id_r'] = v_id_r
+    parameter_grid[p_id]['v_l'] = parameters[p_id]['values'][v_id_l]
+    parameter_grid[p_id]['v_r'] = parameters[p_id]['values'][v_id_r]
+  return parameter_grid
+  
+
+
+def Get_Simulation_ID_From_Coordinates( sim_coords, SG ):
+  grid = SG.Grid
+  parameters = SG.parameters
+  param_ids = parameters.keys()
+  key = ''
+  for param_id in param_ids:
+    p_key = parameters[param_id]['key']
+    key += f'_{p_key}{sim_coords[param_id]}'
+  key = key[1:]
+  sim_id = SG.coords[key]
+  # print(sim_coords, key, sim_id)
+  return sim_id
+
+# linear_m = np.array([ -1.5, 2.5, -1.1, 3.0])
+# linear_b = np.array([ 2.0, -0.5, 5.1, -4.0])
+def Get_Value_From_Simulation( sim_coords, data_to_interpolate, field, sub_field, SG ):
+  sim_id = Get_Simulation_ID_From_Coordinates( sim_coords, SG )
+  sim = SG.Grid[sim_id]
+  param_values = sim['parameter_values']
+  # value = (linear_m * param_values + linear_b).sum()
+  value = data_to_interpolate[sim_id][field][sub_field]
+  return value
+ 
+
+
+def Interpolate_MultiDim( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, parameter_grid=None, param_id=None, sim_coords_before=None ):
+  param_values = np.array([ p0, p1, p2, p3 ])
+  n_param = len(param_values)
+  if param_id == None: param_id = n_param - 1
+  if sim_coords_before == None:  sim_coords_before = [ -1 for param_id in range(n_param)] 
+  if parameter_grid == None: parameter_grid = Get_Parameter_Grid( param_values, SG.parameters )
+  
+  sim_coords_l = sim_coords_before.copy()
+  sim_coords_r = sim_coords_before.copy()
+  
+  v_id_l = parameter_grid[param_id]['v_id_l']
+  v_id_r = parameter_grid[param_id]['v_id_r']
+  p_val_l = parameter_grid[param_id]['v_l']
+  p_val_r = parameter_grid[param_id]['v_r']
+  sim_coords_l[param_id] = v_id_l
+  sim_coords_r[param_id] = v_id_r
+  p_val = param_values[param_id]
+  if p_val < p_val_l or p_val > p_val_r:
+    print( ' ERROR: Parameter outside left and right values')
+    exit()
+  delta = ( p_val - p_val_l ) / ( p_val_r - p_val_l )  
+  if param_id == 0:
+    value_l = Get_Value_From_Simulation( sim_coords_l, data_to_interpolate, field, sub_field, SG )
+    value_r = Get_Value_From_Simulation( sim_coords_r, data_to_interpolate, field, sub_field, SG )
+    value_interp = delta*value_r + (1-delta)*value_l 
+    return value_interp
+  
+  value_l = Interpolate_MultiDim( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_l )
+  value_r = Interpolate_MultiDim( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_r )
+  value_interp = delta*value_r + (1-delta)*value_l
+  return value_interp
+
+
 
 def Interpolate_Comparable_1D( param_id, param_value,  comparable_grid, SG ):
   parameters = SG.parameters
@@ -22,7 +125,7 @@ def Interpolate_Comparable_1D( param_id, param_value,  comparable_grid, SG ):
   param_max = max(param_vals)
   param_min = min(param_vals) 
   if param_value < param_min or param_value > param_max:
-    print( f'ERROR: Paramneter Value outside {param_name} Range: [ {param_min} , {param_max} ] ')
+    print( f'ERROR: Parameter Value outside {param_name} Range: [ {param_min} , {param_max} ] ')
     exit(-1)
   #find closest simulations 
   sim_ids = SG.sim_ids
@@ -114,8 +217,9 @@ def Get_Comparable_Composite_T0_tau():
   comparable = {}
   comparable['T0'] = comparable_T0
   comparable['tau'] = comparable_tau
+  comparable['T0+tau'] = {}
   for key in ['z', 'mean', 'sigma']:
-    comparable[key] = np.concatenate( [ comparable_T0[key], comparable_tau[key] ])
+    comparable['T0+tau'][key] = np.concatenate( [ comparable_T0[key], comparable_tau[key] ])
   return comparable
 
 
@@ -130,8 +234,9 @@ def Get_Comparable_Composite_T0_tau_from_Grid( comparable_data, SG ):
     comparable_grid[sim_id] = {}
     comparable_grid[sim_id]['T0'] = comparable_T0_grid[sim_id]
     comparable_grid[sim_id]['tau'] = comparable_tau_grid[sim_id]
+    comparable_grid[sim_id]['T0+tau'] = {}
     for key in ['z', 'mean']:
-      comparable_grid[sim_id][key] = np.concatenate( [ comparable_T0_grid[sim_id][key], comparable_tau_grid[sim_id][key] ])
+      comparable_grid[sim_id]['T0+tau'][key] = np.concatenate( [ comparable_T0_grid[sim_id][key], comparable_tau_grid[sim_id][key] ])
   return comparable_grid
 
 def Get_Comparable_Tau_from_Grid( comparable_data, SG ):

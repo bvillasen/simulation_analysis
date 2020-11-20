@@ -74,11 +74,14 @@ class Simulation_Grid:
       sim_grid[sim_id] = {}
       sim_grid[sim_id]['param_indices'] = sim_param_indx_grid[sim_id]
       name = 'S{0:03}'.format( sim_id )
+      coords = ''
       for param_id in range(n_param):
         param = parameters[param_id]
         param_key = param['key']
         name += f'_{param_key}{sim_param_indx_grid[sim_id][param_id]}'
-      sim_grid[sim_id]['key'] = name 
+        coords += f'_{param_key}{sim_param_indx_grid[sim_id][param_id]}'
+      sim_grid[sim_id]['key'] = name
+      sim_grid[sim_id]['coords'] = coords[1:] 
 
     
     for sim_id in range( n_sims ):
@@ -91,9 +94,24 @@ class Simulation_Grid:
         param_val = parameters[param_id]['values'][param_indx]
         sim_parameters[param_name] = param_val
       sim_grid[sim_id]['parameters'] = sim_parameters
+    
+    coords = {}  
+    for sim_id in range( n_sims ):
+      coords[sim_grid[sim_id]['coords']] = sim_id
       
+    
+    for sim_id in range( n_sims ):
+      parameter_values = []
+      for p_id in range(n_param):
+        p_name = parameters[p_id]['name']
+        p_val = sim_grid[sim_id]['parameters'][p_name]
+        parameter_values.append( p_val )
+      sim_grid[sim_id]['parameter_values'] = np.array( parameter_values )
+      
+        
     self.Grid = sim_grid
     self.sim_ids = self.Grid.keys()
+    self.coords = coords
     
   def Create_Grid_Directory_Structure( self ):
     n_sims = self.n_simulations

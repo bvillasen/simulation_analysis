@@ -13,6 +13,10 @@ from mcmc_functions import *
 from mcmc_data_functions import *
 from data_thermal_history import *
 
+output_dir = root_dir + 'fit_results_composite/'
+create_directory( output_dir )
+
+load_mcmc_stats = True
 
 
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
@@ -23,22 +27,55 @@ comparable_data = Get_Comparable_Composite_T0_tau()
 comparable_grid = Get_Comparable_Composite_T0_tau_from_Grid( comparable_data, SG )
 
 
-parameters = SG.parameters
-param_id = 0
-param_name = parameters[param_id]['name']
+field = 'T0+tau'
+stats_file = output_dir + 'fit_mcmc.pkl'
 
-param_value = 0.45
-param_vals = parameters[param_id]['values']
-param_max = max(param_vals)
-param_min = min(param_vals) 
 
-#find closest simulations 
-sim_ids = SG.sim_ids
-sim_id_l, sim_id_r = 0, 0
-diff_l, diff_r = -np.inf, np.inf
-for sim_id in sim_ids:
-  sim_params = SG.Grid[sim_id]
-  sim_param_val = sim_params['parameters'][param_name]
-  diff = sim_param_val - param_value
-  if diff > 0 and diff < diff_r: sim_id_r, diff_r = sim_id, diff
-  if diff < 0 and diff > diff_l: sim_id_l, diff_l = sim_id, diff  
+if load_mcmc_stats:
+  
+  print( f'Loading File: {stats_file}')
+  stats = pickle.load( open( stats_file, 'rb' ) )
+
+
+else:
+  
+  nIter = 200000 
+  nBurn = nIter / 5
+  nThin = 1
+  model, params_mcmc = mcmc_model_4D( comparable_data, comparable_grid, field, 'mean', SG )
+  MDL = pymc.MCMC( model )  
+  MDL.sample( iter=nIter, burn=nBurn, thin=nThin )
+  stats = MDL.stats()
+
+  cwd = os.getcwd()
+  os.chdir( output_dir )
+
+  f = open( stats_file, 'wb' )
+  pickle.dump( stats, f)
+  print ( f'Saved File: {out_file_name}' )
+  pymc.Matplot.plot(MDL)  
+
+  labels, samples = [], []
+  for p_id in params_mcmc.keys():
+    param = params_mcmc[p_id]
+    labels.append( param['name'] )
+    samples.append( param['sampler'].trace())
+  samples = np.array( samples ).T
+
+  import corner
+  corner_fig = corner.corner(samples[:,:], labels=labels )
+  corner_fig.savefig( 'corner_fig.png' )  
+
+  os.chdir( cwd )  
+
+
+
+
+
+
+
+
+
+
+
+
