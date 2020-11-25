@@ -220,6 +220,7 @@ class Simulation_Grid:
     cwd = os.getcwd()
     os.chdir( sim_dir )
     if partition == 'comp-astro': partition_key = 'comp'
+    if partition == 'gpuq':       partition_key = 'gpu'
     command = f'submit_script {partition_key} submit_job_lux'
     print( f'Changed Directory to: {sim_dir}')
     print( f' Submitting: {command}' )
