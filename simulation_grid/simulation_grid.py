@@ -223,11 +223,11 @@ class Simulation_Grid:
     command = f'submit_script {partition_key} submit_job_lux'
     print( f'Changed Directory to: {sim_dir}')
     print( f' Submitting: {command}' )
-    # os.system( command )
-    # f = open("run_output.log", "a")
-    # f.write('Job Submitted.\n')
-    # f.close()
-    # os.chdir( cwd ) 
+    os.system( command )
+    f = open("run_output.log", "a")
+    f.write('Job Submitted.\n')
+    f.close()
+    os.chdir( cwd ) 
   
   def Fit_Simulation_Phase_Diagram( self, sim_id ):
     print( f' Fitting Simulation: {sim_id}')
@@ -269,7 +269,6 @@ class Simulation_Grid:
     run_file = cwd + '/phase_diagram/fit_phase_diagram_mpi.py'
     parameters = sim_dir + 'analysis_files/'
     command = f'mpirun -n {n_mpi} --map-by ppr:{n_mpi}:node --oversubscribe python {run_file} {parameters}'
-    # command = f'mpirunlux {n_mpi} {n_mpi} python {run_file} {parameters}'
     print( f' Submitting: {command}' )
     os.system( command )
     
@@ -441,7 +440,7 @@ class Simulation_Grid:
     n_submitted = 0
     for sim_id in sim_ids:
       status = self.Grid[sim_id]['status']
-      print( f' {sim_id}: {status}')
+      # print( f' {sim_id}: {status}')
       if n_submit != None:
         if n_submitted >= n_submit: continue
       if status in ['failed', 'error', 'not submitted']:
