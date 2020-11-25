@@ -2,12 +2,14 @@ import sys, os, time
 import numpy as np
 import h5py as h5
 import pymc
+import pickle
 import matplotlib.pyplot as plt
 from tools import *
 from mcmc_data_functions import Interpolate_Comparable_1D, Interpolate_MultiDim
 
 
 def mcmc_model_4D( comparable_data, comparable_grid, field, sub_field, SG):
+  print( '\nRunning MCMC Sampler')
   parameters = SG.parameters
   param_ids = parameters.keys()
   params_mcmc = {}
@@ -49,4 +51,5 @@ def mcmc_model_1D( param_to_fit, comparable_data, comparable_grid, SG):
   return locals()
  
   
+
 
