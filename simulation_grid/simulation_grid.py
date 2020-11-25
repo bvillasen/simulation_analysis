@@ -429,9 +429,10 @@ class Simulation_Grid:
       print( command )
       os.system( command )
       
-  def Cancel_Grid_Jobs( self ):
+  def Cancel_Grid_Jobs( self, avoid=[] ):
     sim_ids = self.sim_ids
     for sim_id in sim_ids:
+      if sim_id in avoid: continue
       self.Cancel_Simulation_Job( sim_id )
     
   def Submit_Grid_Jobs( self ):
