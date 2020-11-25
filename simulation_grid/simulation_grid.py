@@ -120,7 +120,7 @@ class Simulation_Grid:
       dir_name = self.root_dir + sim_name
       create_directory( dir_name )
       
-  def Create_Submit_Job_Script( self, sim_id, save_file=True ):
+  def Create_Submit_Job_Script( self, sim_id, save_file=True, partition='gpu' ):
     
     root_dir = self.root_dir
     if root_dir[-1] != '/': root_dir += '/'
@@ -211,23 +211,23 @@ class Simulation_Grid:
     for sim_id in self.Grid.keys():
       self.Create_UVB_Rates_File( sim_id )
       
-  def Submit_Simulation_Job( self, sim_id ):
+  def Submit_Simulation_Job( self, sim_id, partition=None ):
     sim_dir = self.Get_Simulation_Directory( sim_id )
     job = self.job_parameters
-    partition = job['partition']
+    if partition == None: partition = job['partition']
     partition_key = partition
+    print( f'Submiting job to queue: {partition}')
     cwd = os.getcwd()
     os.chdir( sim_dir )
     if partition == 'comp-astro': partition_key = 'comp'
     command = f'submit_script {partition_key} submit_job_lux'
     print( f'Changed Directory to: {sim_dir}')
     print( f' Submitting: {command}' )
-    # subprocess.call( command.split() )
-    os.system( command )
-    f = open("run_output.log", "a")
-    f.write('Job Submitted.\n')
-    f.close()
-    os.chdir( cwd ) 
+    # os.system( command )
+    # f = open("run_output.log", "a")
+    # f.write('Job Submitted.\n')
+    # f.close()
+    # os.chdir( cwd ) 
   
   def Fit_Simulation_Phase_Diagram( self, sim_id ):
     print( f' Fitting Simulation: {sim_id}')
@@ -435,16 +435,20 @@ class Simulation_Grid:
       if sim_id in avoid: continue
       self.Cancel_Simulation_Job( sim_id )
     
-  def Submit_Grid_Jobs( self ):
+  def Submit_Grid_Jobs( self, n_submit=None, partition=None ):
     sim_ids = self.sim_ids
     self.Get_Grid_Status()
+    n_submitted = 0
     for sim_id in sim_ids:
       status = self.Grid[sim_id]['status']
       print( f' {sim_id}: {status}')
+      if n_submit != None:
+        if n_submitted >= n_submit: continue
       if status in ['failed', 'error', 'not submitted']:
         print( f'Submiting: {sim_id}')
-        self.Submit_Simulation_Job( sim_id )
-      
+        self.Submit_Simulation_Job( sim_id, partition=partition )
+        n_submitted += 1
+    print( f'Jobs Submitted: {n_submitted} ')
   
     
   def Delete_Simulation_Snapshots( self, sim_id ):
