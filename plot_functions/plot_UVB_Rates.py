@@ -1,6 +1,8 @@
 import os, sys
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
 
 def Plot_Grid_UVB_Rates( SG, output_dir ):
 
