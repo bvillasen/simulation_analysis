@@ -13,7 +13,7 @@ grid_name  = 'scale_H_photoion'
 
 
 if system == 'Lux':
-  root_dir   = f'/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/{grid_name}/'
+  root_dir   = f'/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
   cholla_dir = '/home/brvillas/cholla/'    
 
 if system == 'Shamrock':
