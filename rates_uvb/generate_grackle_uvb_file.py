@@ -24,8 +24,8 @@ def Load_Grackle_File( grackle_file_name ):
 def Shift_UVB_Rates( delta_z, rates, param_name, interp_log=False ):
   keys_He = { 'Chemistry':['k25'], 'Photoheating':['piHeII']}
   keys_H  = { 'Chemistry':['k24', 'k26'], 'Photoheating':['piHI', 'piHeI']}
-  if param_name == 'scale_H': keys = keys_H
-  elif param_name == 'scale_He': keys = keys_He
+  if param_name == 'shift_H': keys = keys_H
+  elif param_name == 'shift_He': keys = keys_He
   else:
     print( "ERROR: Wrong parameter name for UVB rates shift")
     exit(-1)
@@ -44,24 +44,42 @@ def Shift_UVB_Rates( delta_z, rates, param_name, interp_log=False ):
   
 
 
-def Modify_Rates_From_Grackle_File( grackle_file_name, scale_HI, scale_HeII, deltaZ_HI, deltaZ_HeII ):
+def Modify_Rates_From_Grackle_File( grackle_file_name, parameter_values ):
   grackle_data = Load_Grackle_File( grackle_file_name )
   rates_data = grackle_data.copy()
   
-  info = f'Rates for scale_HI:{scale_HI} scale_HeII:{scale_HeII} deltaZ_HI:{deltaZ_HI} deltaZ_HeII:{deltaZ_HeII}'
+  info = 'Rates for '
+  for p_name in parameter_values.keys():
+    p_val = parameter_values[p_name]
+    info += f' {p_name}:{p_val}' 
+  
+    if p_name == 'scale_H':
+      rates_data['UVBRates']['Chemistry']['k24'] *= p_val
+      rates_data['UVBRates']['Chemistry']['k26'] *= p_val
+      rates_data['UVBRates']['Photoheating']['piHI'] *= p_val
+      rates_data['UVBRates']['Photoheating']['piHeI'] *= p_val
+  
+    if p_name == 'scale_He':
+      rates_data['UVBRates']['Chemistry']['k25'] *= p_val
+      rates_data['UVBRates']['Photoheating']['piHeII'] *= p_val
+
+    if p_name == 'scale_H_photoion':
+      rates_data['UVBRates']['Chemistry']['k24'] *= p_val
+      rates_data['UVBRates']['Chemistry']['k26'] *= p_val
+    
+    if p_name == 'scale_H_photoheat':
+      rates_data['UVBRates']['Photoheating']['piHI'] *= p_val
+      rates_data['UVBRates']['Photoheating']['piHeI'] *= p_val
+  
+    if p_name == 'scale_He_photoion':  rates_data['UVBRates']['Chemistry']['k25'] *= p_val
+    if p_name == 'scale_He_photoheat': rates_data['UVBRates']['Photoheating']['piHeII'] *= p_val
+
+      
+ 
+    if p_name  == 'deltaZ_H': Shift_UVB_Rates( p_val, rates_data['UVBRates'], 'shift_H' )
+    if p_name  == 'deltaZ_He': Shift_UVB_Rates( p_val, rates_data['UVBRates'], 'shift_He' )
+
   rates_data['UVBRates']['info'] = info
-  
-  
-  rates_data['UVBRates']['Chemistry']['k24'] *= scale_HI
-  rates_data['UVBRates']['Chemistry']['k26'] *= scale_HI
-  rates_data['UVBRates']['Chemistry']['k25'] *= scale_HeII
-
-  rates_data['UVBRates']['Photoheating']['piHI']   *= scale_HI
-  rates_data['UVBRates']['Photoheating']['piHeI']  *= scale_HI
-  rates_data['UVBRates']['Photoheating']['piHeII'] *= scale_HeII
-
-  Shift_UVB_Rates( deltaZ_HI, rates_data['UVBRates'], 'scale_H' )
-  Shift_UVB_Rates( deltaZ_HeII, rates_data['UVBRates'], 'scale_He' )
   return rates_data
 
 
@@ -88,8 +106,8 @@ def Write_Rates_Grackle_File( out_file_name, rates ):
       
       
       
-def Generate_Modified_Rates_File( grackle_file_name, out_file_name, scale_HI, scale_HeII, deltaZ_HI, deltaZ_HeII  ):      
-  rates = Modify_Rates_From_Grackle_File( grackle_file_name, scale_HI, scale_HeII, deltaZ_HI, deltaZ_HeII )
+def Generate_Modified_Rates_File( grackle_file_name, out_file_name, parameter_values ):      
+  rates = Modify_Rates_From_Grackle_File( grackle_file_name, parameter_values )
   Write_Rates_Grackle_File( out_file_name, rates )
       
 

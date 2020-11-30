@@ -3,6 +3,94 @@ import numpy as np
 import pickle
 import matplotlib.pyplot as plt
 import pymc 
+import palettable
+
+
+def Plot_Corner( samples, labels, output_dir  ):
+  param_ids = samples.keys()
+  n_param = len( param_ids )
+  color = 'C0'
+  data_color = 'C9'
+  font_size = 15
+  label_size = 18
+  alpha = 0.6
+  fig_size = 5
+  space = 0.05
+  tick_label_size = 12
+  tick_length = 7
+  tick_width = 2
+  border_width = 2.0
+  n_bins_1D = 20
+  hist_1D_line_width = 2
+  hist_1D_line_color = 'C0'
+
+  n_bins_2D = 30
+  hist_2D_colormap = palettable.cmocean.sequential.Ice_20_r.mpl_colormap
+
+  fig, ax_l = plt.subplots(nrows=n_param, ncols=n_param, figsize=(fig_size*n_param,fig_size*n_param))
+  fig.subplots_adjust( wspace=space, hspace=space )
+
+  for j in range( n_param ):
+    for i in range( n_param ):
+
+      ax = ax_l[j][i]
+      plot_y_lables, plot_x_lables = False, False
+      plot_y_ticks  = True
+      if i == 0: plot_y_lables = True
+      if j == n_param-1: plot_x_lables = True 
+      if i == j: 
+        plot_y_lables = False
+        plot_y_ticks = False
+
+      if i > j:
+        ax.axis("off")
+        continue
+
+      if plot_x_lables: ax.tick_params(axis='x', which='major', direction='in', labelsize=tick_label_size, length=tick_length, width=tick_width )
+      else:             ax.tick_params(axis='x', which='major', direction='in', labelsize=0, length=tick_length, width=tick_width )
+      if plot_y_lables: ax.tick_params(axis='y', which='major', direction='in', labelsize=tick_label_size, length=tick_length, width=tick_width )
+      else:             ax.tick_params(axis='y', which='major', direction='in', labelsize=0, length=tick_length, width=tick_width )
+      if not plot_y_ticks: ax.tick_params(axis='y', which='major', length=0 )
+
+      if plot_y_lables:
+        if j == 0: y_label = ''
+        else: y_label = labels[samples[j]['name']]  
+        ax.set_ylabel( y_label, fontsize=label_size )
+
+      if plot_x_lables:
+        x_label = labels[samples[i]['name']]  
+        ax.set_xlabel( x_label, fontsize=label_size )
+
+      if i == j: plot_type = '1D'
+      if i < j:  plot_type = '2D'
+
+
+      if plot_type == '1D':
+        name  = samples[j]['name']
+        trace = samples[j]['trace']
+        hist, bin_edges = np.histogram( trace, bins=n_bins_1D ) 
+        bin_centers = ( bin_edges[:-1] + bin_edges[1:] ) / 2.
+        bin_width = bin_centers[0] - bin_centers[1]  
+        ax.step( bin_centers, hist, where='mid', color=hist_1D_line_color, linewidth=hist_1D_line_width  )
+
+      if plot_type == '2D':
+        trace_y = samples[j]['trace']
+        trace_x = samples[i]['trace']
+        hist, x_edges, y_edges = np.histogram2d( trace_x, trace_y, bins=[n_bins_2D, n_bins_2D] )
+        hist = hist.astype( np.float ) 
+        hist = hist.T / hist.sum()
+        hist_mean = hist.mean()
+        hist_sigma = np.sqrt( ((hist-hist_mean)**2).mean() )
+        extent = [ trace_x.min(), trace_x.max(), trace_y.min(), trace_y.max() ]
+        ax.imshow( hist[::-1], cmap=hist_2D_colormap, extent=extent, aspect='auto' )
+        ax.contour( hist, [hist_sigma, 2* hist_sigma], extent=extent )
+
+      [sp.set_linewidth(border_width) for sp in ax.spines.values()]
+
+  figure_name = output_dir + 'corner.png'
+  fig.savefig( figure_name, bbox_inches='tight', dpi=300 )
+  print( f'Saved Figure: {figure_name}' )
+
 
 def Plot_MCMC_Stats( stats, MDL, params_mcmc,  stats_file, output_dir ):
   cwd = os.getcwd()

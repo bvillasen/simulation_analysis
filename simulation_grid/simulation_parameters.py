@@ -7,8 +7,10 @@ system = 'Lux'
 # grid_name = 'scale_H'
 # grid_name = 'deltaZ_He'
 # grid_name = 'deltaZ_H'
-# grid_name = 'grid_small'
-grid_name = 'grid_large'
+# grid_name = 'grid_16'
+# grid_name = 'grid_256'
+grid_name  = 'scale_H_photoion'
+
 
 if system == 'Lux':
   root_dir   = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'

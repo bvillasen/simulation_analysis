@@ -198,13 +198,9 @@ class Simulation_Grid:
     grackle_in_file_name =  'rates_uvb/CloudyData_UVB_Puchwein2019_cloudy.h5' 
     param_values =  self.Get_Simulation_Parameter_Values( sim_id )
     sim_dir = self.Get_Simulation_Directory( sim_id )
-    
-    scale_HI    = param_values['scale_H']
-    scale_HeII  = param_values['scale_He']
-    deltaZ_HI   = param_values['deltaZ_H']
-    deltaZ_HeII = param_values['deltaZ_He']
+     
     out_file_name = sim_dir + 'UVB_rates.h5'
-    Generate_Modified_Rates_File( grackle_in_file_name, out_file_name, scale_HI, scale_HeII, deltaZ_HI, deltaZ_HeII  )
+    Generate_Modified_Rates_File( grackle_in_file_name, out_file_name, param_values  )
           
   def Create_UVB_Rates_Files( self ):
     print("Creating UVB Rates Files:")
