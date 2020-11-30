@@ -22,14 +22,14 @@ sim_ids = SG.sim_ids
 comparable_data = Get_Comparable_Composite_T0_tau()
 comparable_grid = Get_Comparable_Composite_T0_tau_from_Grid( comparable_data, SG )
 
-
-param_to_fit = 3
+field = 'T0+tau'
+param_to_fit = 1
 param_name = SG.parameters[param_to_fit]['name']
 
 nIter = 100000 
 nBurn = nIter / 5
 nThin = 1
-model = mcmc_model_1D( param_to_fit, comparable_data, comparable_grid, SG )
+model = mcmc_model_1D( param_to_fit, comparable_data, comparable_grid, field, SG )
 MDL = pymc.MCMC( model )  
 MDL.sample( iter=nIter, burn=nBurn, thin=nThin )
 stats = MDL.stats()
@@ -60,15 +60,13 @@ for observable in observables_to_sample:
   observables[observable]['mean'] = np.array( obs_mean )
   observables[observable]['sigma'] = np.array( obs_sigma ) 
 
-  
+
 
 
 output_dir = root_dir + 'fit_results_composite/'
 create_directory( output_dir )
 
 
-# plot_type = 'sampling'
-plot_type = 'grid'
 
 nrows = 1
 ncols = 2
@@ -105,6 +103,9 @@ for plot_type in ['grid', 'sampling']:
       if param_name == 'scale_H': label_param = r'$\beta_{HI}$' 
       if param_name == 'deltaZ_He': label_param = r'$\Delta z_{HeII}$' 
       if param_name == 'deltaZ_H': label_param = r'$\Delta z_{HI}$' 
+      if param_name == 'scale_H_photoion': label_param = r'$\beta_{HI}$ ionization'
+      if param_name == 'scale_H_photoheat': label_param = r'$\beta_{HI}$ heating' 
+      
       label =  label_param + ' $= {0}$'.format(param_val)
       ax.plot( z, obs_vals , label=label, zorder=1 )
 
@@ -143,6 +144,8 @@ for plot_type in ['grid', 'sampling']:
       param_val = SG.Grid[sim_id]['parameters'][param_name]
       if param_name == 'scale_H': label_param = r'$\beta_{HI}$' 
       if param_name == 'scale_He': label_param = r'$\beta_{HeII}$' 
+      if param_name == 'scale_H_photoion': label_param = r'$\beta_{HI}$ ionization'
+      if param_name == 'scale_H_photoheat': label_param = r'$\beta_{HI}$ heating' 
       label =  label_param + ' $= {0}$'.format(param_val)
       ax.plot( z, obs_vals , label=label, zorder=1 )
 

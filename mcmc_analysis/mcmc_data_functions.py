@@ -161,7 +161,7 @@ def Interpolate_MultiDim( p0, p1, p2, p3, data_to_interpolate, field, sub_field,
 
 
 
-def Interpolate_Comparable_1D( param_id, param_value,  comparable_grid, SG ):
+def Interpolate_Comparable_1D( param_id, param_value,  comparable_grid, field, SG ):
   parameters = SG.parameters
   param_name = parameters[param_id]['name']
   param_vals = parameters[param_id]['values']
@@ -183,8 +183,8 @@ def Interpolate_Comparable_1D( param_id, param_value,  comparable_grid, SG ):
   param_l = SG.Grid[sim_id_l]['parameters'][param_name]
   param_r = SG.Grid[sim_id_r]['parameters'][param_name]    
   delta = param_value - param_l 
-  mean_l = comparable_grid[sim_id_l]['mean']
-  mean_r = comparable_grid[sim_id_r]['mean'] 
+  mean_l = comparable_grid[sim_id_l][field]['mean']
+  mean_r = comparable_grid[sim_id_r][field]['mean'] 
   mean = (mean_r - mean_l ) / ( param_r - param_l ) * delta  + mean_l 
   return mean
 
