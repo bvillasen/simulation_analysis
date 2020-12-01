@@ -120,7 +120,7 @@ class Simulation_Grid:
       dir_name = self.root_dir + sim_name
       create_directory( dir_name )
       
-  def Create_Submit_Job_Script( self, sim_id, save_file=True, partition='gpu' ):
+  def Create_Submit_Job_Script( self, sim_id, save_file=True, partition='gpuq' ):
     
     root_dir = self.root_dir
     if root_dir[-1] != '/': root_dir += '/'
@@ -129,6 +129,7 @@ class Simulation_Grid:
     job_params = self.job_parameters.copy()
     job_params['name'] = name
     job_params['sim_directory'] = root_dir + name
+    job_params['partition'] = partition
     Create_Submit_Job_Script_Lux( job_params, save_file=save_file )
   
   def Create_All_Submit_Job_Scripts( self, save_file=True ):
@@ -212,6 +213,7 @@ class Simulation_Grid:
     job = self.job_parameters
     if partition == None: partition = job['partition']
     partition_key = partition
+    self.Create_Submit_Job_Script( sim_id, save_file=True, partition=partition )
     print( f'Submiting job to queue: {partition}')
     cwd = os.getcwd()
     os.chdir( sim_dir )
