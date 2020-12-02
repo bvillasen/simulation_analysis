@@ -253,6 +253,39 @@ def load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid,  p
   return data_out
 
 
+def load_cholla_snapshot_file( nSnap, inDir, cool=False, dm=True, cosmo=True, hydro=True,  ):
+  
+  partFileName = inDir + 'particles_{0:03}.h5'.format(nSnap)
+  gridFileName = inDir + 'grid_{0:03}.h5'.format(nSnap)
+
+  outDir = {'dm':{}, 'gas':{} }
+  if hydro:  
+    data_grid = h5.File( gridFileName, 'r' )
+    fields_data = list(data_grid.keys())
+    for key in list(data_grid.attrs.keys()): outDir[key] = data_grid.attrs[key]
+    fields_grid = fields_data
+    for field in fields_grid:
+      if field not in fields_data: continue
+      outDir['gas'][field] = data_grid[field]
+
+  if dm:
+    data_part = h5.File( partFileName, 'r' )
+    fields_data = list(data_part.keys())
+    fields_part = [ 'density',  'grav_potential', 'pos_x', 'pos_y', 'pos_z', 'vel_x', 'vel_y', 'vel_z' ]
+    # current_z = data_part.attrs['current_z']
+    # current_a = data_part.attrs['current_a']
+    # outDir['current_a'] = current_a
+    # outDir['current_z'] = current_z
+    for key in list(data_part.attrs.keys()): outDir[key] = data_part.attrs[key]
+    if cosmo:
+      current_z = data_part.attrs['current_z']
+      print(("Loading Cholla Snapshot: {0}       current_z: {1}".format( nSnap, current_z) ))
+    for field in fields_part:
+      if field not in fields_data: continue
+      # print field
+      outDir['dm'][field] = data_part[field]
+
+  return outDir
 
 # 
 # #Load Snapshot Data

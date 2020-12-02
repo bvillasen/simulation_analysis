@@ -2,7 +2,22 @@ import os, sys
 import numpy as np
 
 
-def fit_thermal_parameters_mcmc( n_file, values_to_fit, fit_dir ):
+def get_phase_diagram_bins( density, temperature, bins_dens, bins_temp  ):
+  density = np.log10(density).flatten()
+  temperature = np.log10(temperature).flatten()
+  bins_dens = np.log10(bins_dens)
+  bins_temp = np.log10(bins_temp)
+  if density.min() < bins_dens[0]:  print("ERROR: Density out of range")
+  if density.max() > bins_dens[-1]: print("ERROR: Density out of range")
+  if temperature.min() < bins_temp[0]:  print("ERROR: Temperature out of range")
+  if temperature.max() > bins_temp[-1]: print("ERROR: Temperature out of range")
+
+  phase, yedges, xedges  = np.histogram2d( density, temperature, bins=[bins_dens, bins_temp] )
+  xcenters = (xedges[:-1] + xedges[1:])/2
+  ycenters = (yedges[:-1] + yedges[1:])/2
+  return ycenters, xcenters, phase
+
+def fit_thermal_parameters_mcmc( n_file, values_to_fit, fit_dir, save_file=True ):
   import pymc
   import pickle
 
@@ -35,10 +50,11 @@ def fit_thermal_parameters_mcmc( n_file, values_to_fit, fit_dir ):
   sigma_gamma = linear_MDL.stats()['gamma']['standard deviation'] 
   print( f'\nFit:   T0: {mean_T0:.3f} +- {sigma_T0:.3f}      gamma:{mean_gamma:.3f} +- {sigma_gamma:.3f}' )
   # plot(linear_MDL)
-  outFileName = fit_dir + f'fit_{n_file}.pkl'
-  f = open( outFileName, "wb")
-  pickle.dump( linear_MDL.stats(), f)
-  print( f'Saved File: {outFileName}' )
+  if save_file:
+    outFileName = fit_dir + f'fit_{n_file}.pkl'
+    f = open( outFileName, "wb")
+    pickle.dump( linear_MDL.stats(), f)
+    print( f'Saved File: {outFileName}' )
   return linear_MDL.stats()
 
 
