@@ -116,6 +116,7 @@ def Plot_MCMC_Stats( stats, MDL, params_mcmc,  stats_file, output_dir ):
 
 def Plot_Observables( observables_samples, comparable_data, params, SG, plot_type, output_dir):
 
+
   nrows = 1
   ncols = 2
   color = 'C0'
@@ -129,7 +130,8 @@ def Plot_Observables( observables_samples, comparable_data, params, SG, plot_typ
   obs_z     = observables_samples[obs_name]['z']
   obs_mean  = observables_samples[obs_name]['mean']
   obs_sigma = observables_samples[obs_name]['sigma'] 
-
+  
+  sim_ids = SG.sim_ids
   if plot_type == 'sampling':
     label = ''
     for p_id in params.keys():
@@ -145,12 +147,13 @@ def Plot_Observables( observables_samples, comparable_data, params, SG, plot_typ
       data_sim = SG.Grid[sim_id]['analysis']
       z = data_sim['z']
       obs_vals = data_sim[obs_name]
-      param_val = SG.Grid[sim_id]['parameters'][param_name]
-      if param_name == 'scale_He': label_param = r'$\beta_{HeII}$' 
-      if param_name == 'scale_H': label_param = r'$\beta_{HI}$' 
-      if param_name == 'deltaZ_He': label_param = r'$\Delta z_{HeII}$' 
-      if param_name == 'deltaZ_H': label_param = r'$\Delta z_{HI}$' 
-      label =  label_param + ' $= {0}$'.format(param_val)
+      # param_val = SG.Grid[sim_id]['parameters'][param_name]
+      # if param_name == 'scale_He': label_param = r'$\beta_{HeII}$' 
+      # if param_name == 'scale_H': label_param = r'$\beta_{HI}$' 
+      # if param_name == 'deltaZ_He': label_param = r'$\Delta z_{HeII}$' 
+      # if param_name == 'deltaZ_H': label_param = r'$\Delta z_{HI}$' 
+      # label =  label_param + ' $= {0}$'.format(param_val)
+      label = ''
       ax.plot( z, obs_vals , label=label, zorder=1 )
 
   data_set = comparable_data[obs_name]
@@ -186,10 +189,11 @@ def Plot_Observables( observables_samples, comparable_data, params, SG, plot_typ
       data_sim = SG.Grid[sim_id]['analysis']
       z = data_sim['z']
       obs_vals = data_sim[obs_name]
-      param_val = SG.Grid[sim_id]['parameters'][param_name]
-      if param_name == 'scale_H': label_param = r'$\beta_{HI}$' 
-      if param_name == 'scale_He': label_param = r'$\beta_{HeII}$' 
-      label =  label_param + ' $= {0}$'.format(param_val)
+      # param_val = SG.Grid[sim_id]['parameters'][param_name]
+      # if param_name == 'scale_H': label_param = r'$\beta_{HI}$' 
+      # if param_name == 'scale_He': label_param = r'$\beta_{HeII}$' 
+      # label =  label_param + ' $= {0}$'.format(param_val)
+      lavel = ''
       ax.plot( z, obs_vals , label=label, zorder=1 )
 
   data_set = comparable_data[obs_name]

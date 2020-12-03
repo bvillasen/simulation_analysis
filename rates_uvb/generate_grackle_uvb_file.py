@@ -71,7 +71,7 @@ def Extend_Redshift( max_delta_z, z ):
   z_new = np.array( z_new )
   return z_new
   
-def Interpoate_Rate( z_new, z_0, rate, interp_log=True ):
+def Interpoate_Rate( z_new, z_0, rate, interp_log=False ):
   if interp_log: rate = np.log10(rate)
   rate_new = np.interp( z_new, z_0, rate )
   if interp_log: rate_new = 10**rate_new

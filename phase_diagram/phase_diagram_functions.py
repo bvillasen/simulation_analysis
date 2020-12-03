@@ -13,6 +13,9 @@ def get_phase_diagram_bins( density, temperature, bins_dens, bins_temp  ):
   if temperature.max() > bins_temp[-1]: print("ERROR: Temperature out of range")
 
   phase, yedges, xedges  = np.histogram2d( density, temperature, bins=[bins_dens, bins_temp] )
+  phase = phase.T
+  phase = phase.astype(np.float)
+  phase /= phase.sum()
   xcenters = (xedges[:-1] + xedges[1:])/2
   ycenters = (yedges[:-1] + yedges[1:])/2
   return ycenters, xcenters, phase
@@ -94,6 +97,7 @@ def get_density_tyemperature_values_to_fit( pd_data, delta_min=-1, delta_max=1, 
     temp_slice = pd[:, overdensity_index].copy()
     slice_sum = temp_slice.sum()
     if slice_sum == 0: continue
+    # if index == 0:print( temp_slice.max() )
     max_val, sigma, sigma_l, sigma_r = get_max_and_sigma( fraction_enclosed, temp_slice, log_temp_vals,  method='asymmetric'   )
     dens_val = log_dens_vals[overdensity_index]
     density_values.append( dens_val )

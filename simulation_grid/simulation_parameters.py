@@ -6,11 +6,12 @@ system = 'Lux'
 # grid_name = 'scale_He'
 # grid_name = 'scale_H'
 # grid_name = 'deltaZ_He'
-grid_name = 'deltaZ_H'
+# grid_name = 'deltaZ_H'
 # grid_name = 'grid_16'
 # grid_name = 'grid_256'
 # grid_name  = 'scale_H_photoion'
 # grid_name  = 'scale_H_photoheat'
+grid_name = 'grid_81'
 
 
 if system == 'Lux':

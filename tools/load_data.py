@@ -253,10 +253,13 @@ def load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid,  p
   return data_out
 
 
-def load_cholla_snapshot_file( nSnap, inDir, cool=False, dm=True, cosmo=True, hydro=True,  ):
+def load_cholla_snapshot_file( nSnap, inDir, cool=False, dm=True, cosmo=True, hydro=True, file_name=None  ):
   
-  partFileName = inDir + 'particles_{0:03}.h5'.format(nSnap)
-  gridFileName = inDir + 'grid_{0:03}.h5'.format(nSnap)
+  if file_name != None:
+    gridFileName = inDir + file_name
+  else:
+    partFileName = inDir + 'particles_{0:03}.h5'.format(nSnap)
+    gridFileName = inDir + 'grid_{0:03}.h5'.format(nSnap)
 
   outDir = {'dm':{}, 'gas':{} }
   if hydro:  
