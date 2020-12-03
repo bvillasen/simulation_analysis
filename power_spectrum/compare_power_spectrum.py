@@ -2,10 +2,9 @@ import os, sys
 import numpy as np
 import pickle
 import matplotlib.pyplot as plt
-sys.path.append('tools')
-from tools import *
-#Append analysis directories to path
-extend_path()
+root_dir = os.path.dirname(os.getcwd()) + '/'
+subDirectories = [x[0] for x in os.walk(root_dir)]
+sys.path.extend(subDirectories)
 from load_data import load_snapshot_data_distributed
 
 
