@@ -37,6 +37,6 @@ dens_ch = data[data_type]['density']
 
 file_name = enzo_dir + 'snapshot_{0:03}.h5'.format(n_snapshot)
 data_enzo = h5.File( file_name, 'r' )
-dens_en = data_enzo['density'][...]  
+dens_en = data_enzo['gas']['density'][...]  
 
 
