@@ -43,7 +43,7 @@ def get_delta_k_memory_save( dens, nx, ny, nz, dx, dy, dz ):
   return FT, kx, ky, kz
 
 def get_power_spectrum(dens, Lbox, nx, ny, nz, dx, dy, dz, n_kSamples=20, n_threads=1 ):
-  delta_k2, kx, ky, kz = get_delta_k( dens, nx, ny, nz, dx, dy, dz, n_threads=n_threads )
+  delta_k2, kx, ky, kz = get_delta_k( dens, nx, ny, nz, dx, dy, dz   )
   # delta_k2, kx, ky, kz = get_delta_k_memory_save( dens, nx, ny, nz, dx, dy, dz, )
   Kz, Ky, Kx = np.meshgrid( kz, ky, kx )
   K_mag = np.sqrt( Kz*Kz + Ky*Ky + Kx*Kx )
