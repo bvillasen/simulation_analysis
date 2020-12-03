@@ -20,7 +20,7 @@ cholla_dir = data_dir + f'cosmo_sims/256_hydro_50Mpc/{data_name}/'
 
 
 
-n_snapshot = 0
+n_snapshot = 29
 precision = np.float64
 data_type = 'hydro'
 fields = [ 'density' ]
