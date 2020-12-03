@@ -17,6 +17,8 @@ data_name = 'SIMPLE_PLMP_eta015'
 data_dir = '/data/groups/comp-astro/bruno/'
 enzo_dir = data_dir + 'cosmo_sims/enzo/256_hydro_50Mpc/h5_files/'
 cholla_dir = data_dir + f'cosmo_sims/256_hydro_50Mpc/{data_name}/'
+output_dir = data_dir + 'cosmo_sims/256_hydro_50Mpc/'
+
 
 
 
@@ -54,8 +56,14 @@ for n_snapshot in snapshots:
   print( f'n_snap: {n_snapshot}  diff: {diff}')
   ps_data[n_snapshot] = {}
   ps_data[n_snapshot]['cholla'] = ps_ch
+  ps_data[n_snapshot]['k_vals'] = k_vals
   ps_data[n_snapshot]['enzo'] = ps_en
   ps_data[n_snapshot]['diff'] = diff
   
-  
 
+
+# Save ps_data
+out_file = output_dir + 'ps_data.pkl'
+f = open( out_file, 'wb' )
+pickle.dump( ps_data, f)
+print ( f'Saved File: {out_file}' )
