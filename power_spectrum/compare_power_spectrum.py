@@ -31,4 +31,11 @@ subgrid = [ [0, 256], [0, 256], [0, 256] ] #Size of the volume to load
 
 
 data = load_snapshot_data_distributed( n_snapshot, cholla_dir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True )
+current_z = data['Current_z']
+dens_ch = data[data_type]['density']
+
+file_name = enzo_dir + 'snapshot_{0:03}.h5'.format(n_snapshot)
+data_enzo = h5.File( file_name, 'r' )
+dens_en = data_enzo['density'][...]  
+
 
