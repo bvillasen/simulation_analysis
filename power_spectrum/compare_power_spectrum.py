@@ -7,6 +7,7 @@ root_dir = os.path.dirname(os.getcwd()) + '/'
 subDirectories = [x[0] for x in os.walk(root_dir)]
 sys.path.extend(subDirectories)
 from load_data import load_snapshot_data_distributed
+from power_spectrum_functions import get_power_spectrum
 
 
 data_name = 'SIMPLE_PPMP_eta035'
@@ -24,10 +25,12 @@ precision = np.float64
 data_type = 'hydro'
 fields = [ 'density' ]
 
-Lbox = 5000    #kpc/h
+Lbox = 5000.    #kpc/h
 proc_grid = [ 2, 2, 2]
 box_size = [ Lbox, Lbox, Lbox ]
 grid_size = [ 256, 256, 256 ] #Size of the simulation grid
+nx, ny, nz = grid_size
+dx, dy, dz = Lbox/nx, Lbox/ny, Lbox/nz
 subgrid = [ [0, 256], [0, 256], [0, 256] ] #Size of the volume to load
 
 
@@ -38,5 +41,10 @@ dens_ch = data[data_type]['density']
 file_name = enzo_dir + 'snapshot_{0:03}.h5'.format(n_snapshot)
 data_enzo = h5.File( file_name, 'r' )
 dens_en = data_enzo['gas']['density'][...]  
+
+
+ps_ch, k_vals, count = get_power_spectrum( dens_ch, Lbox, nx, ny, nz, dx, dy, dz,  n_kSamples=20)
+ps_en, k_vals, count = get_power_spectrum( dens_en, Lbox, nx, ny, nz, dx, dy, dz,  n_kSamples=20)
+
 
 
