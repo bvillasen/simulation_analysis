@@ -55,6 +55,7 @@ for n_snapshot in snapshots:
   diff = ( ps_ch - ps_en ) / ps_en
   print( f'n_snap: {n_snapshot}  diff: {diff}')
   ps_data[n_snapshot] = {}
+  ps_data[n_snapshot]['current_z'] = current_z
   ps_data[n_snapshot]['cholla'] = ps_ch
   ps_data[n_snapshot]['k_vals'] = k_vals
   ps_data[n_snapshot]['enzo'] = ps_en
