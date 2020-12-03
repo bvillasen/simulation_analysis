@@ -10,7 +10,7 @@ from load_data import load_snapshot_data_distributed
 from power_spectrum_functions import get_power_spectrum
 
 
-data_name = 'SIMPLE_PLMP_eta030'
+data_name = 'SIMPLE_PLMP_eta020'
 
 # data_dir = '/raid/bruno/data/'
 # data_dir = '/home/bruno/Desktop/ssd_0/data/'
