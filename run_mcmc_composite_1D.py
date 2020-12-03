@@ -23,7 +23,7 @@ comparable_data = Get_Comparable_Composite_T0_tau()
 comparable_grid = Get_Comparable_Composite_T0_tau_from_Grid( comparable_data, SG )
 
 field = 'T0+tau'
-param_to_fit = 1
+param_to_fit = 3
 param_name = SG.parameters[param_to_fit]['name']
 
 nIter = 100000 
@@ -41,7 +41,7 @@ print( f'\n {param_name}: {param_mean}  +- {param_sigma}' )
 
 
 
-n_samples = 10000
+n_samples = 500000
 observables_to_sample = ['T0', 'tau']
 
 observables = { observable:{} for observable in observables_to_sample }

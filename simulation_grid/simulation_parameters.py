@@ -11,7 +11,8 @@ system = 'Lux'
 # grid_name = 'grid_256'
 # grid_name  = 'scale_H_photoion'
 # grid_name  = 'scale_H_photoheat'
-grid_name = 'grid_81'
+# grid_name = 'grid_81'
+grid_name = 'deltaZ_H_small'
 
 
 if system == 'Lux':
