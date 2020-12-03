@@ -36,7 +36,8 @@ subgrid = [ [0, 256], [0, 256], [0, 256] ] #Size of the volume to load
 
 
 
-snapshots = [ 0, 10, 29 ]
+# snapshots = [ 0, 10, 29 ]
+snapshots = range( 30 )
 
 ps_data = { }
 
@@ -57,9 +58,8 @@ for n_snapshot in snapshots:
   ps_data[n_snapshot] = {}
   ps_data[n_snapshot]['current_z'] = current_z
   ps_data[n_snapshot]['cholla'] = ps_ch
-  ps_data[n_snapshot]['k_vals'] = k_vals
   ps_data[n_snapshot]['enzo'] = ps_en
-  ps_data[n_snapshot]['diff'] = diff
+  ps_data[n_snapshot]['k_vals'] = k_vals
   
 
 
