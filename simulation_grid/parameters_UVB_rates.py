@@ -25,7 +25,7 @@ param_UVB_Rates[3] = {}
 param_UVB_Rates[3]['key'] = 'D'
 param_UVB_Rates[3]['name'] = 'deltaZ_H'
 # param_UVB_Rates[3]['values'] = [ -0.2, -0.1, 0.0,  ]
-param_UVB_Rates[3]['values'] = [ -0.4 -0.2,  0.0, 0.2, 0.4  ]
+param_UVB_Rates[3]['values'] = [ -0.4, -0.2,  0.0, 0.2, 0.4  ]
 
 
 
