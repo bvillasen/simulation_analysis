@@ -10,9 +10,9 @@ from load_data import load_snapshot_data_distributed
 
 data_name = 'SIMPLE_PPMP_eta035'
 
-# data_dir = '/home/bruno/Desktop/data/'
 # data_dir = '/raid/bruno/data/'
-data_dir = '/home/bruno/Desktop/ssd_0/data/'
+# data_dir = '/home/bruno/Desktop/ssd_0/data/'
+data_dir = '/data/groups/comp-astro/bruno/'
 enzo_dir = data_dir + 'cosmo_sims/enzo/256_hydro_50Mpc/h5_files/'
 cholla_dir = data_dir + f'cosmo_sims/256_hydro_50Mpc/{data_name}/'
 
