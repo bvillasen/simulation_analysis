@@ -2,6 +2,7 @@ import os, sys
 import numpy as np
 import pickle
 import matplotlib.pyplot as plt
+import h5py as h5
 root_dir = os.path.dirname(os.getcwd()) + '/'
 subDirectories = [x[0] for x in os.walk(root_dir)]
 sys.path.extend(subDirectories)
