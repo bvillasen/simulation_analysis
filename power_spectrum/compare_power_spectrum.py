@@ -45,6 +45,7 @@ dens_en = data_enzo['gas']['density'][...]
 
 ps_ch, k_vals, count = get_power_spectrum( dens_ch, Lbox, nx, ny, nz, dx, dy, dz,  n_kSamples=20)
 ps_en, k_vals, count = get_power_spectrum( dens_en, Lbox, nx, ny, nz, dx, dy, dz,  n_kSamples=20)
-
+diff = ( ps_ch - ps_en ) / ps_en
+print( f'n_snap: {n_snapshot}  diff: {diff}')
 
 
