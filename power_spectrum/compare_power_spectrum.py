@@ -20,7 +20,6 @@ cholla_dir = data_dir + f'cosmo_sims/256_hydro_50Mpc/{data_name}/'
 
 
 
-n_snapshot = 29
 precision = np.float64
 data_type = 'hydro'
 fields = [ 'density' ]
@@ -34,18 +33,29 @@ dx, dy, dz = Lbox/nx, Lbox/ny, Lbox/nz
 subgrid = [ [0, 256], [0, 256], [0, 256] ] #Size of the volume to load
 
 
-data = load_snapshot_data_distributed( n_snapshot, cholla_dir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True )
-current_z = data['Current_z']
-dens_ch = data[data_type]['density']
 
-file_name = enzo_dir + 'snapshot_{0:03}.h5'.format(n_snapshot)
-data_enzo = h5.File( file_name, 'r' )
-dens_en = data_enzo['gas']['density'][...]  
+snapshots = [ 0, 10, 29 ]
+
+ps_data = { }
+
+for n_snapshot in snapshots:
+  data = load_snapshot_data_distributed( n_snapshot, cholla_dir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True )
+  current_z = data['Current_z']
+  dens_ch = data[data_type]['density']
+
+  file_name = enzo_dir + 'snapshot_{0:03}.h5'.format(n_snapshot)
+  data_enzo = h5.File( file_name, 'r' )
+  dens_en = data_enzo['gas']['density'][...]  
 
 
-ps_ch, k_vals, count = get_power_spectrum( dens_ch, Lbox, nx, ny, nz, dx, dy, dz,  n_kSamples=20)
-ps_en, k_vals, count = get_power_spectrum( dens_en, Lbox, nx, ny, nz, dx, dy, dz,  n_kSamples=20)
-diff = ( ps_ch - ps_en ) / ps_en
-print( f'n_snap: {n_snapshot}  diff: {diff}')
-
+  ps_ch, k_vals, count = get_power_spectrum( dens_ch, Lbox, nx, ny, nz, dx, dy, dz,  n_kSamples=20)
+  ps_en, k_vals, count = get_power_spectrum( dens_en, Lbox, nx, ny, nz, dx, dy, dz,  n_kSamples=20)
+  diff = ( ps_ch - ps_en ) / ps_en
+  print( f'n_snap: {n_snapshot}  diff: {diff}')
+  ps_data[n_snapshot] = {}
+  ps_data[n_snapshot]['cholla'] = ps_ch
+  ps_data[n_snapshot]['enzo'] = ps_en
+  ps_data[n_snapshot]['diff'] = diff
+  
+  
 
