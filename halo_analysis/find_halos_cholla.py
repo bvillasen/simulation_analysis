@@ -64,6 +64,7 @@ start = time.time()
 if pId == 0: call([rockstarComand, "-c", rockstarconfigFile ])
 if pId == 1:
   time.sleep(5)
+  print( ' Linking Second Process ')
   call([rockstarComand, "-c", rockstarConf['OUTBASE'] + '/auto-rockstar.cfg' ])  
 print("Time: {0}".format( time.time() - start) )
 
