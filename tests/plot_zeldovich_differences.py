@@ -39,10 +39,10 @@ def get_temp( u, gamma=5./3, mu=None ):
 
 fig_width = 8
 fig_dpi = 600
-label_size = 16
-figure_text_size = 16
-legend_font_size = 14
-tick_label_size_major = 12
+label_size = 18
+figure_text_size = 18
+legend_font_size = 16
+tick_label_size_major = 14
 tick_label_size_minor = 11
 tick_size_major = 5
 tick_size_minor = 3

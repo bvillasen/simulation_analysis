@@ -14,8 +14,10 @@ from mcmc_data_functions import *
 from data_thermal_history import *
 from mcmc_plotting_functions import *
 
-
-output_dir = root_dir + 'fit_results_composite/'
+# field = 'T0'
+# field = 'tau'
+field = 'T0+tau'
+output_dir = root_dir + f'fit_results_{field}/'
 create_directory( output_dir )
 
 load_mcmc_stats = False
@@ -29,7 +31,6 @@ comparable_data = Get_Comparable_Composite_T0_tau()
 comparable_grid = Get_Comparable_Composite_T0_tau_from_Grid( comparable_data, SG )
 
 
-field = 'T0+tau'
 stats_file = output_dir + 'fit_mcmc.pkl'
 
 fields = [ 'T0', 'tau' ]
@@ -48,7 +49,7 @@ if load_mcmc_stats:
     params[p_id]['sigma'] = p_stats['standard deviation']
 
 else:
-  nIter = 500000
+  nIter = 200000
   nBurn = nIter / 5
   nThin = 1
   model, params_mcmc = mcmc_model_4D( comparable_data, comparable_grid, field, 'mean', SG )
@@ -61,7 +62,7 @@ else:
     p_stats = stats[p_name]
     params[p_id]['mean'] = p_stats['mean']
     params[p_id]['sigma'] = p_stats['standard deviation']
-  Plot_MCMC_Stats( stats, MDL, params_mcmc,  stats_file, output_dir )
+  Plot_MCMC_Stats( stats, MDL, params_mcmc,  stats_file, output_dir, plot_corner=False )
 
   samples = {} 
   for p_id in params_mcmc.keys():

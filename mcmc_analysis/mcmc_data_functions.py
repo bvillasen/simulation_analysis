@@ -63,6 +63,9 @@ def Find_Parameter_Value_Near_IDs( param_id, param_value, parameters, clip_param
   param_min = grid_param_values.min() 
   param_max = grid_param_values.max()
   n_param_values = len( grid_param_values )
+  if n_param_values == 1:
+    p_val_id_l,  p_val_id_r = 0, 0
+    return p_val_id_l, p_val_id_r  
   if clip_params:
     if param_value < param_min: param_value = param_min
     if param_value > param_max: param_value = param_max
@@ -147,7 +150,8 @@ def Interpolate_MultiDim( p0, p1, p2, p3, data_to_interpolate, field, sub_field,
     if p_val < p_val_l or p_val > p_val_r:
       print( ' ERROR: Parameter outside left and right values')
       exit()
-  delta = ( p_val - p_val_l ) / ( p_val_r - p_val_l )  
+  if p_val_l == p_val_r: delta = 0.5
+  else: delta = ( p_val - p_val_l ) / ( p_val_r - p_val_l )  
   if param_id == 0:
     value_l = Get_Value_From_Simulation( sim_coords_l, data_to_interpolate, field, sub_field, SG )
     value_r = Get_Value_From_Simulation( sim_coords_r, data_to_interpolate, field, sub_field, SG )
@@ -219,8 +223,18 @@ def Interpolate_Observable_1D( param_id, observable, param_value,  SG ):
 
 def Get_Comparable_Tau():
   comparable_z, comparable_tau, comparable_sigma = [], [], []
-  # Add data Becker 2013
-  data_set = data_optical_depth_Becker_2013
+  # # Add data Becker 2013
+  # data_set = data_optical_depth_Becker_2013
+  # z   = data_set['z']
+  # tau = data_set['tau']
+  # sigma = data_set['tau_sigma']
+  # indices = z < 4.3
+  # comparable_z.append(z[indices])
+  # comparable_tau.append(tau[indices])
+  # comparable_sigma.append(sigma[indices])
+
+  # Add data Jiani
+  data_set = data_optical_depth_Jiani
   z   = data_set['z']
   tau = data_set['tau']
   sigma = data_set['tau_sigma']
@@ -228,10 +242,9 @@ def Get_Comparable_Tau():
   comparable_z.append(z[indices])
   comparable_tau.append(tau[indices])
   comparable_sigma.append(sigma[indices])
+
   # Add data Keating 2020
   data_set = data_optical_depth_Keating_2020
-  # Add data Bosman 2020
-  # data_set = data_optical_depth_Bosman_2018
   z   = data_set['z']
   tau = data_set['tau']
   sigma = data_set['tau_sigma']

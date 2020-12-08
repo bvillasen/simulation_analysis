@@ -142,7 +142,7 @@ for i, type in enumerate( types ):
   x_l, x_r = -0.5, 1
   line_x = np.linspace( x_l, x_r, 100 )
   line_y = gamma*line_x + T0
-  ax.plot( line_x, line_y, '--', c='w', alpha=1, lw=1 ) 
+  ax.plot( line_x, line_y, '--', c='w', alpha=1, lw=1.8 ) 
   
   if type == 'cholla': T0 = 2.901
   
@@ -150,6 +150,7 @@ for i, type in enumerate( types ):
   T0_4 = T0 * 1e-2
   text = r' $\,  \gamma  = {0:.2f} $'.format( gamma+1, gamma_sigma) + '\n' + r'$T_0 = {0:.2f} \times 10^2   \,\,  $'.format( T0_4 ) + r'$\mathrm{K}$' 
   ax.text(0.65, 0.1, text, horizontalalignment='left',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size, color=text_color)
+  # ax.text(0.45, 0.1, text, horizontalalignment='left',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size, color=text_color)
 
 
 
@@ -158,7 +159,7 @@ for i, type in enumerate( types ):
   ax.cax.toggle_label(True)
   [sp.set_linewidth(border_width) for sp in cb.ax.spines.values()]
 
-
+  ax.set_aspect( 0.8)
 
   font = {'fontname': 'Helvetica',
       'color':  text_color,

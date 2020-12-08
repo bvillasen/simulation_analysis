@@ -39,6 +39,7 @@ if system == 'Shamrock':
   from parameters_UVB_rates_grid_16   import param_UVB_Rates as param_UVB_Rates_grid_16
   from parameters_UVB_rates_grid_256  import param_UVB_Rates as param_UVB_Rates_grid_256
   from parameters_UVB_rates_grid_81   import param_UVB_Rates as param_UVB_Rates_grid_81
+  from parameters_UVB_rates_grid_36   import param_UVB_Rates as param_UVB_Rates_grid_36
   from parameters_UVB_rates_scale_H_photoion   import param_UVB_Rates as param_UVB_Rates_scale_H_photoion
   from parameters_UVB_rates_scale_H_photoheat  import param_UVB_Rates as param_UVB_Rates_scale_H_photoheat
   
@@ -53,5 +54,6 @@ if system == 'Shamrock':
   if grid_name == 'grid_81':   param_UVB_Rates = param_UVB_Rates_grid_81
   if grid_name == 'scale_H_photoion':   param_UVB_Rates = param_UVB_Rates_scale_H_photoion
   if grid_name == 'scale_H_photoheat':   param_UVB_Rates = param_UVB_Rates_scale_H_photoheat
+  if grid_name == 'grid_36':   param_UVB_Rates = param_UVB_Rates_grid_36
   
   

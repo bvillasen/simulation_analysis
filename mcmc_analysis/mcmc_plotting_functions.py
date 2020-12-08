@@ -11,12 +11,12 @@ def Plot_Corner( samples, labels, output_dir  ):
   n_param = len( param_ids )
   color = 'C0'
   data_color = 'C9'
-  font_size = 15
-  label_size = 18
+  font_size = 16
+  label_size = 20
   alpha = 0.6
   fig_size = 5
   space = 0.05
-  tick_label_size = 12
+  tick_label_size = 13
   tick_length = 7
   tick_width = 2
   border_width = 2.0
@@ -92,7 +92,7 @@ def Plot_Corner( samples, labels, output_dir  ):
   print( f'Saved Figure: {figure_name}' )
 
 
-def Plot_MCMC_Stats( stats, MDL, params_mcmc,  stats_file, output_dir ):
+def Plot_MCMC_Stats( stats, MDL, params_mcmc,  stats_file, output_dir, plot_corner=True ):
   cwd = os.getcwd()
   os.chdir( output_dir )
 
@@ -108,10 +108,11 @@ def Plot_MCMC_Stats( stats, MDL, params_mcmc,  stats_file, output_dir ):
     samples.append( param['sampler'].trace())
   samples = np.array( samples ).T
 
-  import corner
-  corner_fig = corner.corner(samples[:,:], labels=labels )
-  corner_fig.savefig( 'corner_fig.png' )  
-  os.chdir( cwd )  
+  if plot_corner:
+    import corner
+    corner_fig = corner.corner(samples[:,:], labels=labels )
+    corner_fig.savefig( 'corner_fig.png' )  
+    os.chdir( cwd )  
 
 
 def Plot_Observables( observables_samples, comparable_data, params, SG, plot_type, output_dir):

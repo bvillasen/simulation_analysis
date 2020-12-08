@@ -26,7 +26,7 @@ precision = np.float64
 data_type = 'hydro'
 fields = [ 'density' ]
 
-Lbox = 5000.    #kpc/h
+Lbox = 50000.    #kpc/h
 proc_grid = [ 2, 2, 2]
 box_size = [ Lbox, Lbox, Lbox ]
 grid_size = [ 256, 256, 256 ] #Size of the simulation grid
