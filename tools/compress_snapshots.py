@@ -1,10 +1,12 @@
 import os, sys
 from os import listdir
 from os.path import isfile, join
-from tools import create_directory
 import numpy as np
 import time
+from tools import *
+extend_path()
 from load_data import load_snapshot_data_distributed
+from internal_energy import get_temp
 # dataDir = '/home/bruno/Desktop/ssd_0/data/'
 # dataDir = '/gpfs/alpine/proj-shared/ast149/'
 dataDir = '/data/groups/comp-astro/bruno/'
@@ -95,7 +97,11 @@ for n_snapshot in snapshots_to_compress:
   start = time.time()
   if hydro:
     data = load_snapshot_data_distributed( n_snapshot, input_dir, 'hydro', hydro_fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True )
-
+    
+    current_z = data['Current_z']
+    density = data['hydro']['density']
+    GasEnergy = data['hydro']['GasEnergy']
+    temperature = get_temp( GasEnergy/density )
 
   if particles:
     pass
