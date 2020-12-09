@@ -3,6 +3,7 @@ import numpy as np
 
 
 def get_phase_diagram_bins( density, temperature, bins_dens, bins_temp  ):
+  density = density / density.mean()
   density = np.log10(density).flatten()
   temperature = np.log10(temperature).flatten()
   bins_dens = np.log10(bins_dens)

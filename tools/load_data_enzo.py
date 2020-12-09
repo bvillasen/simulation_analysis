@@ -22,14 +22,14 @@ def load_snapshot_enzo( nSnap, inDir, dm=False, particles=False, cool=False, met
 
   if hydro:
     data_gas = h5_file['gas']
-    data['gas']['density'] = data_gas['density']
+    data['gas']['density'] = data_gas['density'][...]
     # data['gas']['momentum_x'] = data_gas['momentum_x']
     # data['gas']['momentum_y'] = data_gas['momentum_y']
     # data['gas']['momentum_z'] = data_gas['momentum_z']
     # data['gas']['Energy'] = data_gas['Energy']
     # data['gas']['GasEnergy'] = data_gas['GasEnergy']
     
-  if temp: data['gas']['temperature'] = data_gas['temperature']
+  if temp: data['gas']['temperature'] = data_gas['temperature'][...]
 
   if cool:
     data['gas']['HI_density'] = data_gas['H_dens']

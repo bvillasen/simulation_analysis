@@ -269,7 +269,7 @@ def load_cholla_snapshot_file( nSnap, inDir, cool=False, dm=True, cosmo=True, hy
     fields_grid = fields_data
     for field in fields_grid:
       if field not in fields_data: continue
-      outDir['gas'][field] = data_grid[field]
+      outDir['gas'][field] = data_grid[field][...]
 
   if dm:
     data_part = h5.File( partFileName, 'r' )
