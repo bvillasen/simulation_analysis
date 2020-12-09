@@ -102,6 +102,13 @@ for n_snapshot in snapshots_to_compress:
     density = data['hydro']['density']
     GasEnergy = data['hydro']['GasEnergy']
     temperature = get_temp( GasEnergy/density )
+    file_name = output_dir + 'grid_{0:03}.h5'.format(nSnap)
+    file = h5.File( file_name, 'w' )
+
+
+    file.close()
+    
+    
 
   if particles:
     pass
