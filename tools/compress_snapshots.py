@@ -104,8 +104,9 @@ for n_snapshot in snapshots_to_compress:
     temperature = get_temp( GasEnergy/density )
     file_name = output_dir + 'grid_{0:03}.h5'.format(n_snapshot)
     file = h5.File( file_name, 'w' )
-
-
+    file.attrs['current_z'] = current_z
+    file.create_dataset( 'density', data=density.astype(precision) )
+    file.create_dataset( 'temperature', data=temperature.astype(precision) )
     file.close()
     print( f'Saved File: {file_name}')
     
