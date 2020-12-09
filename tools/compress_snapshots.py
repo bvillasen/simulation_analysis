@@ -1,16 +1,13 @@
 import os, sys
 from os import listdir
 from os.path import isfile, join
-from data_compress_grid import compress_grid
-from data_compress_particles import compress_particles
 from tools import create_directory
 import numpy as np
 import time
 
 # dataDir = '/home/bruno/Desktop/ssd_0/data/'
-dataDir = '/data/groups/comp-astro/bruno/'
-
 # dataDir = '/gpfs/alpine/proj-shared/ast149/'
+dataDir = '/data/groups/comp-astro/bruno/'
 inDir = dataDir + 'cosmo_sims/256_hydro_50Mpc/output_files/'
 outDir = dataDir + 'cosmo_sims/256_hydro_50Mpc/snapshots_comparison_nyx/'
 
