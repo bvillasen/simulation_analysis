@@ -50,63 +50,73 @@ nBoxes = len( boxes )
 print(( "Number of snapshots: {0}".format(nSnapshots) ))
 print(( "Number of files per snapshot: {0}".format(nBoxes) ))
 
+
+#Set wich snapshots to compress
+snapshots_to_compress = snapshots_all
+n_to_compress = len(snapshots_to_compress)
+print(( "\nNumber of snapshots to compres: {0}".format(n_to_compress) ))
+# print(( ' {0}: {1}'.format( index, snapshots_to_compress ) ))
+
+
+#available Hydro Fields:
+#[ density, momentum_x, momentum_y, momentum_z, Enegy, GasEnergy ]
+#[ HI_density, HI_density, HeI_density, HeII_density, HeIII_density, e_density, metal_density, temperature, potential ]
+hydro_fields = ['density' , 'GasEnergy' ]
+print(( "\nHydro fields: {0}".format(hydro_fields)))
+
+#available Particles Fields:
+#[ density, pos_x, pos_y, pos_z, vel_x, vel_y, vel_z, mass, particle_IDs ]
+particles_fields = ['density']
+print(( "\nParticles fields: {0}".format(particles_fields)))
+
+
+
+Lbox = 5000    #kpc/h
+n_points = 256
+proc_grid = [ 2, 2, 2]
+box_size = [ Lbox, Lbox, Lbox ]
+grid_size = [ n_points, n_points, n_points ] #Size of the simulation grid
+subgrid = [ [0, n_points], [0, n_points], [0, n_points] ] #Size of the volume to load
+# density = data[data_type]['density']  
 # 
-# #Set wich snapshots to compress
-# snapshots_to_compress = snapshots_all
-# n_to_compress = len(snapshots_to_compress)
-# print(( "\nNumber of snapshots to compres: {0}".format(n_to_compress) ))
-# # print(( ' {0}: {1}'.format( index, snapshots_to_compress ) ))
-# 
-# 
-# #available Hydro Fields:
-# #[ density, momentum_x, momentum_y, momentum_z, Enegy, GasEnergy ]
-# #[ HI_density, HI_density, HeI_density, HeII_density, HeIII_density, e_density, metal_density, temperature, potential ]
-# hydro_fields = ['density' , 'GasEnergy' ]
-# print(( "\nHydro fields: {0}".format(hydro_fields)))
-# 
-# #available Particles Fields:
-# #[ density, pos_x, pos_y, pos_z, vel_x, vel_y, vel_z, mass, particle_IDs ]
-# particles_fields = ['density']
-# print(( "\nParticles fields: {0}".format(particles_fields)))
-# 
-# 
-# 
-# Lbox = 5000    #kpc/h
-# n_points = 256
-# proc_grid = [ 2, 2, 2]
-# box_size = [ Lbox, Lbox, Lbox ]
-# grid_size = [ n_points, n_points, n_points ] #Size of the simulation grid
-# subgrid = [ [0, n_points], [0, n_points], [0, n_points] ] #Size of the volume to load
-# # density = data[data_type]['density']  
-# # 
-# 
-# precision = np.float64
-# # # precision = np.float32
-# # # precision = np.float16
-# print(( "\nPrecision: {0}".format( precision )))
-# 
-# print( "\nCompressing Snapshots..." )
-# for n_snapshot in snapshots_to_compress:
-#   start = time.time()
-#   if hydro:
-#     data = load_snapshot_data_distributed( n_snapshot, input_dir, 'hydro', hydro_fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True )
-# 
-#     current_z = data['Current_z']
-#     density = data['hydro']['density']
-#     GasEnergy = data['hydro']['GasEnergy']
-#     temperature = get_temp( GasEnergy/density )
-#     file_name = output_dir + 'grid_{0:03}.h5'.format(n_snapshot)
-#     file = h5.File( file_name, 'w' )
-#     file.attrs['current_z'] = current_z
-#     file.create_dataset( 'density', data=density.astype(precision) )
-#     file.create_dataset( 'temperature', data=temperature.astype(precision) )
-#     file.close()
-#     print( f'Saved File: {file_name}')
-# 
-# 
-# 
-#   if particles:
-#     pass
-# 
-#   end = time.time()
-#   print(( ' Elapsed Time: {0:.2f} min'.format((end - start)/60.) ))
+
+precision = np.float64
+# # precision = np.float32
+# # precision = np.float16
+print(( "\nPrecision: {0}".format( precision )))
+
+print( "\nCompressing Snapshots..." )
+for n_snapshot in snapshots_to_compress:
+  start = time.time()
+  if hydro:
+    data = load_snapshot_data_distributed( n_snapshot, input_dir, 'hydro', hydro_fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True )
+
+    current_z = data['Current_z']
+    density = data['hydro']['density']
+    GasEnergy = data['hydro']['GasEnergy']
+    temperature = get_temp( GasEnergy/density )
+    file_name = output_dir + 'grid_{0:03}.h5'.format(n_snapshot)
+    file = h5.File( file_name, 'w' )
+    file.attrs['current_z'] = current_z
+    file.create_dataset( 'density', data=density.astype(precision) )
+    file.create_dataset( 'temperature', data=temperature.astype(precision) )
+    file.close()
+    print( f'Saved File: {file_name}')
+
+
+
+  if particles:
+    data = load_snapshot_data_distributed( n_snapshot, input_dir, 'particles', particles_fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True )
+
+    current_z = data['current_z']
+    density = data['particles']['density']
+    file_name = output_dir + 'particles_{0:03}.h5'.format(n_snapshot)
+    file = h5.File( file_name, 'w' )
+    file.attrs['current_z'] = current_z
+    file.create_dataset( 'density', data=density.astype(precision) )
+    file.close()
+    print( f'Saved File: {file_name}')
+
+
+  end = time.time()
+  print(( ' Elapsed Time: {0:.2f} min'.format((end - start)/60.) ))
