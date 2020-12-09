@@ -91,7 +91,7 @@ precision = np.float64
 print(( "\nPrecision: {0}".format( precision )))
 
 print( "\nCompressing Snapshots..." )
-for nSnap in snapshots_to_compress:
+for n_snapshot in snapshots_to_compress:
   start = time.time()
   if hydro:
     data = load_snapshot_data_distributed( n_snapshot, input_dir, 'hydro', hydro_fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True )
