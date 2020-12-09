@@ -4,7 +4,7 @@ from os.path import isfile, join
 from tools import create_directory
 import numpy as np
 import time
-
+from load_data import load_snapshot_data_distributed
 # dataDir = '/home/bruno/Desktop/ssd_0/data/'
 # dataDir = '/gpfs/alpine/proj-shared/ast149/'
 dataDir = '/data/groups/comp-astro/bruno/'
