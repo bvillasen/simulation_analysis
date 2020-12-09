@@ -107,6 +107,7 @@ for n_snapshot in snapshots_to_compress:
 
 
     file.close()
+    print( f'Saved File: {file_name}')
     
     
 
