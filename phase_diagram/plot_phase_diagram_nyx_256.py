@@ -28,46 +28,40 @@ matplotlib.rcParams['mathtext.rm'] = 'serif'
 data_dir = '/home/bruno/Desktop/ssd_0/data/'
 # data_dir = '/raid/bruno/data/'
 nyx_dir = data_dir + 'cosmo_sims/nyx/256_hydro_50Mpc/'
-cholla_dir = data_dir + 'cosmo_sims/256_hydro_50Mpc/snapshots/'
+cholla_dir = data_dir + 'cosmo_sims/256_hydro_50Mpc/snapshots_comparison_nyx/'
 
 # output_dir = '/home/bruno/Desktop/'
-output_dir = nyx_dir + 'phase_diagram/'
+output_dir = data_dir + 'cosmo_sims/256_hydro_50Mpc/phase_diagram_nyx/'
 create_directory( output_dir )
 
 n_snap = 0
 snapshots = range( 74 )
-
-z_vals = []
-for n_snap in snapshots: 
-  data = {}
-  # types = [ 'nyx', 'cholla' ]
-  data['nyx'] = load_snapshot_nyx( n_snap, nyx_dir, hydro=True )
-  current_z = np.abs(data['nyx']['current_z'])
-  z_vals.append( current_z )
-z_vals = np.array( z_vals )
-a_vals = 1./(z_vals + 1)
-np.savetxt( '/home/bruno/Desktop/outputs_cosmo_nyx_hydro_256.txt', a_vals)
-  
+# 
+# z_vals = []
+# for n_snap in snapshots: 
+#   data = {}
+#   # types = [ 'nyx', 'cholla' ]
+#   data['nyx'] = load_snapshot_nyx( n_snap, nyx_dir, hydro=True )
+#   current_z = np.abs(data['nyx']['current_z'])
+#   z_vals.append( current_z )
+# z_vals = np.array( z_vals )
+# a_vals = 1./(z_vals + 1)
+# np.savetxt( '/home/bruno/Desktop/outputs_cosmo_nyx_hydro_256.txt', a_vals)
+# 
 
 types = [ 'nyx' ]
-snapshots = range( 1 )
 
 
 for n_snap in snapshots: 
   data = {}
-  # types = [ 'nyx', 'cholla' ]
-  types = [ 'nyx' ]
+  types = [ 'nyx', 'cholla' ]
+  # types = [ 'nyx' ]
   data['nyx'] = load_snapshot_nyx( n_snap, nyx_dir, hydro=True )
-  # data['cholla'] = load_cholla_snapshot_file( n_snap, cholla_dir, dm=False )
+  data['cholla'] = load_cholla_snapshot_file( n_snap, cholla_dir, dm=False )
 
   current_z = np.abs(data['nyx']['current_z'])
 
-  dens = data['nyx']['gas']['density']
-  dens_mean = dens.mean()
-  temp = data['nyx']['gas']['temperature']
-
-    
-
+  
   #Get Bin Egdes for the histogram
   dens_start, dens_end = -2, 4
   temp_start, temp_end = -2, 8
@@ -81,7 +75,7 @@ for n_snap in snapshots:
   pd_data = {}
   for type in types:
     print(" Generating Phase Diagram ,   n_bins:{0}".format(nbins))
-    centers_dens, centers_temp, phase = get_phase_diagram_bins( data[type]['gas']['density'], data[type]['gas']['temperature'], bins_dens, bins_temp  )
+    centers_dens, centers_temp, phase = get_phase_diagram_bins( data[type]['gas']['density'][...], data[type]['gas']['temperature'][...], bins_dens, bins_temp  )
     dens_points, temp_points = np.meshgrid( centers_dens, centers_temp )
     pd_data['data'] = phase
     pd_data['dens_min'], pd_data['dens_max'], pd_data['n_dens'] = 10**centers_dens.min(), 10**centers_dens.max(), len( centers_dens)
@@ -145,9 +139,8 @@ for n_snap in snapshots:
     temp_points = pd_data[type]['temp_points']
     phase_1D = np.log10(pd_data[type]['phase_1D'])    
     phase_2D = np.log10(pd_data[type]['phase_2D'])    
-    v_min, v_max = phase_1D.min(), phase_1D.max()    
-    # v_min, v_max = phase_2D.min(), phase_2D.max()
-
+    v_min, v_max = min( np.log10(pd_data['nyx']['phase_1D']).min(), np.log10(pd_data['cholla']['phase_1D']).min() ), max( np.log10(pd_data['nyx']['phase_1D']).max(), np.log10(pd_data['cholla']['phase_1D']).max() )    
+    
     im = ax.scatter( dens_points, temp_points, c=phase_1D, s=0.1, vmin=v_min, vmax=v_max, alpha=alpha, cmap=colormap  )
     # im = ax.imshow( phase_2D[::-1], extent=[ dens_start, dens_end, temp_start, temp_end ] )
 
@@ -158,7 +151,8 @@ for n_snap in snapshots:
     ax.cax.toggle_label(True)
     [sp.set_linewidth(border_width) for sp in cb.ax.spines.values()]
 
-    ax.set_aspect( 0.8)
+    ax.set_aspect( 0.6 )
+    # ax.set_aspect( 1.0)
 
     font = {'fontname': 'Helvetica',
         'color':  text_color,
