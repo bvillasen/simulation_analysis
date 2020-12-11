@@ -24,6 +24,18 @@ matplotlib.rcParams['mathtext.fontset'] = 'cm'
 matplotlib.rcParams['mathtext.rm'] = 'serif'
 
 
+use_mpi = True
+
+if use_mpi :
+  from mpi4py import MPI
+  comm = MPI.COMM_WORLD
+  rank = comm.Get_rank()
+  nprocs = comm.Get_size()
+else:
+  rank = 0
+  nprocs = 1
+
+
 # data_dir = '/home/bruno/Desktop/data/'
 data_dir = '/home/bruno/Desktop/ssd_0/data/'
 # data_dir = '/raid/bruno/data/'
@@ -31,28 +43,19 @@ nyx_dir = data_dir + 'cosmo_sims/nyx/256_hydro_50Mpc/'
 cholla_dir = data_dir + 'cosmo_sims/256_hydro_50Mpc/snapshots_comparison_nyx/'
 
 # output_dir = '/home/bruno/Desktop/'
-output_dir = data_dir + 'cosmo_sims/256_hydro_50Mpc/phase_diagram_nyx/'
+output_dir = data_dir + 'cosmo_sims/256_hydro_50Mpc/phase_diagram_nyx_dpi200/'
 create_directory( output_dir )
 
 n_snap = 0
 snapshots = range( 74 )
-# 
-# z_vals = []
-# for n_snap in snapshots: 
-#   data = {}
-#   # types = [ 'nyx', 'cholla' ]
-#   data['nyx'] = load_snapshot_nyx( n_snap, nyx_dir, hydro=True )
-#   current_z = np.abs(data['nyx']['current_z'])
-#   z_vals.append( current_z )
-# z_vals = np.array( z_vals )
-# a_vals = 1./(z_vals + 1)
-# np.savetxt( '/home/bruno/Desktop/outputs_cosmo_nyx_hydro_256.txt', a_vals)
-# 
+
 
 types = [ 'nyx' ]
 
+indices =  split_indices( snapshots, rank, nprocs )
 
-for n_snap in snapshots: 
+
+for n_snap in indices: 
   data = {}
   types = [ 'nyx', 'cholla' ]
   # types = [ 'nyx' ]
@@ -179,7 +182,7 @@ for n_snap in snapshots:
     ax.set_ylim( y_min, y_max )
 
   out_fileName = output_dir + f'phase_diagram_nyx_{n_snap}.png'
-  fig.savefig( out_fileName,  pad_inches=0.1,  facecolor=fig.get_facecolor(),  bbox_inches='tight', dpi=300)
+  fig.savefig( out_fileName,  pad_inches=0.1,  bbox_inches='tight', dpi=200)
   print(( 'Saved Image: ' + out_fileName ))
   fig.clf()
 

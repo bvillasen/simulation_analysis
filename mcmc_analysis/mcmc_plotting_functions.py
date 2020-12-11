@@ -115,7 +115,7 @@ def Plot_MCMC_Stats( stats, MDL, params_mcmc,  stats_file, output_dir, plot_corn
     os.chdir( cwd )  
 
 
-def Plot_Observables( observables_samples, comparable_data, params, SG, plot_type, output_dir):
+def Plot_Observables( observables_samples, comparable_data, params, SG, plot_type, output_dir, chi2=None):
 
 
   nrows = 1
@@ -172,6 +172,10 @@ def Plot_Observables( observables_samples, comparable_data, params, SG, plot_typ
   ax.set_xlim( 2, 12 )
   ax.set_ylim( 3000, 18000)
 
+  if chi2 != None and plot_type=='sampling':
+    chi2_val = chi2['T0']
+    text = r'$\chi ^2 = {0:.2f}$ '.format( chi2_val) 
+    ax.text(0.7, 0.65, text, horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=font_size, )
 
   ax = ax_l[1]
   obs_name = 'tau'
@@ -184,6 +188,8 @@ def Plot_Observables( observables_samples, comparable_data, params, SG, plot_typ
     # label = ''
     ax.fill_between( obs_z, obs_mean + obs_sigma, obs_mean - obs_sigma, alpha=alpha, color=color, zorder=1)
     ax.plot( obs_z, obs_mean, c=color, label=label, zorder=1 )
+    
+    
 
   if plot_type == 'grid':
     for sim_id in sim_ids:
@@ -196,6 +202,8 @@ def Plot_Observables( observables_samples, comparable_data, params, SG, plot_typ
       # label =  label_param + ' $= {0}$'.format(param_val)
       lavel = ''
       ax.plot( z, obs_vals , label=label, zorder=1 )
+
+  
 
   data_set = comparable_data[obs_name]
   data_z = data_set['z']
@@ -213,6 +221,10 @@ def Plot_Observables( observables_samples, comparable_data, params, SG, plot_typ
   ax.set_ylim( 0.1, 8)
   ax.set_yscale('log')
 
+  if chi2 != None and plot_type=='sampling':
+    chi2_val = chi2['tau']
+    text = r'$\chi ^2 = {0:.2f}$ '.format( chi2_val) 
+    ax.text(0.2, 0.65, text, horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=font_size, )
   figure_name = output_dir + f'fig_composite_{plot_type}.png'
   fig.savefig( figure_name, bbox_inches='tight', dpi=300 )
   print( f'Saved Figure: {figure_name}' )

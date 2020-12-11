@@ -27,7 +27,7 @@ SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_par
 SG.Load_Grid_Analysis_Data()
 sim_ids = SG.sim_ids
 
-comparable_data = Get_Comparable_Composite_T0_tau()
+comparable_data = Get_Comparable_Composite_T0_tau( factor_sigma_tau_becker=9.5, factor_sigma_tau_keating=7., )
 comparable_grid = Get_Comparable_Composite_T0_tau_from_Grid( comparable_data, SG )
 
 
@@ -72,14 +72,26 @@ else:
     samples[p_id]['trace'] = param['sampler'].trace() 
 
 
-labels = { 'scale_He':r'$\beta_{\mathrm{He}}$', 'scale_H':r'$\beta_{\mathrm{H}}$', 'deltaZ_He':r'$\Delta z_{\mathrm{He}}$', 'deltaZ_H':r'$\Delta z_{\mathrm{H}}$'    }
+  labels = { 'scale_He':r'$\beta_{\mathrm{He}}$', 'scale_H':r'$\beta_{\mathrm{H}}$', 'deltaZ_He':r'$\Delta z_{\mathrm{He}}$', 'deltaZ_H':r'$\Delta z_{\mathrm{H}}$'    }
 
 
-Plot_Corner( samples, labels, output_dir  )
+  Plot_Corner( samples, labels, output_dir  )
+
+
+
+
+param_stats = {}
+for p_id in params.keys():
+  p_name = params[p_id]['name']
+  p_stats = stats[p_name]
+  params[p_id]['mean'] = p_stats['mean']
+  params[p_id]['sigma'] = p_stats['standard deviation']
 
 
 # Obtain distribution of observables
 n_samples = 10000
 observables = [ 'T0', 'tau' ]
 observables_samples = Sample_Observables( n_samples, observables, params, data_grid, SG  )
-Plot_Observables( observables_samples, comparable_data, params, SG, 'sampling', output_dir)
+chi2_vals = Get_Chi2( observables, params, comparable_grid, comparable_data, SG )
+Plot_Observables( observables_samples, comparable_data, params, SG, 'sampling', output_dir, chi2=chi2_vals)
+

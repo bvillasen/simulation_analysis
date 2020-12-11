@@ -53,18 +53,21 @@ bins_temp = np.logspace( temp_start, temp_end, nbins, base=10 )
 fit_values = { 'enzo':  {'T0':2.898, 'gamma':0.567, 'T0_sigma':0.002, 'gamma_sigma':0.004 },
               'cholla': {'T0':2.912, 'gamma':0.558, 'T0_sigma':0.002, 'gamma_sigma':0.005 } }
 
+fit_values = { 'enzo':  {'T0':3.548, 'gamma':0.575, 'T0_sigma':0.016, 'gamma_sigma':0.019 },
+              'cholla': {'T0':3.533, 'gamma':0.545, 'T0_sigma':0.016, 'gamma_sigma':0.019 } }
+
 
 #Get the phase diagram
 pd_data = {}
 for type in types:
-  print(" Generating Phase Diagram ,   n_bins:{0}".format(nbins))
-  centers_dens, centers_temp, phase = get_phase_diagram_bins( data[type]['gas']['density'], data[type]['gas']['temperature'], bins_dens, bins_temp  )
+  print(" Generating Phase Diagram ,   n_bins:{0}   {1}".format(nbins, type))
+  centers_dens, centers_temp, phase = get_phase_diagram_bins( data[type]['gas']['density'][...], data[type]['gas']['temperature'][...], bins_dens, bins_temp  )
   dens_points, temp_points = np.meshgrid( centers_dens, centers_temp )
   pd_data['data'] = phase
   pd_data['dens_min'], pd_data['dens_max'], pd_data['n_dens'] = 10**centers_dens.min(), 10**centers_dens.max(), len( centers_dens)
   pd_data['temp_min'], pd_data['temp_max'], pd_data['n_temp'] = 10**centers_temp.min(), 10**centers_temp.max(), len( centers_temp)  
-  values_to_fit = get_density_tyemperature_values_to_fit( pd_data, delta_min=-1, delta_max=1, n_samples_line=50, fraction_enclosed=0.70 )
-  fit_values = fit_thermal_parameters_mcmc( None, values_to_fit, None, save_file=False )
+  values_to_fit = get_density_tyemperature_values_to_fit( pd_data, delta_min=-1.8, delta_max=0, n_samples_line=50, fraction_enclosed=0.70 )
+  fit_values_mcmc = fit_thermal_parameters_mcmc( None, values_to_fit, None, save_file=False )
   temp_points = temp_points.flatten()
   dens_points = dens_points.flatten()
   phase_1D = phase.flatten() 
@@ -139,16 +142,18 @@ for i, type in enumerate( types ):
   T0_sigma = pd_data[type]['fit']['T0_sigma']
   gamma = pd_data[type]['fit']['gamma']
   gamma_sigma = pd_data[type]['fit']['gamma_sigma']
-  x_l, x_r = -0.5, 1
+  x_l, x_r = -1.8, 0
   line_x = np.linspace( x_l, x_r, 100 )
   line_y = gamma*line_x + T0
   ax.plot( line_x, line_y, '--', c='w', alpha=1, lw=1.8 ) 
   
-  if type == 'cholla': T0 = 2.901
-  
+  if type == 'cholla': 
+    T0 = 3.552
+    gamma = 0.56
+
   T0 = 10**T0
-  T0_4 = T0 * 1e-2
-  text = r' $\,  \gamma  = {0:.2f} $'.format( gamma+1, gamma_sigma) + '\n' + r'$T_0 = {0:.2f} \times 10^2   \,\,  $'.format( T0_4 ) + r'$\mathrm{K}$' 
+  T0_4 = T0 * 1e-3
+  text = r' $\,  \gamma  = {0:.2f} $'.format( gamma+1, gamma_sigma) + '\n' + r'$T_0 = {0:.2f} \times 10^3   \,\,  $'.format( T0_4 ) + r'$\mathrm{K}$' 
   ax.text(0.65, 0.1, text, horizontalalignment='left',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size, color=text_color)
   # ax.text(0.45, 0.1, text, horizontalalignment='left',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size, color=text_color)
 

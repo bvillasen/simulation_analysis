@@ -11,7 +11,16 @@ from tools import *
 from data_thermal_history import data_thermal_history_Gaikwad_2020a, data_thermal_history_Gaikwad_2020b
 from data_optical_depth import *
 
-
+def Get_Chi2( observables, params, comparable_grid, comparable_data, SG ):
+  chi2_vals = {}
+  for field in observables:
+    obs_mean = Interpolate_MultiDim(  params[0]['mean'], params[1]['mean'], params[2]['mean'], params[3]['mean'],  comparable_grid, field, 'mean', SG, clip_params=True ) 
+    data_z     = comparable_data[field]['z']
+    data_mean  = comparable_data[field]['mean']  
+    data_sigma = comparable_data[field]['sigma']
+    chi2 =  np.sum( ( ( obs_mean - data_mean ) / data_sigma )**2  )
+    chi2_vals[field] = chi2
+  return chi2_vals
 
 def Sample_Observables( n_samples, observables, params, data_grid, SG  ):
   print(f'\nSampling Observables: {observables}')
@@ -221,37 +230,49 @@ def Interpolate_Observable_1D( param_id, observable, param_value,  SG ):
   mean = (mean_r - mean_l ) / ( param_r - param_l ) * delta  + mean_l 
   return mean,  SG.Grid[sim_id_r]['analysis']['z'] 
 
-def Get_Comparable_Tau():
+def Get_Comparable_Tau( factor_sigma_tau_becker=1, factor_sigma_tau_keating=1  ):
   comparable_z, comparable_tau, comparable_sigma = [], [], []
-  # # Add data Becker 2013
-  # data_set = data_optical_depth_Becker_2013
+
+  # Add data Becker 2013
+  data_set = data_optical_depth_Becker_2013
+  z   = data_set['z']
+  tau = data_set['tau']
+  sigma = data_set['tau_sigma'] * factor_sigma_tau_becker
+  indices = z < 4.3
+  comparable_z.append(z[indices][::2])
+  comparable_tau.append(tau[indices][::2])
+  comparable_sigma.append(sigma[indices][::2])
+
+  # Add data Jiani
+  # data_set = data_optical_depth_Jiani
   # z   = data_set['z']
   # tau = data_set['tau']
-  # sigma = data_set['tau_sigma']
+  # sigma = data_set['tau_sigma'] * factor_sigma_tau
   # indices = z < 4.3
   # comparable_z.append(z[indices])
   # comparable_tau.append(tau[indices])
   # comparable_sigma.append(sigma[indices])
+  
+  # Add data Bosman
+  # data_set = data_optical_depth_Bosman_2018
+  # z   = data_set['z']
+  # tau = data_set['tau']
+  # sigma = data_set['tau_sigma'] * factor_sigma_tau
+  # indices = z > 4.3
+  # comparable_z.append(z[indices])
+  # comparable_tau.append(tau[indices])
+  # comparable_sigma.append(sigma[indices])
 
-  # Add data Jiani
-  data_set = data_optical_depth_Jiani
-  z   = data_set['z']
-  tau = data_set['tau']
-  sigma = data_set['tau_sigma']
-  indices = z < 4.3
-  comparable_z.append(z[indices])
-  comparable_tau.append(tau[indices])
-  comparable_sigma.append(sigma[indices])
-
-  # Add data Keating 2020
+  # # Add data Keating 2020
   data_set = data_optical_depth_Keating_2020
   z   = data_set['z']
   tau = data_set['tau']
-  sigma = data_set['tau_sigma']
+  sigma = data_set['tau_sigma'] * factor_sigma_tau_keating
   indices = z > 4.3
   comparable_z.append(z[indices])
   comparable_tau.append(tau[indices])
   comparable_sigma.append(sigma[indices])
+  
   comparable = {}
   comparable['z'] = np.concatenate( comparable_z )
   comparable['mean'] = np.concatenate( comparable_tau )
@@ -269,9 +290,9 @@ def Get_Comparable_T0_Gaikwad():
   comparable['sigma'] = data_sigma
   return comparable
 
-def Get_Comparable_Composite_T0_tau():
+def Get_Comparable_Composite_T0_tau(  factor_sigma_tau_becker=1, factor_sigma_tau_keating=1 ):
   comparable_T0 = Get_Comparable_T0_Gaikwad()
-  comparable_tau = Get_Comparable_Tau()
+  comparable_tau = Get_Comparable_Tau(  factor_sigma_tau_becker=factor_sigma_tau_becker, factor_sigma_tau_keating=factor_sigma_tau_keating )
   comparable = {}
   comparable['T0'] = comparable_T0
   comparable['tau'] = comparable_tau
