@@ -1,6 +1,6 @@
 
 
-# system = 'Lux'
+system = 'Lux'
 # system = 'Shamrock'
 
 # grid_name = 'scale_He'
