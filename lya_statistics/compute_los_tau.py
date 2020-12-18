@@ -9,6 +9,11 @@ from load_skewers import load_skewers_multiple_axis
 from spectra_functions import compute_optical_depth
 from tools import *
 
+for option in sys.argv:
+  if option.find("n_snap=") != -1: n_snap = int(option[option.find('=')+1:])
+
+print( f'Snapshot: {n_snap}' )
+
 use_mpi = True
 if use_mpi :
   from mpi4py import MPI
@@ -28,8 +33,7 @@ uvb = 'pchw18'
 dataDir = '/raid/bruno/data/'
 simulation_dir = dataDir + 'cosmo_sims/2048_hydro_50Mpc/'
 input_dir = simulation_dir + 'skewers_{0}/'.format(uvb)
-optical_depth_dir = simulation_dir + 'optical_depth_{0}/multiple_axis/'.format(uvb)
-output_dir = simulation_dir + 'transmited_flux_{0}/'.format(uvb)
+output_dir = simulation_dir + 'transmited_flux_{0}/los_F/'.format(uvb)
 if rank == 0: create_directory( output_dir )
 
 
@@ -49,8 +53,7 @@ cosmology['Omega_M'] = 0.3111
 cosmology['Omega_L'] = 0.6889
 
 
-# n_skewers_total = 10002
-n_skewers_total = 300
+n_skewers_total = 10002
 n_skewers_axis = n_skewers_total// 3 
 n_skewers_list = [ n_skewers_axis, n_skewers_axis, n_skewers_axis ]
 n_skewers = np.sum( n_skewers_list )
@@ -109,11 +112,20 @@ global_ids = comm.gather( processed_ids, root=0 )
 
 
 if rank == 0:
-  
+
   global_F   = np.concatenate( global_F )
   global_ids = np.concatenate( global_ids )
   n_processed = len(global_ids)
+  print( global_ids )
   print( f'n_processed: {n_processed},   ps_data shape: {global_F.shape}' )
-  
-  
-  
+
+  file_name = output_dir + f'los_transmitted_flux_{n_snap}.h5'
+  file = h5.File( file_name, 'w')
+  file.attrs['n_skewers'] = n_processed
+  file.attrs['current_z'] = current_z
+  file.create_dataset( 'los_F', data=global_F )
+  file.close()
+  print( f'Saved File: {file_name}')
+
+
+

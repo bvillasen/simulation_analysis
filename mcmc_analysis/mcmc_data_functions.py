@@ -203,15 +203,17 @@ def Interpolate_Comparable_1D( param_id, param_value,  comparable_grid, field, S
 
 
   
-def Interpolate_Observable_1D( param_id, observable, param_value,  SG ):
+def Interpolate_Observable_1D( param_id, observable, param_value,  SG, clip_values=True ):
   parameters = SG.parameters
   param_name = parameters[param_id]['name']
   param_vals = parameters[param_id]['values']
   param_max = max(param_vals)
   param_min = min(param_vals) 
-  if param_value < param_min or param_value > param_max:
-    print( f'ERROR: Paramneter Value outside {param_name} Range: [ {param_min} , {param_max} ] ')
-    exit(-1)
+  # if param_value < param_min or param_value > param_max:
+  #   print( f'ERROR: Paramneter Value outside {param_name} {param_value} Range: [ {param_min} , {param_max} ] ')
+  if clip_values:
+    if param_value < param_min: param_value = param_min
+    if param_value > param_max: param_value = param_max 
   #find closest simulations 
   sim_ids = SG.sim_ids
   sim_id_l, sim_id_r = 0, 0

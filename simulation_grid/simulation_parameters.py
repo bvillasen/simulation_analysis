@@ -1,14 +1,14 @@
 
 
-system = 'Lux'
-# system = 'Shamrock'
+# system = 'Lux'
+system = 'Shamrock'
 
 # grid_name = 'scale_He'
 # grid_name = 'scale_H'
 # grid_name = 'deltaZ_He'
-# grid_name = 'deltaZ_H'
+grid_name = 'deltaZ_H'
 # grid_name = 'grid_16'
-grid_name = 'grid_256_large'
+# grid_name = 'grid_256_large'
 # grid_name  = 'scale_H_photoion'
 # grid_name  = 'scale_H_photoheat'
 # grid_name = 'grid_81'
