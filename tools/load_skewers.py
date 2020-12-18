@@ -3,17 +3,26 @@ import h5py as h5
 import numpy as np
 
 
-def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_random_seed=True, print_out=True ):
+def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_random_seed=True, print_out=True, ids_to_load=None ):
   inFileName = input_dir + f'skewers_{skewer_axis}_{nSnap}.h5'
   inFile = h5.File( inFileName, 'r' )
   n_total = inFile.attrs['n']
   current_z = inFile.attrs['current_z']
+  
+  if print_out: print(f"Loading {n_skewers} skewers {skewer_axis} axis")
+  
+  if (ids_to_load != None).any():
+    skewer_ids = ids_to_load
+    print( f' Loading: {skewer_axis} {skewer_ids}')
+    if n_skewers != len(skewer_ids):
+      print("ERROR: List of skewer ids sont match n_skewres"      )
+      exit(-1)
+  else:  
+    if set_random_seed:   
+      if print_out: print( 'WANING: Fixed random seed to load skewers')
+      np.random.seed(12345)
+      skewer_ids = np.random.randint(0, n_total, n_skewers)
 
-  if set_random_seed:   
-    if print_out: print( 'WANING: Fixed random seed to load skewers')
-    np.random.seed(12345)
-  skewer_ids = np.random.randint(0, n_total, n_skewers)
-  if print_out: print(f" Loading {n_skewers} skewers {skewer_axis} axis")
 
   skewers_dens, skewers_temp, skewers_HI, skewers_vel = [], [], [], []
   for skewer_id in skewer_ids:
@@ -38,7 +47,7 @@ def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_ra
   return data_out
 
 
-def load_skewers_multiple_axis( axis_list, n_skewers_list, nSnap, input_dir, set_random_seed=True, print_out=True):
+def load_skewers_multiple_axis( axis_list, n_skewers_list, nSnap, input_dir, set_random_seed=True, print_out=True, ids_to_load_list=None):
   n_axis = len(axis_list)
 
   dens_list, HI_list, temp_list, vel_list = [], [], [], []
@@ -46,7 +55,9 @@ def load_skewers_multiple_axis( axis_list, n_skewers_list, nSnap, input_dir, set
   for i in range( n_axis ):
     skewer_axis = axis_list[i]
     n_skewers = n_skewers_list[i]
-    data_skewers = load_skewers_single_axis( n_skewers, skewer_axis,  nSnap, input_dir, set_random_seed=set_random_seed, print_out=print_out )
+    if ids_to_load_list != None:  ids_to_load = ids_to_load_list[i]
+    else: ids_to_load = None
+    data_skewers = load_skewers_single_axis( n_skewers, skewer_axis,  nSnap, input_dir, set_random_seed=set_random_seed, print_out=print_out, ids_to_load=ids_to_load )
     current_z = data_skewers['current_z']
     skewers_dens = data_skewers['density']
     skewers_HI = data_skewers['HI_density']

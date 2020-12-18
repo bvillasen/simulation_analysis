@@ -55,20 +55,25 @@ cosmology['Omega_M'] = 0.3111
 cosmology['Omega_L'] = 0.6889
 
 
+# n_skewers_total = 60
 n_skewers_total = 10002
 n_skewers_axis = n_skewers_total// 3 
 n_skewers_list = [ n_skewers_axis, n_skewers_axis, n_skewers_axis ]
-n_skewers = np.sum( n_skewers_list )
 axis_list = [ 'x', 'y', 'z' ]
+n_skewers_proc_list = [ ]
+skewers_ids_proc_list = []
 
-n_snap = 169
-
+for i in range( len(axis_list) ):
+  skewers_ids = range(n_skewers_list[i])
+  skewers_ids_proc = split_indices( skewers_ids, rank, nprocs, adjacent=True )
+  skewers_ids_proc_list.append(skewers_ids_proc)
+  n_skewers_proc_list.append( len( skewers_ids_proc ))
 
 if print_out: print(f"\nComputing LOS tau, s_nap:{n_snap}   n_skewers:{n_skewers_total}" )
 
 
 # Load skewer data
-skewer_dataset = load_skewers_multiple_axis( axis_list, n_skewers_list, n_snap, input_dir, set_random_seed=True, print_out=print_out)
+skewer_dataset = load_skewers_multiple_axis( axis_list, n_skewers_proc_list, n_snap, input_dir, ids_to_load_list=skewers_ids_proc_list, print_out=print_out)
 current_z = skewer_dataset['current_z']
 cosmology['current_z'] = current_z
 los_density = skewer_dataset['density']
@@ -77,17 +82,15 @@ los_velocity = skewer_dataset['velocity']
 los_temperature = skewer_dataset['temperature']
 
 
+n_skewers = sum( n_skewers_proc_list )
 skewers_ids = range(n_skewers)
-skewers_ids_proc = split_indices( skewers_ids, rank, nprocs, adjacent=True )
-n_skewers_proc = len( skewers_ids_proc )
-# print( f'{rank}: {skewers_ids_proc}')
 
 
-processed_ids, processed_F = [], []
-for i,skewer_id in enumerate(skewers_ids_proc):
+processed_F = []
+for i,skewer_id in enumerate(skewers_ids):
 
-  if i%(n_skewers_proc//10)==0: 
-    text = ' Skewer {0}/{1}    {2:.0f} %'.format(i, n_skewers_proc,  float(i)/n_skewers_proc*100)
+  if i%(n_skewers//10)==0: 
+    text = ' Skewer {0}/{1}    {2:.0f} %'.format(i, n_skewers,  float(i)/n_skewers*100)
     if rank == 0: print_line_flush( text )
 
   skewer_data = {}  
@@ -99,26 +102,21 @@ for i,skewer_id in enumerate(skewers_ids_proc):
   los_vel_hubble = tau_los_data['vel_Hubble']
   los_tau = tau_los_data['tau']
   los_F = np.exp( -los_tau )
-  processed_ids.append( skewer_id )
   processed_F.append( los_F )
-
+  
 
 processed_F   = np.array( processed_F )
-processed_ids = np.array( processed_ids )
 
 #Send the power spectrum to root process
 if print_out: print( '\nGathering global data')
 global_F   = comm.gather( processed_F, root=0 )
-global_ids = comm.gather( processed_ids, root=0 )
 
 
 
 if rank == 0:
 
   global_F   = np.concatenate( global_F )
-  global_ids = np.concatenate( global_ids )
-  n_processed = len(global_ids)
-  print( global_ids )
+  n_processed = global_F.shape[0]
   print( f'n_processed: {n_processed},   ps_data shape: {global_F.shape}' )
 
   file_name = output_dir + f'los_transmitted_flux_{n_snap}.h5'
@@ -126,6 +124,7 @@ if rank == 0:
   file.attrs['n_skewers'] = n_processed
   file.attrs['current_z'] = current_z
   file.create_dataset( 'los_F', data=global_F )
+  file.create_dataset( 'vel_Hubble', data=los_vel_hubble )
   file.close()
   print( f'Saved File: {file_name}')
 
