@@ -2,7 +2,7 @@ import subprocess
 
 
 n_snap = 169
-command = f'python compute_los_tau.py n_snap={n_snap}''
+command = f'python compute_los_tau.py n_snap={n_snap}'
 
 n_procs = 40
 n_procs_per_node = 40
