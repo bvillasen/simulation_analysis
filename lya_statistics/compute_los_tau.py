@@ -28,12 +28,12 @@ print_out = False
 if rank == 0: print_out = True 
 
 uvb = 'pchw18'
-# dataDir = '/data/groups/comp-astro/bruno/'
+# dataDir = '/raid/bruno/data/'
 # dataDir = '/home/bruno/Desktop/ssd_0/data/'
-dataDir = '/raid/bruno/data/'
+dataDir = '/data/groups/comp-astro/bruno/'
 simulation_dir = dataDir + 'cosmo_sims/2048_hydro_50Mpc/'
 input_dir = simulation_dir + 'skewers_{0}/'.format(uvb)
-output_dir = simulation_dir + 'transmited_flux_{0}/los_F/'.format(uvb)
+output_dir = simulation_dir + 'transmited_flux_{0}_review/los_F/'.format(uvb)
 if rank == 0: create_directory( output_dir )
 
 
