@@ -92,7 +92,8 @@ for i,skewer_id in enumerate(skewers_ids):
 
   if i%(n_skewers//10)==0: 
     text = ' Skewer {0}/{1}    {2:.0f} %'.format(i, n_skewers,  float(i)/n_skewers*100)
-    if rank == 0: print_line_flush( text )
+    # if rank == 0: print_line_flush( text )
+    if rank == 0: print( text )
 
   skewer_data = {}  
   skewer_data['HI_density']  = los_HI_density[skewer_id]
