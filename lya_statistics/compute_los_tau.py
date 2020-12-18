@@ -9,7 +9,9 @@ from load_skewers import load_skewers_multiple_axis
 from spectra_functions import compute_optical_depth
 from tools import *
 
-for option in sys.argv:
+parameters = sys.argv
+print parameters
+for option in parameters:
   if option.find("n_snap=") != -1: n_snap = int(option[option.find('=')+1:])
 
 print( f'Snapshot: {n_snap}' )
