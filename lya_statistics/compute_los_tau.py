@@ -9,13 +9,6 @@ from load_skewers import load_skewers_multiple_axis
 from spectra_functions import compute_optical_depth
 from tools import *
 
-parameters = sys.argv
-print( parameters )
-for option in parameters:
-  if option.find("n_snap=") != -1: n_snap = int(option[option.find('=')+1:])
-
-print( f'Snapshot: {n_snap}' )
-
 use_mpi = True
 if use_mpi :
   from mpi4py import MPI
@@ -25,9 +18,17 @@ if use_mpi :
 else:
   rank = 0
   nprocs = 1
+  
+  print_out = False
+  if rank == 0: print_out = True 
 
-print_out = False
-if rank == 0: print_out = True 
+parameters = sys.argv
+if print_out: print( parameters )
+for option in parameters:
+  if option.find("n_snap=") != -1: n_snap = int(option[option.find('=')+1:])
+
+if print_out: print( f'Snapshot: {n_snap}' )
+
 
 uvb = 'pchw18'
 # dataDir = '/raid/bruno/data/'
