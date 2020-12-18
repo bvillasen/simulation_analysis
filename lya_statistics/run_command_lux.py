@@ -9,8 +9,8 @@ n_procs_per_node = 40
 
 lux_command = f'mpirun -n {n_procs} --map-by ppr:{n_procs_per_node}:node --oversubscribe {command}'
 print('Command: {0}'.format( lux_command ))
-# process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-# for line in process.stdout:
-#   print(line)
-# process.wait()
-# print(process.returncode)
+process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+for line in process.stdout:
+  print(line)
+process.wait()
+print(process.returncode)
