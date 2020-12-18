@@ -10,7 +10,7 @@ from spectra_functions import compute_optical_depth
 from tools import *
 
 parameters = sys.argv
-print parameters
+print( parameters )
 for option in parameters:
   if option.find("n_snap=") != -1: n_snap = int(option[option.find('=')+1:])
 
