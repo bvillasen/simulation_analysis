@@ -27,7 +27,7 @@ SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_par
 SG.Load_Grid_Analysis_Data()
 sim_ids = SG.sim_ids
 
-comparable_data = Get_Comparable_Composite_T0_tau( factor_sigma_tau_becker=9.5, factor_sigma_tau_keating=7., )
+comparable_data = Get_Comparable_Composite_T0_tau( factor_sigma_tau_becker=6.0, factor_sigma_tau_keating=4.0, )
 comparable_grid = Get_Comparable_Composite_T0_tau_from_Grid( comparable_data, SG )
 
 
@@ -50,6 +50,7 @@ if load_mcmc_stats:
 
 else:
   nIter = 200000
+  # nIter = 100000
   nBurn = nIter / 5
   nThin = 1
   model, params_mcmc = mcmc_model_4D( comparable_data, comparable_grid, field, 'mean', SG )
@@ -94,4 +95,5 @@ observables = [ 'T0', 'tau' ]
 observables_samples = Sample_Observables( n_samples, observables, params, data_grid, SG  )
 chi2_vals = Get_Chi2( observables, params, comparable_grid, comparable_data, SG )
 Plot_Observables( observables_samples, comparable_data, params, SG, 'sampling', output_dir, chi2=chi2_vals)
+Plot_Observables( observables_samples, comparable_data, params, SG, 'grid', output_dir, chi2=None)
 

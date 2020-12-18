@@ -113,6 +113,17 @@ class Simulation_Grid:
     self.sim_ids = self.Grid.keys()
     self.coords = coords
     
+  def Find_Closest_Simulation( self, params_search ):
+    diff_min = np.inf
+    id_max = None 
+    for sim_id in self.sim_ids:
+      params_sim = self.Grid[sim_id]['parameter_values']
+      diff = np.abs( params_search - params_sim ).sum()
+      if diff < diff_min:
+        diff_min = diff
+        id_max = sim_id
+    return id_max
+        
   def Create_Grid_Directory_Structure( self ):
     n_sims = self.n_simulations
     for sim_id in range( n_sims ):
@@ -277,7 +288,8 @@ class Simulation_Grid:
       self.Fit_Simulation_Phase_Diagram_MPI( sim_id, n_mpi=n_mpi )
       
   def Load_Simulation_Analysis_Data( self, sim_id, load_fit=False  ):
-    print( f' Loading Simulation Analysis: {sim_id}' )
+    str = f' Loading Simulation Analysis: {sim_id}' 
+    print_line_flush( str )
     
     sim_dir = self.Get_Simulation_Directory( sim_id )
     input_dir = sim_dir + 'analysis_files/'
@@ -318,6 +330,7 @@ class Simulation_Grid:
     
     for sim_id in sim_ids:
       self.Load_Simulation_Analysis_Data( sim_id, load_fit=load_fit  )
+    print('\n')
   
   def Load_Simulation_UVB_Rates( self, sim_id ):
     sim_dir = self.Get_Simulation_Directory( sim_id )

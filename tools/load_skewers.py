@@ -9,7 +9,9 @@ def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_ra
   n_total = inFile.attrs['n']
   current_z = inFile.attrs['current_z']
 
-  if set_random_seed:   np.random.seed(12345)
+  if set_random_seed:   
+    if print_out: print( 'WANING: Fixed random seed to load skewers')
+    np.random.seed(12345)
   skewer_ids = np.random.randint(0, n_total, n_skewers)
   if print_out: print(f" Loading {n_skewers} skewers {skewer_axis} axis")
 
@@ -36,20 +38,57 @@ def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_ra
   return data_out
 
 
+def load_skewers_multiple_axis( axis_list, n_skewers_list, nSnap, input_dir, set_random_seed=True, print_out=True):
+  n_axis = len(axis_list)
 
-dataDir = '/data/groups/comp-astro/bruno/'
-input_dir = dataDir + 'cosmo_sims/2048_hydro_50Mpc/skewers_pchw18/'
+  dens_list, HI_list, temp_list, vel_list = [], [], [], []
 
-nSnap = 169
+  for i in range( n_axis ):
+    skewer_axis = axis_list[i]
+    n_skewers = n_skewers_list[i]
+    data_skewers = load_skewers_single_axis( n_skewers, skewer_axis,  nSnap, input_dir, set_random_seed=set_random_seed, print_out=print_out )
+    current_z = data_skewers['current_z']
+    skewers_dens = data_skewers['density']
+    skewers_HI = data_skewers['HI_density']
+    skewers_temp = data_skewers['temperature']
+    skewers_vel = data_skewers['velocity']
+    dens_list.append( skewers_dens )
+    HI_list.append( skewers_HI )
+    temp_list.append( skewers_temp )
+    vel_list.append( skewers_vel )
+    
+  dens_all = np.concatenate( dens_list )
+  dens_list = []
+  HI_all = np.concatenate( HI_list )
+  HI_list = []
+  temp_all = np.concatenate( temp_list )
+  temp_list = []
+  vel_all = np.concatenate( vel_list )
+  vel_list = []
+  n_skewers = len( dens_all)
+  data_skewers = {}
+  data_skewers['current_z'] = current_z
+  data_skewers['n_skewers'] = n_skewers
+  data_skewers['density'] = dens_all
+  data_skewers['HI_density'] = HI_all
+  data_skewers['velocity'] = vel_all
+  data_skewers['temperature'] = temp_all
+  return data_skewers
 
-skewer_axis = 'x'
-n_skewers = 100
-data_skewers = load_skewers_single_axis(n_skewers, skewer_axis,  nSnap, input_dir, set_random_seed=True, print_out=True )
-current_z = data_skewers['current_z']
 
-
-skewer_id = 0
-skewer_density     = data_skewers['density'][skewer_id]
-skewer_HI_density  = data_skewers['HI_density'][skewer_id]
-skewer_temperature = data_skewers['temperature'][skewer_id]
-skewer_velocity    = data_skewers['velocity'][skewer_id]
+# dataDir = '/data/groups/comp-astro/bruno/'
+# input_dir = dataDir + 'cosmo_sims/2048_hydro_50Mpc/skewers_pchw18/'
+# 
+# nSnap = 169
+# 
+# skewer_axis = 'x'
+# n_skewers = 100
+# data_skewers = load_skewers_single_axis(n_skewers, skewer_axis,  nSnap, input_dir, set_random_seed=True, print_out=True )
+# current_z = data_skewers['current_z']
+# 
+# 
+# skewer_id = 0
+# skewer_density     = data_skewers['density'][skewer_id]
+# skewer_HI_density  = data_skewers['HI_density'][skewer_id]
+# skewer_temperature = data_skewers['temperature'][skewer_id]
+# skewer_velocity    = data_skewers['velocity'][skewer_id]

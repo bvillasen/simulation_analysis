@@ -19,6 +19,10 @@ def mcmc_model_4D( comparable_data, comparable_grid, field, sub_field, SG):
     print(f' Fitting: {param_name}  {param_vals}')
     param_min = min(param_vals)
     param_max = max(param_vals)
+    # if param_id == 3:
+    #   param_min = 0.0
+    #   param_max = 0.2
+    #   print( f'WARNING: Limiting {param_name} to [ {param_min}, {param_max}] ')
     param_mid = ( param_max + param_min ) / 2.
     param_mcmc = pymc.Uniform(param_name, param_min, param_max, value=param_mid )
     params_mcmc[param_id] = {}

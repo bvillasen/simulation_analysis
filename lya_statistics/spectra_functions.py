@@ -41,18 +41,14 @@ def get_optical_depth_velocity( current_z, H, dr, dv, n_HI_los, vel_peculiar_los
   
   n_points = len( n_HI )
   
-  print( f'Space: {space}')
   if space == 'real': velocity = vel_Hubble
   elif space == 'redshift': velocity = vel_Hubble + vel_peculiar
   else: 
     print ('ERROR: Invalid space ( Real or Redshift )')
     return None
   
-  
   b_all = get_Doppler_parameter( temp ) 
-  
   tau_los = np.zeros(n_points) #Initialize arrays of zeros for the total optical delpth along the line of sight
-    
     
   if method=='error_function':
     #Loop over each cell

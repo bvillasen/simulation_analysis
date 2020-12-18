@@ -6,10 +6,12 @@ import h5py as h5
 import time
 
 
-def split_indices( indices, rank, n_procs ):
+def split_indices( indices, rank, n_procs, adjacent=False ):
   n_index_total = len(indices)
   n_proc_indices = (n_index_total-1) // n_procs + 1
   indices_to_generate = np.array([ rank + i*n_procs for i in range(n_proc_indices) ])
+  if adjacent: indices_to_generate = np.array([ i + rank*n_procs for i in range(n_proc_indices) ])
+  else: indices_to_generate = np.array([ rank + i*n_procs for i in range(n_proc_indices) ])
   indices_to_generate = indices_to_generate[ indices_to_generate < n_index_total ]
   return indices_to_generate
 
