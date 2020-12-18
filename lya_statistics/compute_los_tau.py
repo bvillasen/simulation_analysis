@@ -19,8 +19,8 @@ else:
   rank = 0
   nprocs = 1
   
-  print_out = False
-  if rank == 0: print_out = True 
+print_out = False
+if rank == 0: print_out = True 
 
 parameters = sys.argv
 if print_out: print( parameters )
