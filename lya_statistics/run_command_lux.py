@@ -3,7 +3,8 @@ import subprocess
 snaps = [ 83, 90,  96, 102,  119, 124, 130, 136, 143, 151, 159, 169, ]
 snaps_boss = [  96,  102, 106, 110,  114, 119, 124, 130, 136, 143, 151, 159 ]
 
-snapshots = list( set( snaps_boss ).union(set(snaps))).sort()
+snapshots = list( set( snaps_boss ).union(set(snaps)))
+snapshots.sort()
 print(snapshots)
 
 # 
