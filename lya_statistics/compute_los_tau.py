@@ -37,8 +37,8 @@ if print_out: print( f'Snapshot: {n_snap}' )
 uvb = 'pchw18'
 # uvb = 'hm12'
 # dataDir = '/home/bruno/Desktop/ssd_0/data/'
-dataDir = '/raid/bruno/data/'
-# dataDir = '/data/groups/comp-astro/bruno/'
+# dataDir = '/raid/bruno/data/'
+dataDir = '/data/groups/comp-astro/bruno/'
 simulation_dir = dataDir + 'cosmo_sims/2048_hydro_50Mpc/'
 input_dir = simulation_dir + 'skewers_{0}/'.format(uvb)
 output_dir = simulation_dir + 'transmited_flux_{0}_review/los_F/'.format(uvb)
