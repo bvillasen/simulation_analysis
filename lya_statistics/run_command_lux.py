@@ -11,7 +11,7 @@ for n_snap in snapshots:
   command = 'python'
   params = f'compute_los_tau.py n_snap={n_snap}'
 
-  n_procs = 40
+  n_procs = 160
   n_procs_per_node = 40
 
   lux_command = f'mpirun -n {n_procs} --map-by ppr:{n_procs_per_node}:node --oversubscribe {command} {params} '
