@@ -61,8 +61,9 @@ cosmology['Omega_M'] = 0.3111
 cosmology['Omega_L'] = 0.6889
 
 
-n_skewers_total = 60
+# n_skewers_total = 60
 # n_skewers_total = 10002
+n_skewers_total = 20001
 n_skewers_axis = n_skewers_total// 3 
 n_skewers_list = [ n_skewers_axis, n_skewers_axis, n_skewers_axis ]
 axis_list = [ 'x', 'y', 'z' ]
