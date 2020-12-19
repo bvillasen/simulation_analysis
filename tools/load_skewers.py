@@ -3,15 +3,16 @@ import h5py as h5
 import numpy as np
 
 
-def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_random_seed=True, print_out=True, ids_to_load=None ):
+def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_random_seed=False, print_out=True, ids_to_load=None ):
   inFileName = input_dir + f'skewers_{skewer_axis}_{nSnap}.h5'
   inFile = h5.File( inFileName, 'r' )
   n_total = inFile.attrs['n']
+  # if print_out: print( f'Availbale squewers: {n_total}')
   current_z = inFile.attrs['current_z']
   
-  if print_out: print(f"Loading {n_skewers} skewers {skewer_axis} axis")
+  if print_out: print(f"Loading {n_skewers} skewers {skewer_axis} axis from {n_total} available")
   
-  if (ids_to_load != None).any():
+  if type(ids_to_load) == np.ndarray:
     skewer_ids = ids_to_load
     print( f' Loading: {skewer_axis} {skewer_ids}')
     if n_skewers != len(skewer_ids):
@@ -21,7 +22,7 @@ def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_ra
     if set_random_seed:   
       if print_out: print( 'WANING: Fixed random seed to load skewers')
       np.random.seed(12345)
-      skewer_ids = np.random.randint(0, n_total, n_skewers)
+    skewer_ids = np.random.randint(0, n_total, n_skewers)
 
 
   skewers_dens, skewers_temp, skewers_HI, skewers_vel = [], [], [], []

@@ -9,6 +9,7 @@ from load_skewers import load_skewers_multiple_axis
 from spectra_functions import compute_optical_depth
 from tools import *
 
+
 use_mpi = True
 if use_mpi :
   from mpi4py import MPI
@@ -22,6 +23,9 @@ else:
 print_out = False
 if rank == 0: print_out = True 
 
+if print_out: print( 'WANING: Fixed random seed to load skewers')
+np.random.seed(12345)
+
 parameters = sys.argv
 if print_out: print( parameters )
 for option in parameters:
@@ -30,11 +34,11 @@ for option in parameters:
 if print_out: print( f'Snapshot: {n_snap}' )
 
 
-# uvb = 'pchw18'
-uvb = 'hm12'
-# dataDir = '/raid/bruno/data/'
+uvb = 'pchw18'
+# uvb = 'hm12'
 # dataDir = '/home/bruno/Desktop/ssd_0/data/'
-dataDir = '/data/groups/comp-astro/bruno/'
+dataDir = '/raid/bruno/data/'
+# dataDir = '/data/groups/comp-astro/bruno/'
 simulation_dir = dataDir + 'cosmo_sims/2048_hydro_50Mpc/'
 input_dir = simulation_dir + 'skewers_{0}/'.format(uvb)
 output_dir = simulation_dir + 'transmited_flux_{0}_review/los_F/'.format(uvb)
@@ -57,13 +61,14 @@ cosmology['Omega_M'] = 0.3111
 cosmology['Omega_L'] = 0.6889
 
 
-# n_skewers_total = 60
-n_skewers_total = 10002
+n_skewers_total = 60
+# n_skewers_total = 10002
 n_skewers_axis = n_skewers_total// 3 
 n_skewers_list = [ n_skewers_axis, n_skewers_axis, n_skewers_axis ]
 axis_list = [ 'x', 'y', 'z' ]
 n_skewers_proc_list = [ ]
 skewers_ids_proc_list = []
+
 
 for i in range( len(axis_list) ):
   skewers_ids = range(n_skewers_list[i])
@@ -75,7 +80,7 @@ if print_out: print(f"\nComputing LOS tau, s_nap:{n_snap}   n_skewers:{n_skewers
 
 
 # Load skewer data
-skewer_dataset = load_skewers_multiple_axis( axis_list, n_skewers_proc_list, n_snap, input_dir, ids_to_load_list=skewers_ids_proc_list, print_out=print_out)
+skewer_dataset = load_skewers_multiple_axis( axis_list, n_skewers_proc_list, n_snap, input_dir, set_random_seed=False, print_out=print_out)
 current_z = skewer_dataset['current_z']
 cosmology['current_z'] = current_z
 los_density = skewer_dataset['density']
@@ -106,7 +111,7 @@ for i,skewer_id in enumerate(skewers_ids):
   los_tau = tau_los_data['tau']
   los_F = np.exp( -los_tau )
   processed_F.append( los_F )
-  
+
 
 processed_F   = np.array( processed_F )
 
