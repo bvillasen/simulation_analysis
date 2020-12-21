@@ -23,9 +23,6 @@ else:
 print_out = False
 if rank == 0: print_out = True 
 
-if print_out: print( 'WANING: Fixed random seed to load skewers')
-np.random.seed(12345)
-
 parameters = sys.argv
 if print_out: print( parameters )
 for option in parameters:
@@ -65,13 +62,11 @@ n_skewers_axis = n_skewers_total// 3
 n_skewers_list = [ n_skewers_axis, n_skewers_axis, n_skewers_axis ]
 axis_list = [ 'x', 'y', 'z' ]
 n_skewers_proc_list = [ ]
-skewers_ids_proc_list = []
 
 
 for i in range( len(axis_list) ):
   skewers_ids = range(n_skewers_list[i])
   skewers_ids_proc = split_indices( skewers_ids, rank, nprocs, adjacent=True )
-  skewers_ids_proc_list.append(skewers_ids_proc)
   n_skewers_proc_list.append( len( skewers_ids_proc ))
 
 if print_out: print(f"\nComputing LOS tau, s_nap:{n_snap}   n_skewers:{n_skewers_total}" )
