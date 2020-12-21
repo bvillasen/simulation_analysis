@@ -48,7 +48,7 @@ def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_ra
   return data_out
 
 
-def load_skewers_multiple_axis( axis_list, n_skewers_list, nSnap, input_dir, set_random_seed=True, print_out=True, ids_to_load_list=None):
+def load_skewers_multiple_axis( axis_list, n_skewers_list, nSnap, input_dir, set_random_seed=False, print_out=True, ids_to_load_list=None):
   n_axis = len(axis_list)
 
   dens_list, HI_list, temp_list, vel_list = [], [], [], []
