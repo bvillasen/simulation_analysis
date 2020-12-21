@@ -34,8 +34,8 @@ for option in parameters:
 if print_out: print( f'Snapshot: {n_snap}' )
 
 
-# uvb = 'pchw18'
-uvb = 'hm12'
+uvb = 'pchw18'
+# uvb = 'hm12'
 # dataDir = '/home/bruno/Desktop/ssd_0/data/'
 # dataDir = '/raid/bruno/data/'
 dataDir = '/data/groups/comp-astro/bruno/'
@@ -46,7 +46,7 @@ if rank == 0: create_directory( output_dir )
 
 
 # Box parameters
-Lbox = 50.0 #Mpc/h
+Lbox = 50000.0 #kpc/h
 nPoints = 2048
 nx = nPoints
 ny = nPoints
@@ -60,9 +60,6 @@ cosmology['H0'] = 67.66
 cosmology['Omega_M'] = 0.3111
 cosmology['Omega_L'] = 0.6889
 
-
-# n_skewers_total = 60
-# n_skewers_total = 10002
 n_skewers_total = 60000
 n_skewers_axis = n_skewers_total// 3 
 n_skewers_list = [ n_skewers_axis, n_skewers_axis, n_skewers_axis ]

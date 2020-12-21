@@ -36,7 +36,7 @@ def get_optical_depth_velocity( current_z, H, dr, dv, n_HI_los, vel_peculiar_los
   temp = extend_periodic( temp_los, n_ghost) 
   
   r_proper = (np.linspace( -n_ghost, n+n_ghost-1, n+2*n_ghost) + 0.5 )* dr
-  vel_Hubble = H * r_proper * 1e5
+  vel_Hubble = H * r_proper * 1e5  #cm/s
   dv_Hubble = vel_Hubble[1] - vel_Hubble[0]
   
   n_points = len( n_HI )
@@ -62,7 +62,7 @@ def get_optical_depth_velocity( current_z, H, dr, dv, n_HI_los, vel_peculiar_los
             
   # Trim the ghost cells from the global optical depth 
   tau_los    = tau_los[n_ghost:-n_ghost]
-  vel_Hubble = vel_Hubble[n_ghost:-n_ghost]
+  vel_Hubble = vel_Hubble[n_ghost:-n_ghost] * 1e-5 # km/seg
   return tau_los, vel_Hubble
 
 
