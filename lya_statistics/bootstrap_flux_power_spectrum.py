@@ -33,7 +33,7 @@ for option in parameters:
 
 
 # uvb = 'pchw18'
-suvb = 'hm12'
+uvb = 'hm12'
 # dataDir = '/home/bruno/Desktop/ssd_0/data/'
 # dataDir = '/raid/bruno/data/'
 dataDir = '/data/groups/comp-astro/bruno/'
