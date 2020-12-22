@@ -29,8 +29,8 @@ for option in parameters:
 # if print_out: print( f'Snapshot: {n_snap}' )
 
 
-uvb = 'pchw18'
-# uvb = 'hm12'
+# uvb = 'pchw18'
+uvb = 'hm12'
 # dataDir = '/home/bruno/Desktop/ssd_0/data/'
 # dataDir = '/raid/bruno/data/'
 dataDir = '/data/groups/comp-astro/bruno/'
