@@ -73,6 +73,7 @@ for n_snap in snapshots:
   print( f'Writing to File: {file_name}' )
   file = h5.File( file_name, 'w')
   file.attrs['current_z'] = current_z
+  file.attrs['n_iterations'] = n_iterations
   file.create_dataset( 'k_vals', data=k_vals )
   file.create_dataset( 'mean',   data=mean_all )
 
