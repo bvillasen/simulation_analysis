@@ -26,14 +26,14 @@ if print_out: print( parameters )
 for option in parameters:
   if option.find("n_snap=") != -1: n_snap = int(option[option.find('=')+1:])
 
-if print_out: print( f'Snapshot: {n_snap}' )
+# if print_out: print( f'Snapshot: {n_snap}' )
 
 
 uvb = 'pchw18'
 # uvb = 'hm12'
 # dataDir = '/home/bruno/Desktop/ssd_0/data/'
-dataDir = '/raid/bruno/data/'
-# dataDir = '/data/groups/comp-astro/bruno/'
+# dataDir = '/raid/bruno/data/'
+dataDir = '/data/groups/comp-astro/bruno/'
 simulation_dir = dataDir + 'cosmo_sims/2048_hydro_50Mpc/'
 input_dir = simulation_dir + 'transmited_flux_{0}_review/los_F/'.format(uvb)
 output_dir = simulation_dir + 'transmited_flux_{0}_review/flux_power_spectrum/'.format(uvb)
@@ -55,45 +55,56 @@ cosmology['H0'] = 67.66
 cosmology['Omega_M'] = 0.3111
 cosmology['Omega_L'] = 0.6889
 
-file_name = input_dir + f'los_transmitted_flux_{n_snap}.h5'
-print( f'Loading: {file_name}' )
-file = h5.File( file_name, 'r' )
-current_z = file.attrs['current_z']
-n_skewers = file.attrs['n_skewers']  
-los_F = file['los_F'][...]
-vel_Hubble = file['vel_Hubble'][...]
-file.close()
+snaps = [ 83, 90,  96, 102,  119, 124, 130, 136, 143, 151, 159, 169, ]
+snaps_boss = [  96,  102, 106, 110,  114, 119, 124, 130, 136, 143, 151, 159 ]
+snapshots = list( set( snaps_boss ).union(set(snaps)))
+snapshots.sort()
+print(snapshots)
 
-if los_F.shape[0] != n_skewers: 
-  print( 'ERROR: Size of array does not match n_skewers')
-  exit(-1)
 
-F_mean = los_F.mean()
-power_spectrum_all = []
-for i in range( n_skewers ):
-  
-  if i%(n_skewers//10)==0: 
-    text = ' Skewer {0}/{1}    {2:.0f} %'.format(i, n_skewers,  float(i)/n_skewers*100)
-    if rank == 0: print_line_flush( text )
+for n_snap in snapshots:
+
+  file_name = input_dir + f'los_transmitted_flux_{n_snap}.h5'
+  print( f'Loading: {file_name}' )
+  file = h5.File( file_name, 'r' )
+  current_z = file.attrs['current_z']
+  n_skewers = file.attrs['n_skewers']  
+  los_F = file['los_F'][...]
+  vel_Hubble = file['vel_Hubble'][...]
+  file.close()
+
+  if los_F.shape[0] != n_skewers: 
+    print( 'ERROR: Size of array does not match n_skewers')
+    exit(-1)
+
+  F_mean = los_F.mean()
+  power_spectrum_all = []
+  for i in range( n_skewers ):
     
-  F = los_F[i]
-  # Flux fluctuations
-  delta_F = ( F - F_mean ) / F_mean 
-          
-  d_log_k = 0.1
-  bin_centers, skewer_power_spectrum = get_skewer_flux_power_spectrum(vel_Hubble, delta_F, d_log_k=d_log_k )
-  power_spectrum_all.append( skewer_power_spectrum )
+    if i%(n_skewers//10)==0: 
+      text = ' Skewer {0}/{1}    {2:.0f} %'.format(i, n_skewers,  float(i)/n_skewers*100)
+      if rank == 0: print_line_flush( text )
+      
+    F = los_F[i]
+    # Flux fluctuations
+    delta_F = ( F - F_mean ) / F_mean 
+            
+    d_log_k = 0.1
+    bin_centers, skewer_power_spectrum = get_skewer_flux_power_spectrum(vel_Hubble, delta_F, d_log_k=d_log_k )
+    power_spectrum_all.append( skewer_power_spectrum )
 
-power_spectrum_all = np.array( power_spectrum_all )
+  power_spectrum_all = np.array( power_spectrum_all )
 
-print( f'Writing Data shape:{power_spectrum_all.shape} ')
-
-
-file_name = output_dir + f'flux_ps_{n_snap}.h5'
-file = h5.File( file_name, 'w')
-file.attrs['current_z']  = current_z
+  print( f'Writing Data shape:{power_spectrum_all.shape} ')
 
 
-file.close()
-print( f'Saved File: {file_name}' )
+  file_name = output_dir + f'flux_ps_{n_snap}.h5'
+  file = h5.File( file_name, 'w')
+  file.attrs['current_z']  = current_z
+  file.create_dataset('vel_Hubble', data=vel_Hubble )
+  file.create_dataset('k_vals', data=bin_centers )
+  file.create_dataset('flux_power_spectrum', data=power_spectrum_all )
+
+  file.close()
+  print( f'Saved File: {file_name}' )
 
