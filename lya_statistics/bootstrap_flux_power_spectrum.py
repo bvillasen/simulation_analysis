@@ -51,6 +51,7 @@ print(snapshots)
 
 for n_snap in snapshots:
 
+  print( f'Bootstraping Snapshot: {n_snap}' )
 
   # Load Power Spectrum Samples
   file_name = input_dir + f'flux_ps_{n_snap}.h5'
