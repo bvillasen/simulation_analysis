@@ -21,19 +21,18 @@ else:
 print_out = False
 if rank == 0: print_out = True 
 
-n_snap = 169
 
 parameters = sys.argv
 if print_out: print( parameters )
 for option in parameters:
-  if option.find("n_snap=") != -1: n_snap = int(option[option.find('=')+1:])
+  if option.find("uvb")    != -1: uvb = option[option.find('=')+1:]
 
 
 # if print_out: print( f'Snapshot: {n_snap}' )
 
 
 # uvb = 'pchw18'
-uvb = 'hm12'
+# uvb = 'hm12'
 # dataDir = '/home/bruno/Desktop/ssd_0/data/'
 # dataDir = '/raid/bruno/data/'
 dataDir = '/data/groups/comp-astro/bruno/'
