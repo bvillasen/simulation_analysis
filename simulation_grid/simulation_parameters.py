@@ -34,7 +34,8 @@ figures_dir = root_dir + 'figures/'
 
 
 # n_points = 256
-n_points = 512
+# n_points = 512
+n_points = 1024
 Lbox = 50000.0 # kpc
 
 sim_params = {}
