@@ -6,7 +6,7 @@ import numpy as np
 import pickle
 
 
-def load_analysis_data( n_file, input_dir, phase_diagram=True, lya_statistics=True, load_skewer=False, load_fit=False ):
+def load_analysis_data( n_file, input_dir, phase_diagram=True, lya_statistics=True, load_skewer=False, load_fit=False, load_flux_Pk=True):
   file_name = input_dir + f'{n_file}_analysis.h5'
   file = h5.File( file_name, 'r' ) 
 
@@ -60,6 +60,14 @@ def load_analysis_data( n_file, input_dir, phase_diagram=True, lya_statistics=Tr
     F_mean = max( F_mean, 1e-60 )
     data_out['lya_statistics']['Flux_mean'] = F_mean
     data_out['lya_statistics']['tau'] = -np.log( F_mean )
+    
+    if load_flux_Pk:
+      data_out['lya_statistics']['power_spectrum'] = {}
+      ps_data = lya_statistics['power_spectrum']
+      k_vals  = ps_data['k_vals'][...]
+      ps_mean = ps_data['p(k)'][...]
+      data_out['lya_statistics']['power_spectrum']['k_vals']  = k_vals
+      data_out['lya_statistics']['power_spectrum']['ps_mean'] = ps_mean
   
     if load_skewer:
       skewer = lya_statistics['skewer']

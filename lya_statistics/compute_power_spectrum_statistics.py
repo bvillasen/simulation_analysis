@@ -34,8 +34,8 @@ for option in parameters:
 # uvb = 'pchw18'
 # uvb = 'hm12'
 # dataDir = '/home/bruno/Desktop/ssd_0/data/'
-# dataDir = '/raid/bruno/data/'
-dataDir = '/data/groups/comp-astro/bruno/'
+dataDir = '/raid/bruno/data/'
+# dataDir = '/data/groups/comp-astro/bruno/'
 simulation_dir = dataDir + 'cosmo_sims/2048_hydro_50Mpc/'
 input_dir = simulation_dir + 'transmited_flux_{0}_review/bootstraped_power_spectrum/'.format(uvb)
 output_dir = simulation_dir + 'transmited_flux_{0}_review/bootstraped_power_spectrum/statistics/'.format(uvb)
@@ -79,27 +79,31 @@ for n_snap in snapshots:
     # Obtain distribution of P(k)
     n_bins_for_dist = 30
     ps_statistics = {}
+    ps_statistics['sigma'] = []
     for i in range(n_k_samples):
       ps_statistics[i] = {}
       ps_statistics[i]['k_val'] = k_vals[i]
       p_vals = ps_mean_samples[:,i]
-      delta_power = p_vals * k_vals[i]  / np.pi 
-      ps_statistics[i]['mean']  = delta_power.mean() 
-      ps_statistics[i]['sigma'] = delta_power.std() 
-      bin_edges = np.linspace( delta_power.min()*0.99, delta_power.max()*1.01, n_bins_for_dist )
-      power_hist, bin_edges = np.histogram( delta_power, bins=bin_edges )
+      # delta_power = p_vals * k_vals[i]  / np.pi 
+      ps_statistics[i]['mean']  = p_vals.mean() 
+      ps_statistics[i]['sigma'] = p_vals.std()
+      ps_statistics['sigma'].append( ps_statistics[i]['sigma'] )  
+      bin_edges = np.linspace( p_vals.min()*0.99, p_vals.max()*1.01, n_bins_for_dist )
+      power_hist, bin_edges = np.histogram( p_vals, bins=bin_edges )
       bin_centers = ( bin_edges[1:] + bin_edges[:-1] ) / 2
       power_hist = power_hist.astype(np.float) / power_hist.sum()
       ps_statistics[i]['distribution'] = {} 
       ps_statistics[i]['distribution']['bin_centers'] = bin_centers
       ps_statistics[i]['distribution']['histogram']   = power_hist
-      
+    ps_statistics['sigma'] = np.array( ps_statistics['sigma'] )
 
     matrix = np.zeros( [n_k_samples, n_k_samples] )
     for i in range(n_k_samples):
       for j in range(n_k_samples):
-        vals_i = ps_mean_samples[:,i] * k_vals[i]  / np.pi
-        vals_j = ps_mean_samples[:,j] * k_vals[j]  / np.pi
+        # vals_i = ps_mean_samples[:,i] * k_vals[i]  / np.pi
+        # vals_j = ps_mean_samples[:,j] * k_vals[j]  / np.pi
+        vals_i = ps_mean_samples[:,i] 
+        vals_j = ps_mean_samples[:,j] 
         mean_i = vals_i.mean()
         mean_j = vals_j.mean()
         n_samples_i = vals_i.shape[0]
