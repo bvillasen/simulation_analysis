@@ -130,6 +130,11 @@ class Simulation_Grid:
       sim_name = self.Grid[sim_id]['key']
       dir_name = self.root_dir + sim_name
       create_directory( dir_name )
+  
+  def Write_UVB_Parameters( self, sim_id ):
+      sim_dir = self.Get_Simulation_Directory( sim_id )
+      sim_params = self.simulation_parameters.copy()
+      print( sim_param )
       
   def Create_Submit_Job_Script( self, sim_id, save_file=True, partition='gpuq' ):
     
@@ -190,6 +195,7 @@ class Simulation_Grid:
     print("Creating Parameter Files:")
     for sim_id in self.Grid.keys():
       self.Create_Simulation_Parameter_File( sim_id, save_file=save_file )
+      self.Write_UVB_Parameters( sim_id )
   
   def Get_Simulation_Parameter_Values( self, sim_id ):
     param = self.parameters
