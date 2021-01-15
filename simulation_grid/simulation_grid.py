@@ -134,7 +134,13 @@ class Simulation_Grid:
   def Write_UVB_Parameters( self, sim_id ):
       sim_dir = self.Get_Simulation_Directory( sim_id )
       sim_params = self.Grid[sim_id]['parameters']
-      print( sim_params )
+      file_name = sim_dir + 'uvb_params.txt'
+      file = open( file_name, 'w' )
+      for key in sim_params.keys():
+        string = f'{key}={sim_params[key]} \n'
+        file.write( string )
+      file.close()
+      print( f' Saved File: {file_name}' )
       
   def Create_Submit_Job_Script( self, sim_id, save_file=True, partition='gpuq' ):
     
