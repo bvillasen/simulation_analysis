@@ -134,7 +134,7 @@ class Simulation_Grid:
   def Write_UVB_Parameters( self, sim_id ):
       sim_dir = self.Get_Simulation_Directory( sim_id )
       sim_params = self.simulation_parameters.copy()
-      print( sim_param )
+      print( sim_params )
       
   def Create_Submit_Job_Script( self, sim_id, save_file=True, partition='gpuq' ):
     
