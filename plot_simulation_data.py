@@ -25,6 +25,6 @@ create_directory( output_dir )
 
 sim_data = None
 ps_data_dir = 'lya_statistics/data/'
-plot_power_spectrum_grid( ps_data_dir, output_dir, scales='small', sim_data=sim_data, system=SYSTEM )
-plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data=sim_data, system=SYSTEM )
+plot_power_spectrum_grid( ps_data_dir, output_dir, scales='small', sim_data=sim_data, system=system )
+plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data=sim_data, system=system )
 
