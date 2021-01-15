@@ -27,7 +27,7 @@ matplotlib.rcParams['mathtext.rm'] = 'serif'
 
 
 
-def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data=None  ):
+def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data=None, system=None  ):
 
 
   fig_width = 8
@@ -44,7 +44,8 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data=
   tick_width_minor = 1
   border_width = 1
 
-  prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/bruno/fonts/Helvetica', "Helvetica.ttf"), size=12)
+  if system == 'Lux':      prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/brvillas/fonts', "Helvetica.ttf"), size=12)
+  if system == 'Shamrock': prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/bruno/fonts/Helvetica', "Helvetica.ttf"), size=12)
 
   dir_boss = ps_data_dir + 'data_power_spectrum_boss/'
   data_filename = dir_boss + 'data_table.py'
