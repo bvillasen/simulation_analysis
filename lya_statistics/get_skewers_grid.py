@@ -94,3 +94,9 @@ data = load_snapshot_data_distributed( n_snapshot, inDir, data_type, fields, sub
 if rank == 0: print( data.keys() )
 
 
+comm.Barrier()
+
+
+if rank == 0: print( 'Finished Succesfully' )
+
+
