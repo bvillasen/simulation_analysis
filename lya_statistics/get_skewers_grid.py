@@ -130,7 +130,7 @@ for i in range( n_i ):
     n_processed += 1
     
     if n_processed % ( n_skewers//128 ) == 0:
-      text = f'N processed: {n_processed} / {n_skewers}    {n_processed/n_skewers*100}%'
+      text = f'N processed: {n_processed} / {n_skewers}    {n_processed/n_skewers*100}%       '
       if rank == 0: print_line_flush( text )
     
     if axis == 'x':
@@ -153,10 +153,10 @@ for i in range( n_i ):
     skewer_data['velocity']    = los_velocity
     skewer_data['temperature'] = los_temperature
     
-    # tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function' )
-    # los_vel_hubble = tau_los_data['vel_Hubble']
-    # los_tau = tau_los_data['tau']
-    # los_F = np.exp( -los_tau )
+    tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function' )
+    los_vel_hubble = tau_los_data['vel_Hubble']
+    los_tau = tau_los_data['tau']
+    los_F = np.exp( -los_tau )
     
 
 
