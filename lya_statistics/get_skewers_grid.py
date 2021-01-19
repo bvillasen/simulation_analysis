@@ -8,7 +8,6 @@ from tools import *
 from load_data import load_snapshot_data_distributed
 from spectra_functions import compute_optical_depth
 
-
 use_mpi = True  
 
 if use_mpi :
@@ -126,13 +125,16 @@ n_skewers = n_i * n_j
 n_processed = 0
 text = f'N processed: {n_processed} / {n_skewers}    {n_processed/n_skewers*100}%'
 if rank == 0: print_line_flush( text )
+start = time.time() 
 for i in range( n_i ):
   for j in range( n_j ):
     
     n_processed += 1
     
     if n_processed % ( n_skewers//128 ) == 0:
-      text = f'N processed: {n_processed} / {n_skewers}    {n_processed/n_skewers*100}%       '
+      now = time.time()
+      etr = ( n_skewers - n_processed ) / n_processed * ( now - start ) / 60
+      text = 'N processed: {0} / {1}    {2:.1}%    ETR= {3:.1} Hrs  '.format(n_processed, n_skewers, n_processed/n_skewers*100, etr)
       if rank == 0: print_line_flush( text )
     
     
