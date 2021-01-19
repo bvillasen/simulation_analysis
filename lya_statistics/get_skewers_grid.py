@@ -119,6 +119,8 @@ if axis == 'z': n_i, n_j, n_los = subgrid_shape
 
 n_skewers = n_i * n_j
 n_processed = 0
+text = f'N processed: {n_processed} / n_skewers    {n_processed/n_skewers*100}%'
+if rank == 0: print_line_flush( text )
 for i in range( n_i ):
   for j in range( n_j ):
     
@@ -126,7 +128,7 @@ for i in range( n_i ):
     if j > 0: continue
     
     if n_processed % ( n_skewers//100 ) == 0:
-      text = 'N processed: {n_processed} / n_skewers'
+      text = f'N processed: {n_processed} / n_skewers    {n_processed/n_skewers*100}%'
       if rank == 0: print_line_flush( text )
     
     if axis == 'x':
