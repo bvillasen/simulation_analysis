@@ -27,7 +27,7 @@ matplotlib.rcParams['mathtext.rm'] = 'serif'
 
 
 
-def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data=None, system=None  ):
+def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_sets=None, system=None  ):
 
 
   fig_width = 8
@@ -91,9 +91,6 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data=
   text_color  = 'black'
   color_line = c_pchw18
   
-  if sim_data:
-    sim_z_vals = sim_data['z']
-
 
   for index, current_z in enumerate( z_vals ):
 
@@ -112,23 +109,21 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data=
       factor = 1.1
       if indx_i == nrows-1 and indx_j==ncols-1: factor = 1.0
     
-    if sim_data:
-      diff = np.abs( sim_z_vals - current_z )
-      diff_min = diff.min()
-      index = np.where( diff == diff_min )[0][0]
-      # print( index )
-      if diff_min < 0.05:
-        k = sim_data['ps_kvals'][index]
-        ps = sim_data['ps_mean'][index]
-        delta = ps * k / np.pi * factor
-        ax.plot( k, delta, c=color_line, linewidth=3  )
-        
-
-
-
+    if sim_data_sets:
+      for sim_data in sim_data_sets:
+        sim_z_vals = sim_data['z']
+        diff = np.abs( sim_z_vals - current_z )
+        diff_min = diff.min()
+        index = np.where( diff == diff_min )[0][0]
+        # print( index )
+        if diff_min < 0.05:
+          k = sim_data['ps_kvals'][index]
+          ps = sim_data['ps_mean'][index]
+          delta = ps * k / np.pi * factor
+          ax.plot( k, delta, c=color_line, linewidth=3, label=sim_data['plot_label']  )
+          
 
     ax.text(0.85, 0.95, r'$z={0:.1f}$'.format(current_z), horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size, color=text_color) 
-
 
     
     if scales == 'large':

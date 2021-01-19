@@ -8,23 +8,27 @@ extend_path()
 from parameters_UVB_rates import param_UVB_Rates
 from simulation_grid import Simulation_Grid
 from simulation_parameters import *
-from plot_power_spectrum_functions import plot_power_spectrum_grid
+from plot_flux_power_spectrum import plot_power_spectrum_grid
+from plot_T0_tau import plot_T0_and_tau
 
 
 output_dir = root_dir + 'figures/'
 create_directory( output_dir )
 
-# SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
-# sim_ids = SG.sim_ids
-# SG.Load_Grid_Analysis_Data( sim_ids=sim_ids, load_fit=True )
-# 
-# sim_id = 0
-# sim_data  = SG.Grid[sim_id]['analysis']
-# sim_param = SG.Grid[sim_id]['parameters'] 
+SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
+sim_ids = SG.sim_ids
+SG.Load_Grid_Analysis_Data( sim_ids=sim_ids, load_fit=True )
+
+sim_id = 0
+sim_data  = SG.Grid[sim_id]['analysis']
+sim_param = SG.Grid[sim_id]['parameters'] 
+sim_data['plot_label'] = 'P19 Modified'
 
 
-sim_data = None
+sim_data_sets = [ sim_data ]
 ps_data_dir = 'lya_statistics/data/'
-plot_power_spectrum_grid( ps_data_dir, output_dir, scales='small', sim_data=sim_data, system=system )
-plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data=sim_data, system=system )
+plot_power_spectrum_grid( ps_data_dir, output_dir, scales='small', sim_data_sets=sim_data_sets, system=system )
+plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_sets=sim_data_sets, system=system )
 
+
+plot_T0_and_tau( output_dir, sim_data_sets=sim_data_sets, system=system )
