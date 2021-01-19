@@ -93,6 +93,14 @@ fields = [ 'HI_density' ]
 data = load_snapshot_data_distributed( n_snapshot, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=show_progess )
 if rank == 0: print( data.keys() )
 
+H0        = data['H0'] 
+Omega_L   = data['Omega_L']
+Omega_M   = data['Omega_M']
+current_z = data['Current_z']
+
+HI_density = data[data_type]['HI_density']
+
+
 
 comm.Barrier()
 
