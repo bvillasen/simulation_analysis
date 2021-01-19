@@ -88,16 +88,18 @@ if axis == 'z': vel_field = 'momentum_z'
 
 data_type = 'hydro'
 precision = np.float64
-fields = [ 'HI_density', 'temperature', vel_field  ]
-fields = [ 'HI_density' ]
+fields = [ 'density', 'HI_density', 'temperature', vel_field  ]
 data = load_snapshot_data_distributed( n_snapshot, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=show_progess )
 
 H0        = data['H0'] 
 Omega_L   = data['Omega_L']
 Omega_M   = data['Omega_M']
 current_z = data['Current_z']
-HI_density = data[data_type]['HI_density']
-subgrid_shape = HI_density.shape
+density     = data[data_type]['density']
+HI_density  = data[data_type]['HI_density']
+velocity    = data[data_type][vel_field] / density
+temperature = data[data_type]['temperature']
+subgrid_shape = density.shape
 
 if rank == 0: 
   print( f'H0:        {H0}' )
