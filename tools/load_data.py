@@ -156,6 +156,9 @@ def select_ids_to_load( subgrid, domain, proc_grid ):
 
 def load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True, get_statistics=False, print_fields=False ):
   
+  if show_progess:
+    print( f'Loading Snapshot: {nSnap}  ')
+    print( f'Input Directory:  {inDir}  ')
   
   # Get the doamin domain_decomposition
   domain = get_domain_block( proc_grid, box_size, grid_size )
@@ -163,7 +166,7 @@ def load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid,  p
   # Find the ids to load 
   ids_to_load = select_ids_to_load( subgrid, domain, proc_grid )
 
-  print(("Loading Snapshot: {0}".format(nSnap)))
+  # print(("Loading Snapshot: {0}".format(nSnap)))
   #Find the boundaries of the volume to load
   domains = { 'x':{'l':[], 'r':[]}, 'y':{'l':[], 'r':[]}, 'z':{'l':[], 'r':[]}, }
   for id in ids_to_load:
@@ -203,7 +206,7 @@ def load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid,  p
       available_fields = inFile.keys()
       head = inFile.attrs
       if added_header == False:
-        print( ' Loading: ' + inDir + inFileName )
+        # print( ' Loading: ' + inDir + inFileName )
         if print_fields: print( f' Available Fields:  {available_fields}')
         for h_key in list(head.keys()):
           if h_key in ['dims', 'dims_local', 'offset', 'bounds', 'domain', 'dx', ]: continue

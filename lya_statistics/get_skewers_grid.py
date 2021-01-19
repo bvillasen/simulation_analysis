@@ -101,13 +101,16 @@ HI_density  = data[data_type]['HI_density']
 velocity    = data[data_type][vel_field] / density
 temperature = data[data_type]['temperature']
 subgrid_shape = density.shape
+F_subgrid = np.ones( subgrid_shape ) * -1 
+
 
 if rank == 0: 
-  print( f'H0:        {H0}' )
-  print( f'Omega_L:   {Omega_L}' )
-  print( f'Omega_M:   {Omega_M}' )
-  print( f'Current_z: {current_z}' )
-  print( f'Subgrid shape: {subgrid_shape}' )
+  print( '\n Starting Calculation') 
+  print( f' H0:        {H0}' )
+  print( f' Omega_L:   {Omega_L}' )
+  print( f' Omega_M:   {Omega_M}' )
+  print( f' Current_z: {current_z}' )
+  print( f' Subgrid shape: {subgrid_shape}' )
   
 box = { 'Lbox':[ Lbox, Lbox, Lbox ] }
 cosmology = { 'H0':H0, 'Omega_L':Omega_L, 'Omega_M':Omega_M, 'current_z':current_z }
@@ -130,28 +133,31 @@ for i in range( n_i ):
       text = f'N processed: {n_processed} / {n_skewers}    {n_processed/n_skewers*100}%'
       if rank == 0: print( text )
     
-    # if axis == 'x':
-    #   los_HI_density = HI_density[:, i, j]
-    #   los_velocity   = velocity[:, i, j]
-    #   los_temperature = temperature[:, i, j]
-    # 
-    # if axis == 'y':
-    #   los_HI_density = HI_density[i, :, j]
-    #   los_velocity   = velocity[i, :, j]
-    #   los_temperature = temperature[i, :, j]
-    # 
-    # if axis == 'z':
-    #   los_HI_density = HI_density[i, j, :]
-    #   los_velocity   = velocity[i, j, :]
-    #   los_temperature = temperature[i, j, :]
-    # 
-    # skewer_data = {}  
-    # skewer_data['HI_density']  = los_HI_density
-    # skewer_data['velocity']    = los_velocity
-    # skewer_data['temperature'] = los_temperature
-    # 
-    # tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function' )
-    # 
+    if axis == 'x':
+      los_HI_density = HI_density[:, i, j]
+      los_velocity   = velocity[:, i, j]
+      los_temperature = temperature[:, i, j]
+    
+    if axis == 'y':
+      los_HI_density = HI_density[i, :, j]
+      los_velocity   = velocity[i, :, j]
+      los_temperature = temperature[i, :, j]
+    
+    if axis == 'z':
+      los_HI_density = HI_density[i, j, :]
+      los_velocity   = velocity[i, j, :]
+      los_temperature = temperature[i, j, :]
+    
+    skewer_data = {}  
+    skewer_data['HI_density']  = los_HI_density
+    skewer_data['velocity']    = los_velocity
+    skewer_data['temperature'] = los_temperature
+    
+    tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function' )
+    los_vel_hubble = tau_los_data['vel_Hubble']
+    los_tau = tau_los_data['tau']
+    los_F = np.exp( -los_tau )
+    
 
 
 
