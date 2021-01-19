@@ -125,7 +125,6 @@ for i in range( n_i ):
   for j in range( n_j ):
     
     n_processed += 1
-    if j > 0: continue
     
     if n_processed % ( n_skewers//128 ) == 0:
       text = f'N processed: {n_processed} / {n_skewers}    {n_processed/n_skewers*100}%'
