@@ -70,13 +70,13 @@ if axis == 'x':
   subgrid_z = [ index_start, index_end ]
 
 if axis == 'y':
-  subgrid_x = [ 0, npo ]
+  subgrid_x = [ 0, n_points ]
   subgrid_y = [ 0, n_points ]
-  subgrid_z = [ index_z*box_size, (index_z+1)*box_size ]
+  subgrid_z = [ index_start, index_end ]
 
 if axis == 'z':
-  subgrid_x = [ index_y*box_size, (index_y+1)*box_size ]
-  subgrid_y = [ index_z*box_size, (index_z+1)*box_size ]
+  subgrid_x = [ 0, n_points ]
+  subgrid_y = [ index_start, index_end ]
   subgrid_z = [ 0, n_points ]
 
 
@@ -91,7 +91,7 @@ precision = np.float64
 fields = [ 'density', 'HI_density', 'temperature', vel_field  ]
 data = load_snapshot_data_distributed( n_snapshot, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=show_progess )
 
-H0        = data['H0'] 
+H0        = data['H0'] * 1000 #km/s/Mpc
 Omega_L   = data['Omega_L']
 Omega_M   = data['Omega_M']
 current_z = data['Current_z']
@@ -107,6 +107,42 @@ if rank == 0:
   print( f'Omega_M:   {Omega_M}' )
   print( f'Current_z: {current_z}' )
   print( f'Subgrid shape: {subgrid_shape}' )
+  
+cosmology = {'H0':H0, 'Omega_L':Omega_L, 'Omega_M':Omega_M, 'current_z':current_z }
+
+
+if axis == 'x': n_los, n_i, n_j = subgrid_shape
+if axis == 'y': n_i, n_los, n_j = subgrid_shape
+if axis == 'z': n_i, n_j, n_los = subgrid_shape
+
+n_skewers = n_i * n_j
+
+for i in range( n_i ):
+  for j in range( n_j ):
+    
+    if j > 0: continue 
+    
+    if axis == 'x':
+      los_HI_density = HI_density[:, i, j]
+      los_velocity   = velocity[:, i, j]
+      los_temperature = temperature[:, i, j]
+    
+    if axis == 'y':
+      los_HI_density = HI_density[i, :, j]
+      los_velocity   = velocity[i, :, j]
+      los_temperature = temperature[i, :, j]
+    
+    if axis == 'z':
+      los_HI_density = HI_density[i, j, :]
+      los_velocity   = velocity[i, j, :]
+      los_temperature = temperature[i, j, :]
+  
+    skewer_data = {}  
+    skewer_data['HI_density']  = los_HI_density
+    skewer_data['velocity']    = los_velocity
+    skewer_data['temperature'] = los_temperature
+
+    tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function' )
   
 
 
