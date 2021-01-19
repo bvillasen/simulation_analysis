@@ -6,6 +6,7 @@ subDirectories = [x[0] for x in os.walk(root_dir)]
 sys.path.extend(subDirectories)
 from tools import *
 from load_data import load_snapshot_data_distributed
+from spectra_functions import compute_optical_depth
 
 
 use_mpi = True  
@@ -120,6 +121,7 @@ n_skewers = n_i * n_j
 for i in range( n_i ):
   for j in range( n_j ):
     
+    if rank == 0: print( i )
     if j > 0: continue 
     
     if axis == 'x':
