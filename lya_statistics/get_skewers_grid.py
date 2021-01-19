@@ -28,21 +28,24 @@ ny = n_points
 nz = n_points
 ncells = nx * ny * nz
 
-# uvb = 'pchw18'
-uvb = 'hm12'
+uvb = 'pchw18'
+# uvb = 'hm12'
 
 # cosmo_name = 'cosmo_3'
 cosmo_name = ''
 
 
 inDir = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/output_files_{1}/'.format(n_points, uvb, cosmo_name )
-output_dir = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/skewers_{1}/'.format(n_points, uvb, cosmo_name )
-# create_directory( output_dir )
+output_dir = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/skewers_grid_{1}/'.format(n_points, uvb, cosmo_name )
+if rank == 0: create_directory( output_dir )
 
+snaps = [ 83, 90,  96, 102,  119, 124, 130, 136, 143, 151, 159, 169, ]
+snaps_boss = [  96,  102, 106, 110,  114, 119, 124, 130, 136, 143, 151, 159 ]
+snapshots = list( set( snaps_boss ).union(set(snaps)))
+snapshots.sort()
+print(snapshots)
 
-
-data_type = 'hydro'
-show_progess = True
+n_snapshot = snapshots[0]
 
 Lbox = 50000.0     #kpc/h
 n_points = 2048
