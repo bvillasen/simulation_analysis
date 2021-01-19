@@ -89,6 +89,7 @@ if axis == 'z': vel_field = 'momentum_z'
 data_type = 'hydro'
 precision = np.float64
 fields = [ 'HI_density', 'temperature', vel_field  ]
+fields = [ 'HI_density' ]
 data = load_snapshot_data_distributed( n_snapshot, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=show_progess )
 if rank == 0: print( data.keys() )
 
