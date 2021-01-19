@@ -49,7 +49,7 @@ snapshots = list( set( snaps_boss ).union(set(snaps)))
 snapshots.sort()
 # print(snapshots)
 
-n_snapshot = snapshots[0]
+n_snapshot = snapshots[-2]
 snapshot_dir = output_dir + 'snapshot_{0:03}/'.format( n_snapshot ) 
 if rank == 0: create_directory( snapshot_dir )
 
