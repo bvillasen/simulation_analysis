@@ -105,7 +105,7 @@ F_subgrid = np.ones( subgrid_shape ) * -1
 
 
 if rank == 0: 
-  print( '\n Starting Calculation') 
+  print( '\nStarting Calculation') 
   print( f' H0:        {H0}' )
   print( f' Omega_L:   {Omega_L}' )
   print( f' Omega_M:   {Omega_M}' )
@@ -122,7 +122,7 @@ if axis == 'z': n_i, n_j, n_los = subgrid_shape
 
 n_skewers = n_i * n_j
 n_processed = 0
-text = f'N processed: {n_processed} / n_skewers    {n_processed/n_skewers*100}%'
+text = f'N processed: {n_processed} / {n_skewers}    {n_processed/n_skewers*100}%'
 if rank == 0: print_line_flush( text )
 for i in range( n_i ):
   for j in range( n_j ):
@@ -153,10 +153,10 @@ for i in range( n_i ):
     skewer_data['velocity']    = los_velocity
     skewer_data['temperature'] = los_temperature
     
-    tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function' )
-    los_vel_hubble = tau_los_data['vel_Hubble']
-    los_tau = tau_los_data['tau']
-    los_F = np.exp( -los_tau )
+    # tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function' )
+    # los_vel_hubble = tau_los_data['vel_Hubble']
+    # los_tau = tau_los_data['tau']
+    # los_F = np.exp( -los_tau )
     
 
 
