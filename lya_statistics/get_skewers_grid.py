@@ -135,6 +135,7 @@ for i in range( n_i ):
       text = f'N processed: {n_processed} / {n_skewers}    {n_processed/n_skewers*100}%       '
       if rank == 0: print_line_flush( text )
     
+    
     if axis == 'x':
       los_HI_density = HI_density[:, i, j]
       los_velocity   = velocity[:, i, j]
@@ -155,10 +156,13 @@ for i in range( n_i ):
     skewer_data['velocity']    = los_velocity
     skewer_data['temperature'] = los_temperature
     
-    tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function' )
-    los_vel_hubble = tau_los_data['vel_Hubble']
-    los_tau = tau_los_data['tau']
-    los_F = np.exp( -los_tau )
+    if j > 0: los_F = np.ones( los_HI_density )
+    
+    else:
+      tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function' )
+      los_vel_hubble = tau_los_data['vel_Hubble']
+      los_tau = tau_los_data['tau']
+      los_F = np.exp( -los_tau )
     
     if len( los_F ) != n_los: print ('ERROR: Length of array does not match size of box')
     
