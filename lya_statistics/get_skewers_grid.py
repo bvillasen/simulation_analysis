@@ -131,7 +131,7 @@ for i in range( n_i ):
     
     if n_processed % ( n_skewers//128 ) == 0:
       text = f'N processed: {n_processed} / {n_skewers}    {n_processed/n_skewers*100}%'
-      if rank == 0: print( text )
+      if rank == 0: print_line_flush( text )
     
     if axis == 'x':
       los_HI_density = HI_density[:, i, j]
