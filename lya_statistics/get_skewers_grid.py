@@ -34,6 +34,9 @@ uvb = 'pchw18'
 # cosmo_name = 'cosmo_3'
 cosmo_name = ''
 
+show_progess = False
+if rank == 0: show_progess = True
+
 
 inDir = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/output_files_{1}/'.format(n_points, uvb, cosmo_name )
 output_dir = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/skewers_grid_{1}/'.format(n_points, uvb, cosmo_name )
@@ -86,6 +89,6 @@ if axis == 'z': vel_field = 'momentum_z'
 data_type = 'hydro'
 precision = np.float64
 fields = [ 'HI_density', 'temperature', vel_field  ]
-data = load_snapshot_data_distributed( n_snapshot, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True )
+data = load_snapshot_data_distributed( n_snapshot, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=show_progess )
 
 
