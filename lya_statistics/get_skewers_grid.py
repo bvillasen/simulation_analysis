@@ -156,7 +156,7 @@ for i in range( n_i ):
     skewer_data['velocity']    = los_velocity
     skewer_data['temperature'] = los_temperature
     
-    if j > 0: los_F = np.ones( los_HI_density )
+    if j > 0: los_F = np.ones_like( los_HI_density )
     
     else:
       tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function' )
