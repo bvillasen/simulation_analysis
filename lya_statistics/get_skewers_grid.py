@@ -156,14 +156,14 @@ for i in range( n_i ):
     skewer_data['velocity']    = los_velocity
     skewer_data['temperature'] = los_temperature
     
-    if j > 0: los_F = np.ones_like( los_HI_density )
+    # if j > 0: los_F = np.ones_like( los_HI_density )
     
-    else:
-      tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function' )
-      los_vel_hubble = tau_los_data['vel_Hubble']
-      los_tau = tau_los_data['tau']
-      los_F = np.exp( -los_tau )
-    
+    # else:
+    tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function' )
+    los_vel_hubble = tau_los_data['vel_Hubble']
+    los_tau = tau_los_data['tau']
+    los_F = np.exp( -los_tau )
+  
     if len( los_F ) != n_los: print ('ERROR: Length of array does not match size of box')
     
     if axis == 'x': F_subgrid[:, i, j] = los_F
@@ -175,7 +175,6 @@ neg_indices = F_subgrid < 0
 if neg_indices.sum() > 0: print ('ERROR: Negative Values in F_subgrid')
       
     
-
 file_name = snapshot_dir + f'skewers_subgrid_{axis}_{rank}.h5'
 file = h5.File( file_name, 'w' )
 file.attrs['current_z'] = current_z
@@ -191,12 +190,12 @@ print ( f'Saved File: {file_name}' )
     
 
 
-
-
-
-
-
 comm.Barrier()
+
+
+
+
+
 
 
 if rank == 0: print( 'Finished Succesfully' )
