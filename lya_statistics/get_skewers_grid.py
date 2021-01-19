@@ -59,7 +59,7 @@ grid_size = [ n_points, n_points, n_points ]
 
 indices = range( n_points )
 split_indices = split_indices( indices, rank, nprocs, adjacent=True )
-index_start, index_end = split_indices[0], split_indices[-1]
+index_start, index_end = split_indices[0], split_indices[-1]+1
 print( f'Rank:{rank}   start:{index_start}   end:{index_end}' )
 
 axis = 'x'
