@@ -118,12 +118,16 @@ if axis == 'y': n_i, n_los, n_j = subgrid_shape
 if axis == 'z': n_i, n_j, n_los = subgrid_shape
 
 n_skewers = n_i * n_j
-
+n_processed = 0
 for i in range( n_i ):
   for j in range( n_j ):
     
-    if rank == 0: print( i )
-    if j > 0: continue 
+    n_processed += 1
+    if j > 0: continue
+    
+    if n_processed % ( n_skewers//100 ) == 0:
+      text = 'N processed: {n_processed} / n_skewers'
+      if rank == 0: print_line_flush( text )
     
     if axis == 'x':
       los_HI_density = HI_density[:, i, j]
