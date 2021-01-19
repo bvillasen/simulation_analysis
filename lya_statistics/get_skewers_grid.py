@@ -96,7 +96,11 @@ H0        = data['H0']
 Omega_L   = data['Omega_L']
 Omega_M   = data['Omega_M']
 current_z = data['Current_z']
-if rank == 0: print( f'Current_z: {current_z}' )
+if rank == 0: 
+  print( f'H0:        {H0}' )
+  print( f'Omega_L:   {Omega_L}' )
+  print( f'Omega_M:   {Omega_M}' )
+  print( f'Current_z: {current_z}' )
 
 
 HI_density = data[data_type]['HI_density']
