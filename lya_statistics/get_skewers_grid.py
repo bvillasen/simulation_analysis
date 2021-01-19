@@ -128,31 +128,31 @@ for i in range( n_i ):
     if j > 0: continue
     
     if n_processed % ( n_skewers//100 ) == 0:
-      text = f'N processed: {n_processed} / n_skewers    {n_processed/n_skewers*100}%'
+      text = f'N processed: {n_processed} / {n_skewers}    {n_processed/n_skewers*100}%'
       if rank == 0: print_line_flush( text )
     
-    if axis == 'x':
-      los_HI_density = HI_density[:, i, j]
-      los_velocity   = velocity[:, i, j]
-      los_temperature = temperature[:, i, j]
-    
-    if axis == 'y':
-      los_HI_density = HI_density[i, :, j]
-      los_velocity   = velocity[i, :, j]
-      los_temperature = temperature[i, :, j]
-    
-    if axis == 'z':
-      los_HI_density = HI_density[i, j, :]
-      los_velocity   = velocity[i, j, :]
-      los_temperature = temperature[i, j, :]
-  
-    skewer_data = {}  
-    skewer_data['HI_density']  = los_HI_density
-    skewer_data['velocity']    = los_velocity
-    skewer_data['temperature'] = los_temperature
-
-    tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function' )
-  
+    # if axis == 'x':
+    #   los_HI_density = HI_density[:, i, j]
+    #   los_velocity   = velocity[:, i, j]
+    #   los_temperature = temperature[:, i, j]
+    # 
+    # if axis == 'y':
+    #   los_HI_density = HI_density[i, :, j]
+    #   los_velocity   = velocity[i, :, j]
+    #   los_temperature = temperature[i, :, j]
+    # 
+    # if axis == 'z':
+    #   los_HI_density = HI_density[i, j, :]
+    #   los_velocity   = velocity[i, j, :]
+    #   los_temperature = temperature[i, j, :]
+    # 
+    # skewer_data = {}  
+    # skewer_data['HI_density']  = los_HI_density
+    # skewer_data['velocity']    = los_velocity
+    # skewer_data['temperature'] = los_temperature
+    # 
+    # tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function' )
+    # 
 
 
 
