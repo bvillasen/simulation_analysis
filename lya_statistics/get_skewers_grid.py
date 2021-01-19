@@ -109,7 +109,8 @@ if rank == 0:
   print( f'Current_z: {current_z}' )
   print( f'Subgrid shape: {subgrid_shape}' )
   
-cosmology = {'H0':H0, 'Omega_L':Omega_L, 'Omega_M':Omega_M, 'current_z':current_z }
+box = { 'Lbox':[ Lbox, Lbox, Lbox ] }
+cosmology = { 'H0':H0, 'Omega_L':Omega_L, 'Omega_M':Omega_M, 'current_z':current_z }
 
 
 if axis == 'x': n_los, n_i, n_j = subgrid_shape
