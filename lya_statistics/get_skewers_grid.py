@@ -171,8 +171,8 @@ for i in range( n_i ):
     if axis == 'z': F_subgrid[i, j, :] = los_F
     
     
-neg_indices = np.where( F_subgrid < 0 )
-if len( neg_indices ) > 0: print ('ERROR: Negative Values in F_subgrid')
+neg_indices = F_subgrid < 0
+if neg_indices.sum() > 0: print ('ERROR: Negative Values in F_subgrid')
       
     
 
