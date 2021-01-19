@@ -47,9 +47,11 @@ snaps = [ 83, 90,  96, 102,  119, 124, 130, 136, 143, 151, 159, 169, ]
 snaps_boss = [  96,  102, 106, 110,  114, 119, 124, 130, 136, 143, 151, 159 ]
 snapshots = list( set( snaps_boss ).union(set(snaps)))
 snapshots.sort()
-print(snapshots)
+# print(snapshots)
 
 n_snapshot = snapshots[0]
+snapshot_dir = output_dir + 'snapshot_{0:03}/'.format( n_snapshot ) 
+if rank == 0: create_directory( snapshot_dir )
 
 Lbox = 50000.0     #kpc/h
 n_points = 2048
@@ -61,7 +63,7 @@ grid_size = [ n_points, n_points, n_points ]
 indices = range( n_points )
 split_indices = split_indices( indices, rank, nprocs, adjacent=True )
 index_start, index_end = split_indices[0], split_indices[-1]+1
-print( f'Rank:{rank}   start:{index_start}   end:{index_end}' )
+# print( f'Rank:{rank}   start:{index_start}   end:{index_end}' )
 
 axis = 'x'
 
@@ -157,6 +159,31 @@ for i in range( n_i ):
     los_vel_hubble = tau_los_data['vel_Hubble']
     los_tau = tau_los_data['tau']
     los_F = np.exp( -los_tau )
+    
+    if len( los_F ) != n_los: print ('ERROR: Length of array does not match size of box')
+    
+    if axis == 'x': F_subgrid[:, i, j] = los_F
+    if axis == 'y': F_subgrid[i, :, j] = los_F
+    if axis == 'z': F_subgrid[i, j, :] = los_F
+    
+    
+    neg_indices = np.where( los_F < 0 )
+    if len( neg_indices ) > 0: print ('ERROR: Negative Values in F_subgrid')
+      
+    
+
+file_name = snapshot_dir + f'skewers_subgrid_{axis}_{rank}.h5'
+file = h5.File( file_name, 'r' )
+file.attrs['current_z'] = current_z
+file.attrs['subgrid_shape'] = subgrid_shape
+
+
+file.create_dataset( 'vel_hubble', data=los_vel_hubble  )
+file.create_dataset( 'F_subgrid',  data=F_subgrid )
+file.close()
+
+print ( f'Saved File: {file_name}' )
+    
     
 
 
