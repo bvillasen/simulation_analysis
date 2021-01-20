@@ -116,8 +116,9 @@ for i in range( n_i ):
 comm.Barrier()
 
 neg_indices = PS_subgrid < 0
-if neg_indices.sum() > 0: print ('ERROR: Negative Values in F_subgrid')
-      
+if neg_indices.sum() > 0: 
+  print ('ERROR: Negative Values in F_subgrid')
+  exit(-1)    
     
 file_name = snapshot_dir + f'power_spectrum_subgrid_{axis}_{rank:03}.h5'
 file = h5.File( file_name, 'w' )

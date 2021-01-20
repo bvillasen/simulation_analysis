@@ -42,9 +42,12 @@ axis = 'x'
 file_base_name = f'power_spectrum_subgrid_{axis}'
 file_list, n_files = get_files_names( file_base_name, snapshot_dir )
 
+allocated_memory = False
+
+print('\nLoading Files...')
 for index, file_name in enumerate( file_list ):
   
-  text = f'Loading File: {index+1} / {n_files} '
+  text = f' Loading File: {index+1} / {n_files} '
   print_line_flush( text )
   
   file = h5.File( snapshot_dir + file_name, 'r' )
