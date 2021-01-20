@@ -69,6 +69,7 @@ for index, file_name in enumerate( file_list ):
   PS_grid[:, index*n_j:(index+1)*n_j, :] = PS_subgrid
   
 
+print( '\n' )
 neg_indices = PS_grid < 0
 if neg_indices.sum() > 0:
   print ('ERROR: Negative Values in PS_grid')
