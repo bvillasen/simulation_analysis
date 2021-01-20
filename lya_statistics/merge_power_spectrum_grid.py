@@ -39,14 +39,19 @@ create_directory( snapshot_dir )
 
 axis = 'x'
 
-file_name = snapshot_dir + f'power_spectrum_subgrid_{axis}_{rank}.h5'
-file = h5.File( file_name, 'r' )
-current_z = file.attrs['current_z']
-F_mean_global = file.attrs['F_mean_global']
-subgrid_shape = file.attrs['subgrid_shape']
-k_vals = file['k_vals'][...]
-PS_subgrid = file['power_spectrum_subgrid']
-file.close()
+file_base_name = f'power_spectrum_subgrid_{axis}'
+file_list = get_files_names( file_base_name, snapshot_dir )
+
+# index = 0
+# 
+# file_name = snapshot_dir + f'power_spectrum_subgrid_{axis}_{index}.h5'
+# file = h5.File( file_name, 'r' )
+# current_z = file.attrs['current_z']
+# F_mean_global = file.attrs['F_mean_global']
+# subgrid_shape = file.attrs['subgrid_shape']
+# k_vals = file['k_vals'][...]
+# PS_subgrid = file['power_spectrum_subgrid']
+# file.close()
 
     
 
