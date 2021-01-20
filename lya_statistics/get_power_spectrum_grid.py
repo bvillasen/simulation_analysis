@@ -57,7 +57,7 @@ file_name = snapshot_dir + f'skewers_subgrid_{axis}_{rank}.h5'
 file = h5.File( file_name, 'r' )
 current_z     = file.attrs['current_z']
 subgrid_shape = file.attrs['subgrid_shape']
-vel_hubble = file['vel_hubble'][...]
+vel_Hubble = file['vel_hubble'][...]
 F_subgrid = file['F_subgrid'][...]
 file.close()
 
