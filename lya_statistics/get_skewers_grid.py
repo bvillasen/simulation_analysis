@@ -115,91 +115,91 @@ if rank == 0:
   
 box = { 'Lbox':[ Lbox, Lbox, Lbox ] }
 cosmology = { 'H0':H0, 'Omega_L':Omega_L, 'Omega_M':Omega_M, 'current_z':current_z }
-
-
-if axis == 'x': n_los, n_i, n_j = subgrid_shape
-if axis == 'y': n_i, n_los, n_j = subgrid_shape
-if axis == 'z': n_i, n_j, n_los = subgrid_shape
-
-n_skewers = n_i * n_j
-n_processed = 0
-text = f'N processed: {n_processed} / {n_skewers}    {n_processed/n_skewers*100}%'
-if rank == 0: print_line_flush( text )
-start = time.time() 
-for i in range( n_i ):
-  for j in range( n_j ):
-    
-    n_processed += 1
-    
-    if n_processed % ( n_skewers//128 ) == 0:
-      now = time.time()
-      etr = ( n_skewers - n_processed ) / n_processed * ( now - start ) / 60
-      text = 'N processed: {0} / {1}    {2:.1f}%    ETR= {3:.2f} min  '.format(n_processed, n_skewers, n_processed/n_skewers*100, etr)
-      if rank == 0: print_line_flush( text )
-    
-    
-    if axis == 'x':
-      los_HI_density = HI_density[:, i, j]
-      los_velocity   = velocity[:, i, j]
-      los_temperature = temperature[:, i, j]
-    
-    if axis == 'y':
-      los_HI_density = HI_density[i, :, j]
-      los_velocity   = velocity[i, :, j]
-      los_temperature = temperature[i, :, j]
-    
-    if axis == 'z':
-      los_HI_density = HI_density[i, j, :]
-      los_velocity   = velocity[i, j, :]
-      los_temperature = temperature[i, j, :]
-    
-    skewer_data = {}  
-    skewer_data['HI_density']  = los_HI_density
-    skewer_data['velocity']    = los_velocity
-    skewer_data['temperature'] = los_temperature
-    
-    # if j > 0: los_F = np.ones_like( los_HI_density )
-    
-    # else:
-    tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function' )
-    los_vel_hubble = tau_los_data['vel_Hubble']
-    los_tau = tau_los_data['tau']
-    los_F = np.exp( -los_tau )
-  
-    if len( los_F ) != n_los: print ('ERROR: Length of array does not match size of box')
-    
-    if axis == 'x': F_subgrid[:, i, j] = los_F
-    if axis == 'y': F_subgrid[i, :, j] = los_F
-    if axis == 'z': F_subgrid[i, j, :] = los_F
-    
-    
-neg_indices = F_subgrid < 0
-if neg_indices.sum() > 0: print ('ERROR: Negative Values in F_subgrid')
-      
-    
-file_name = snapshot_dir + f'skewers_subgrid_{axis}_{rank}.h5'
-file = h5.File( file_name, 'w' )
-file.attrs['current_z'] = current_z
-file.attrs['subgrid_shape'] = subgrid_shape
-
-
-file.create_dataset( 'vel_hubble', data=los_vel_hubble  )
-file.create_dataset( 'F_subgrid',  data=F_subgrid )
-file.close()
-
-print ( f'Saved File: {file_name}' )
-    
-    
-
-
-comm.Barrier()
-
-
-
-
-
-
-
-if rank == 0: print( 'Finished Succesfully' )
-
-
+# 
+# 
+# if axis == 'x': n_los, n_i, n_j = subgrid_shape
+# if axis == 'y': n_i, n_los, n_j = subgrid_shape
+# if axis == 'z': n_i, n_j, n_los = subgrid_shape
+# 
+# n_skewers = n_i * n_j
+# n_processed = 0
+# text = f'N processed: {n_processed} / {n_skewers}    {n_processed/n_skewers*100}%'
+# if rank == 0: print_line_flush( text )
+# start = time.time() 
+# for i in range( n_i ):
+#   for j in range( n_j ):
+# 
+#     n_processed += 1
+# 
+#     if n_processed % ( n_skewers//128 ) == 0:
+#       now = time.time()
+#       etr = ( n_skewers - n_processed ) / n_processed * ( now - start ) / 60
+#       text = 'N processed: {0} / {1}    {2:.1f}%    ETR= {3:.2f} min  '.format(n_processed, n_skewers, n_processed/n_skewers*100, etr)
+#       if rank == 0: print_line_flush( text )
+# 
+# 
+#     if axis == 'x':
+#       los_HI_density = HI_density[:, i, j]
+#       los_velocity   = velocity[:, i, j]
+#       los_temperature = temperature[:, i, j]
+# 
+#     if axis == 'y':
+#       los_HI_density = HI_density[i, :, j]
+#       los_velocity   = velocity[i, :, j]
+#       los_temperature = temperature[i, :, j]
+# 
+#     if axis == 'z':
+#       los_HI_density = HI_density[i, j, :]
+#       los_velocity   = velocity[i, j, :]
+#       los_temperature = temperature[i, j, :]
+# 
+#     skewer_data = {}  
+#     skewer_data['HI_density']  = los_HI_density
+#     skewer_data['velocity']    = los_velocity
+#     skewer_data['temperature'] = los_temperature
+# 
+#     # if j > 0: los_F = np.ones_like( los_HI_density )
+# 
+#     # else:
+#     tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function' )
+#     los_vel_hubble = tau_los_data['vel_Hubble']
+#     los_tau = tau_los_data['tau']
+#     los_F = np.exp( -los_tau )
+# 
+#     if len( los_F ) != n_los: print ('ERROR: Length of array does not match size of box')
+# 
+#     if axis == 'x': F_subgrid[:, i, j] = los_F
+#     if axis == 'y': F_subgrid[i, :, j] = los_F
+#     if axis == 'z': F_subgrid[i, j, :] = los_F
+# 
+# 
+# neg_indices = F_subgrid < 0
+# if neg_indices.sum() > 0: print ('ERROR: Negative Values in F_subgrid')
+# 
+# 
+# file_name = snapshot_dir + f'skewers_subgrid_{axis}_{rank}.h5'
+# file = h5.File( file_name, 'w' )
+# file.attrs['current_z'] = current_z
+# file.attrs['subgrid_shape'] = subgrid_shape
+# 
+# 
+# file.create_dataset( 'vel_hubble', data=los_vel_hubble  )
+# file.create_dataset( 'F_subgrid',  data=F_subgrid )
+# file.close()
+# 
+# print ( f'Saved File: {file_name}' )
+# 
+# 
+# 
+# 
+# comm.Barrier()
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# if rank == 0: print( 'Finished Succesfully' )
+# 
+# 
