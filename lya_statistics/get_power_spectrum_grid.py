@@ -119,7 +119,7 @@ neg_indices = PS_subgrid < 0
 if neg_indices.sum() > 0: print ('ERROR: Negative Values in F_subgrid')
       
     
-file_name = snapshot_dir + f'power_spectrum_subgrid_{axis}_{rank}.h5'
+file_name = snapshot_dir + f'power_spectrum_subgrid_{axis}_{rank:03}.h5'
 file = h5.File( file_name, 'w' )
 file.attrs['current_z'] = current_z
 file.attrs['F_mean_global'] = F_mean_global
