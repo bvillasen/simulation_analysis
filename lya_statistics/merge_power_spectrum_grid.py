@@ -59,7 +59,7 @@ for index, file_name in enumerate( file_list ):
   file.close()
   
   if not allocated_memory:
-    print( f'Subgrid size: {subgrid_shape} ' )
+    print( f'\n Subgrid size: {subgrid_shape} ' )
     n_i, n_j, n_bins = subgrid_shape
     grid_size = ( n_i, n_j* n_files, n_bins )
     print( f' Grid Size: {grid_size}' )
