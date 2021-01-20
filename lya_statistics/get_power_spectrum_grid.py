@@ -4,9 +4,9 @@ import h5py as h5
 root_dir = os.path.dirname(os.getcwd()) + '/'
 subDirectories = [x[0] for x in os.walk(root_dir)]
 sys.path.extend(subDirectories)
+from flux_power_spectrum import get_skewer_flux_power_spectrum
 from tools import *
-from load_data import load_snapshot_data_distributed
-from spectra_functions import compute_optical_depth
+
 
 use_mpi = True
 
