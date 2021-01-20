@@ -145,6 +145,7 @@ print ( f'Saved File: {file_name}' )
 comm.Barrier()
 if rank == 0: 
   print( f'N Bins: {n_bins}' )
+  print( f'PS Subgrid Shape: {PS_subgrid_shape}' )
   print( 'Finished Succesfully' )
 
 
