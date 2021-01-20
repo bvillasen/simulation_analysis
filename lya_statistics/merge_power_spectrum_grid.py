@@ -59,9 +59,11 @@ for index, file_name in enumerate( file_list ):
   file.close()
   
   if not allocated_memory:
+    print( f'Subgrid size: {subgrid_shape} ' )
     n_i, n_j, n_bins = subgrid_shape
     full_size = ( n_i, n_j* n_files, n_bins )
-    PS_grid  = np.ones( full_size ) * -1
+    print( f' Full Size: {full_size}' )
+    # PS_grid  = np.ones( full_size ) * -1
     allocated_memory = True 
 
     
