@@ -72,6 +72,12 @@ tau = - np.log( F_mean_global  )
 if rank == 0: 
   print( f'tau:    {tau}')
   print( f'F_mean: {F_mean_global}')
+  print( f'current_z: {current_z}')
+  print( f'subgrid_shape: {subgrid_shape}')
+  
+if axis == 'x': n_los, n_i, n_j = subgrid_shape
+if axis == 'y': n_i, n_los, n_j = subgrid_shape
+if axis == 'z': n_i, n_j, n_los = subgrid_shape
 
     
     
