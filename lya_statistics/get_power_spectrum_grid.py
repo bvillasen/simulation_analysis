@@ -113,6 +113,7 @@ for i in range( n_i ):
       PS_subgrid[i, j, :] = skewer_power_spectrum
 
 
+comm.Barrier()
 
 neg_indices = PS_subgrid < 0
 if neg_indices.sum() > 0: print ('ERROR: Negative Values in F_subgrid')
