@@ -66,7 +66,7 @@ for index, file_name in enumerate( file_list ):
     PS_grid  = np.ones( grid_size ) * -1
     allocated_memory = True 
     
-  PS_grid[:, index:(index+1)*n_j, :] = PS_subgrid
+  PS_grid[:, index:(index+1)*n_j, :] = PS_subgrid.copy()
   
 
 neg_indices = PS_grid < 0
