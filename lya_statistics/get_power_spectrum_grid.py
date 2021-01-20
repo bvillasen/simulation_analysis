@@ -114,8 +114,26 @@ for i in range( n_i ):
 
 
 
+neg_indices = PS_subgrid < 0
+if neg_indices.sum() > 0: print ('ERROR: Negative Values in F_subgrid')
+      
+    
+file_name = snapshot_dir + f'power_spectrum_subgrid_{axis}_{rank}.h5'
+file = h5.File( file_name, 'w' )
+file.attrs['current_z'] = current_z
+file.attrs['subgrid_shape'] = subgrid_shape
 
 
+file.create_dataset( 'vel_hubble', data=los_vel_hubble  )
+file.create_dataset( 'k_vals',  data=bin_centers )
+file.create_dataset( 'power_spectrum_subgrid',  data=PS_subgrid )
+file.close()
+
+print ( f'Saved File: {file_name}' )
+
+
+
+comm.Barrier()
 if rank == 0: print( 'Finished Succesfully' )
 
 
