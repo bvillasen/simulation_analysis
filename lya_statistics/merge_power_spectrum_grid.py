@@ -40,7 +40,7 @@ create_directory( snapshot_dir )
 axis = 'x'
 
 file_base_name = f'power_spectrum_subgrid_{axis}'
-file_list = get_files_names( file_base_name, snapshot_dir )
+file_list, n_files = get_files_names( file_base_name, snapshot_dir )
 
 # index = 0
 # 
