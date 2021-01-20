@@ -79,71 +79,71 @@ if axis == 'x': n_los, n_i, n_j = subgrid_shape
 if axis == 'y': n_i, n_los, n_j = subgrid_shape
 if axis == 'z': n_i, n_j, n_los = subgrid_shape
 
-
-n_skewers = n_i * n_j
-n_processed = 0
-text = f'N processed: {n_processed} / {n_skewers}    {n_processed/n_skewers*100}%'
-if rank == 0: print_line_flush( text )
-start = time.time() 
-allocated_memory = False
-for i in range( n_i ):
-  for j in range( n_j ):
-    
-    n_processed += 1
-    
-    if n_processed % ( n_skewers//128 ) == 0:
-      now = time.time()
-      etr = ( n_skewers - n_processed ) / n_processed * ( now - start ) / 60
-      text = 'N processed: {0} / {1}    {2:.1f}%    ETR= {3:.2f} min  '.format(n_processed, n_skewers, n_processed/n_skewers*100, etr)
-      if rank == 0: print_line_flush( text )
-      
-    if axis == 'x': los_F = F_subgrid[:, i, j]
-    if axis == 'y': los_F = F_subgrid[i, :, j]
-    if axis == 'z': los_F = F_subgrid[i, j, :]
-    
-    delta_F = ( los_F - F_mean_global ) / F_mean_global
-
-    d_log_k = 0.1
-    bin_centers, skewer_power_spectrum = get_skewer_flux_power_spectrum(vel_Hubble, delta_F, d_log_k=d_log_k )
-
-    if not allocated_memory:
-      n_bins = len(bin_centers)
-      PS_subgrid = np.ones( [n_i, n_j, n_bins ] ) * -1
-      allocated_memory = True
-    
-    if ( skewer_power_spectrum < 0 ).any():
-      print ('ERROR: Negative Values in Skewer Power Spectrum')
-      exit(-1)    
-      
-    
-    PS_subgrid[i, j, :] = skewer_power_spectrum
-
-if rank == 0: print('\n')
-comm.Barrier()
-
-neg_indices = PS_subgrid < 0
-if neg_indices.sum() > 0: 
-  print ('ERROR: Negative Values in PS_subgrid')
-  exit(-1)    
-    
-file_name = snapshot_dir + f'power_spectrum_subgrid_{axis}_{rank:03}.h5'
-file = h5.File( file_name, 'w' )
-file.attrs['current_z'] = current_z
-file.attrs['F_mean_global'] = F_mean_global
-file.attrs['subgrid_shape'] = subgrid_shape
-
-
-file.create_dataset( 'k_vals',  data=bin_centers )
-file.create_dataset( 'power_spectrum_subgrid',  data=PS_subgrid )
-file.close()
-
-print ( f'Saved File: {file_name}' )
-
-
-
-comm.Barrier()
-if rank == 0: 
-  print( f'N Bins: {n_bins}' )
-  print( 'Finished Succesfully' )
-
-
+# 
+# n_skewers = n_i * n_j
+# n_processed = 0
+# text = f'N processed: {n_processed} / {n_skewers}    {n_processed/n_skewers*100}%'
+# if rank == 0: print_line_flush( text )
+# start = time.time() 
+# allocated_memory = False
+# for i in range( n_i ):
+#   for j in range( n_j ):
+# 
+#     n_processed += 1
+# 
+#     if n_processed % ( n_skewers//128 ) == 0:
+#       now = time.time()
+#       etr = ( n_skewers - n_processed ) / n_processed * ( now - start ) / 60
+#       text = 'N processed: {0} / {1}    {2:.1f}%    ETR= {3:.2f} min  '.format(n_processed, n_skewers, n_processed/n_skewers*100, etr)
+#       if rank == 0: print_line_flush( text )
+# 
+#     if axis == 'x': los_F = F_subgrid[:, i, j]
+#     if axis == 'y': los_F = F_subgrid[i, :, j]
+#     if axis == 'z': los_F = F_subgrid[i, j, :]
+# 
+#     delta_F = ( los_F - F_mean_global ) / F_mean_global
+# 
+#     d_log_k = 0.1
+#     bin_centers, skewer_power_spectrum = get_skewer_flux_power_spectrum(vel_Hubble, delta_F, d_log_k=d_log_k )
+# 
+#     if not allocated_memory:
+#       n_bins = len(bin_centers)
+#       PS_subgrid = np.ones( [n_i, n_j, n_bins ] ) * -1
+#       allocated_memory = True
+# 
+#     if ( skewer_power_spectrum < 0 ).any():
+#       print ('ERROR: Negative Values in Skewer Power Spectrum')
+#       exit(-1)    
+# 
+# 
+#     PS_subgrid[i, j, :] = skewer_power_spectrum
+# 
+# if rank == 0: print('\n')
+# comm.Barrier()
+# 
+# neg_indices = PS_subgrid < 0
+# if neg_indices.sum() > 0: 
+#   print ('ERROR: Negative Values in PS_subgrid')
+#   exit(-1)    
+# 
+# file_name = snapshot_dir + f'power_spectrum_subgrid_{axis}_{rank:03}.h5'
+# file = h5.File( file_name, 'w' )
+# file.attrs['current_z'] = current_z
+# file.attrs['F_mean_global'] = F_mean_global
+# file.attrs['subgrid_shape'] = subgrid_shape
+# 
+# 
+# file.create_dataset( 'k_vals',  data=bin_centers )
+# file.create_dataset( 'power_spectrum_subgrid',  data=PS_subgrid )
+# file.close()
+# 
+# print ( f'Saved File: {file_name}' )
+# 
+# 
+# 
+# comm.Barrier()
+# if rank == 0: 
+#   print( f'N Bins: {n_bins}' )
+#   print( 'Finished Succesfully' )
+# 
+# 
