@@ -62,7 +62,7 @@ for index, file_name in enumerate( file_list ):
     print( f'Subgrid size: {subgrid_shape} ' )
     n_i, n_j, n_bins = subgrid_shape
     grid_size = ( n_i, n_j* n_files, n_bins )
-    print( f' Grid Size: {full_size}' )
+    print( f' Grid Size: {grid_size}' )
     PS_grid  = np.ones( grid_size ) * -1
     allocated_memory = True 
     
