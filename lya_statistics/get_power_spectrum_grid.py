@@ -8,7 +8,7 @@ from tools import *
 from load_data import load_snapshot_data_distributed
 from spectra_functions import compute_optical_depth
 
-use_mpi = False
+use_mpi = True
 
 if use_mpi :
   from mpi4py import MPI
@@ -57,10 +57,21 @@ file_name = snapshot_dir + f'skewers_subgrid_{axis}_{rank}.h5'
 file = h5.File( file_name, 'r' )
 current_z     = file.attrs['current_z']
 subgrid_shape = file.attrs['subgrid_shape']
-
 vel_hubble = file['vel_hubble'][...]
 F_subgrid = file['F_subgrid'][...]
 file.close()
+
+F_mean_local = F_subgrid.mean()
+
+if use_mpi:
+  F_mean_global = comm.allreduce( F_mean_local, MPI.SUM ) / nprocs
+else:
+  F_mean_global = F_mean_local
+  
+tau = - np.log( F_mean_global  )
+if rank == 0: 
+  print( f'tau:    {tau}')
+  print( f'F_mean: {F_mean_global}')
 
     
     
