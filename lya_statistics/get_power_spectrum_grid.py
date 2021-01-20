@@ -97,26 +97,26 @@ for i in range( n_i ):
       text = 'N processed: {0} / {1}    {2:.1f}%    ETR= {3:.2f} min  '.format(n_processed, n_skewers, n_processed/n_skewers*100, etr)
       if rank == 0: print_line_flush( text )
       
-      if axis == 'x': los_F = F_subgrid[:, i, j]
-      if axis == 'y': los_F = F_subgrid[i, :, j]
-      if axis == 'z': los_F = F_subgrid[i, j, :]
-      
-      delta_F = ( los_F - F_mean_global ) / F_mean_global
+    if axis == 'x': los_F = F_subgrid[:, i, j]
+    if axis == 'y': los_F = F_subgrid[i, :, j]
+    if axis == 'z': los_F = F_subgrid[i, j, :]
+    
+    delta_F = ( los_F - F_mean_global ) / F_mean_global
 
-      d_log_k = 0.1
-      bin_centers, skewer_power_spectrum = get_skewer_flux_power_spectrum(vel_Hubble, delta_F, d_log_k=d_log_k )
+    d_log_k = 0.1
+    bin_centers, skewer_power_spectrum = get_skewer_flux_power_spectrum(vel_Hubble, delta_F, d_log_k=d_log_k )
 
-      if not allocated_memory:
-        n_bins = len(bin_centers)
-        PS_subgrid = np.ones( [n_i, n_j, n_bins ] ) * -1
-        allocated_memory = True
+    if not allocated_memory:
+      n_bins = len(bin_centers)
+      PS_subgrid = np.ones( [n_i, n_j, n_bins ] ) * -1
+      allocated_memory = True
+    
+    if ( skewer_power_spectrum < 0 ).any():
+      print ('ERROR: Negative Values in Skewer Power Spectrum')
+      exit(-1)    
       
-      if ( skewer_power_spectrum < 0 ).any():
-        print ('ERROR: Negative Values in Skewer Power Spectrum')
-        exit(-1)    
-        
-      
-      PS_subgrid[i, j, :] = skewer_power_spectrum
+    
+    PS_subgrid[i, j, :] = skewer_power_spectrum
 
 
 comm.Barrier()
