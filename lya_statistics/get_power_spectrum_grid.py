@@ -85,6 +85,7 @@ n_processed = 0
 text = f'N processed: {n_processed} / {n_skewers}    {n_processed/n_skewers*100}%'
 if rank == 0: print_line_flush( text )
 start = time.time() 
+allocated_memory = False
 for i in range( n_i ):
   for j in range( n_j ):
     
@@ -105,6 +106,11 @@ for i in range( n_i ):
       d_log_k = 0.1
       bin_centers, skewer_power_spectrum = get_skewer_flux_power_spectrum(vel_Hubble, delta_F, d_log_k=d_log_k )
 
+      if not allocated_memory:
+        n_bins = len(bin_centers)
+        PS_subgrid = np.ones( [n_i, n_j, n_bins ] ) * -1
+      
+      PS_subgrid[i, j, :] = skewer_power_spectrum
 
 
 
