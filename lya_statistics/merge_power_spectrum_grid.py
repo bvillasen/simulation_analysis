@@ -55,7 +55,7 @@ for index, file_name in enumerate( file_list ):
   F_mean_global = file.attrs['F_mean_global']
   subgrid_shape = file.attrs['subgrid_shape']
   k_vals = file['k_vals'][...]
-  PS_subgrid = file['power_spectrum_subgrid']
+  PS_subgrid = file['power_spectrum_subgrid'][...]
   file.close()
   
   if not allocated_memory:
@@ -66,7 +66,7 @@ for index, file_name in enumerate( file_list ):
     PS_grid  = np.ones( grid_size ) * -1
     allocated_memory = True 
     
-  PS_grid[:, index:(index+1)*n_j, :] = PS_subgrid.copy()
+  PS_grid[:, index:(index+1)*n_j, :] = PS_subgrid
   
 
 neg_indices = PS_grid < 0
