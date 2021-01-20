@@ -25,6 +25,7 @@ cosmo_name = ''
 
 
 input_dir = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/skewers_grid_{1}/'.format(n_points, uvb, cosmo_name )
+output_dir =  dataDir + 'cosmo_sims/{0}_hydro_50Mpc/flux_power_spectrum_grid_{1}/'.format(n_points, uvb, cosmo_name )
 
 
 snaps = [ 83, 90,  96, 102,  119, 124, 130, 136, 143, 151, 159, 169, ]
@@ -75,7 +76,7 @@ if neg_indices.sum() > 0:
   print ('ERROR: Negative Values in PS_grid')
   exit(-1)    
   
-file_name = snapshot_dir + f'power_spectrum_grid_{axis}.h5'
+file_name = output_dir + f'ps_grid_{axis}_{n_snapshot}.h5'
 file = h5.File( file_name, 'w' )
 file.attrs['current_z'] = current_z
 file.attrs['F_mean_global'] = F_mean_global
