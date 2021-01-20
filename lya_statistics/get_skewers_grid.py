@@ -134,7 +134,7 @@ for i in range( n_i ):
     if n_processed % ( n_skewers//128 ) == 0:
       now = time.time()
       etr = ( n_skewers - n_processed ) / n_processed * ( now - start ) / 60
-      text = 'N processed: {0} / {1}    {2:.1}%    ETR= {3:.1} min  '.format(n_processed, n_skewers, n_processed/n_skewers*100, etr)
+      text = 'N processed: {0} / {1}    {2:.1}%    ETR= {3:.2f} min  '.format(n_processed, n_skewers, n_processed/n_skewers*100, etr)
       if rank == 0: print_line_flush( text )
     
     
