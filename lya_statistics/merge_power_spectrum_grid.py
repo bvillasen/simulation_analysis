@@ -61,11 +61,34 @@ for index, file_name in enumerate( file_list ):
   if not allocated_memory:
     print( f'Subgrid size: {subgrid_shape} ' )
     n_i, n_j, n_bins = subgrid_shape
-    full_size = ( n_i, n_j* n_files, n_bins )
-    print( f' Full Size: {full_size}' )
-    # PS_grid  = np.ones( full_size ) * -1
+    grid_size = ( n_i, n_j* n_files, n_bins )
+    print( f' Grid Size: {full_size}' )
+    PS_grid  = np.ones( grid_size ) * -1
     allocated_memory = True 
+    
+  PS_grid[:, index:(index+1)*n_j, :] = PS_subgrid
+  
 
+neg_indices = PS_grid < 0
+if neg_indices.sum() > 0:
+  print ('ERROR: Negative Values in PS_grid')
+  exit(-1)    
+  
+file_name = snapshot_dir + f'power_spectrum_grid_{axis}.h5'
+file = h5.File( file_name, 'w' )
+file.attrs['current_z'] = current_z
+file.attrs['F_mean_global'] = F_mean_global
+file.attrs['grid_shape'] = grid_size
+
+
+file.create_dataset( 'k_vals',  data=k_vals )
+file.create_dataset( 'power_spectrum_grid',  data=PS_grid )
+file.close()
+
+print ( f'Saved File: {file_name}' )
+  
+
+print( 'Finished Succesfully' )
     
 
 
