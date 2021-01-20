@@ -109,6 +109,7 @@ for i in range( n_i ):
       if not allocated_memory:
         n_bins = len(bin_centers)
         PS_subgrid = np.ones( [n_i, n_j, n_bins ] ) * -1
+        allocated_memory = True
       
       PS_subgrid[i, j, :] = skewer_power_spectrum
 
