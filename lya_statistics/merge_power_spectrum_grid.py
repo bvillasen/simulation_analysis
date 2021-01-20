@@ -26,6 +26,7 @@ cosmo_name = ''
 
 input_dir = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/skewers_grid_{1}/'.format(n_points, uvb, cosmo_name )
 output_dir =  dataDir + 'cosmo_sims/{0}_hydro_50Mpc/flux_power_spectrum_grid_{1}/'.format(n_points, uvb, cosmo_name )
+create_directory( output_dir )
 
 
 snaps = [ 83, 90,  96, 102,  119, 124, 130, 136, 143, 151, 159, 169, ]
@@ -36,7 +37,6 @@ snapshots.sort()
 
 n_snapshot = snapshots[-2]
 snapshot_dir = input_dir + 'snapshot_{0:03}/'.format( n_snapshot ) 
-create_directory( snapshot_dir )
 
 axis = 'x'
 
