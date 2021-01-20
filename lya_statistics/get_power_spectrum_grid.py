@@ -111,6 +111,11 @@ for i in range( n_i ):
         PS_subgrid = np.ones( [n_i, n_j, n_bins ] ) * -1
         allocated_memory = True
       
+      if ( skewer_power_spectrum < 0 ).any():
+        print ('ERROR: Negative Values in Skewer Power Spectrum')
+        exit(-1)    
+        
+      
       PS_subgrid[i, j, :] = skewer_power_spectrum
 
 
@@ -118,7 +123,7 @@ comm.Barrier()
 
 neg_indices = PS_subgrid < 0
 if neg_indices.sum() > 0: 
-  print ('ERROR: Negative Values in F_subgrid')
+  print ('ERROR: Negative Values in PS_subgrid')
   exit(-1)    
     
 file_name = snapshot_dir + f'power_spectrum_subgrid_{axis}_{rank:03}.h5'
