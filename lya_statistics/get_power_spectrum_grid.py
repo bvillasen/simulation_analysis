@@ -124,7 +124,6 @@ file.attrs['current_z'] = current_z
 file.attrs['subgrid_shape'] = subgrid_shape
 
 
-file.create_dataset( 'vel_hubble', data=los_vel_hubble  )
 file.create_dataset( 'k_vals',  data=bin_centers )
 file.create_dataset( 'power_spectrum_subgrid',  data=PS_subgrid )
 file.close()
@@ -134,6 +133,8 @@ print ( f'Saved File: {file_name}' )
 
 
 comm.Barrier()
-if rank == 0: print( 'Finished Succesfully' )
+if rank == 0: 
+  print( f'N Bins: {n_bins}' )
+  print( 'Finished Succesfully' )
 
 
