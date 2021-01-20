@@ -56,6 +56,7 @@ for index, file_name in enumerate( file_list ):
   F_mean_global = file.attrs['F_mean_global']
   subgrid_shape = file.attrs['subgrid_shape']
   k_vals = file['k_vals'][...]
+  vel_Hubble = file['vel_Hubble'][...]
   PS_subgrid = file['power_spectrum_subgrid'][...]
   file.close()
   
@@ -84,6 +85,7 @@ file.attrs['grid_shape'] = grid_size
 
 
 file.create_dataset( 'k_vals',  data=k_vals )
+file.create_dataset( 'vel_Hubble', data=vel_Hubble )
 file.create_dataset( 'power_spectrum_grid',  data=PS_grid )
 file.close()
 

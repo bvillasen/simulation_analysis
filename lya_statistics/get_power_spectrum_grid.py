@@ -134,7 +134,9 @@ file.attrs['F_mean_global'] = F_mean_global
 file.attrs['subgrid_shape'] = PS_subgrid_shape
 
 
+
 file.create_dataset( 'k_vals',  data=bin_centers )
+file.create_dataset( 'vel_Hubble',  data=vel_Hubble )
 file.create_dataset( 'power_spectrum_subgrid',  data=PS_subgrid )
 file.close()
 

@@ -8,8 +8,9 @@ from flux_power_spectrum import get_skewer_flux_power_spectrum
 from tools import *
 
 
-dataDir = '/data/groups/comp-astro/bruno/'
 # dataDir = '/gpfs/alpine/proj-shared/ast149/'
+# dataDir = '/data/groups/comp-astro/bruno/'
+dataDir = '/raid/bruno/data/'
 
 n_points = 2048
 nx = n_points
