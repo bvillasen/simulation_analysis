@@ -118,7 +118,7 @@ for i in range( n_i ):
     
     PS_subgrid[i, j, :] = skewer_power_spectrum
 
-
+if rank == 0: print('\n')
 comm.Barrier()
 
 neg_indices = PS_subgrid < 0
