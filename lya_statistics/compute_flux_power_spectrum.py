@@ -36,7 +36,7 @@ for option in parameters:
 dataDir = '/data/groups/comp-astro/bruno/'
 simulation_dir = dataDir + 'cosmo_sims/2048_hydro_50Mpc/'
 input_dir = simulation_dir + 'transmited_flux_{0}_review/los_F/'.format(uvb)
-output_dir = simulation_dir + 'transmited_flux_{0}_review/flux_power_spectrum/'.format(uvb)
+output_dir = simulation_dir + 'transmited_flux_{0}_review/flux_power_spectrum_new/'.format(uvb)
 if rank == 0: create_directory( output_dir )
 
 
