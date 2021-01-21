@@ -8,7 +8,7 @@ from parameters_UVB_rates import param_UVB_Rates
 from simulation_grid import Simulation_Grid
 from simulation_parameters import *
 from plot_UVB_Rates import Plot_Grid_UVB_Rates
-from plot_power_spectrum_functions import plot_power_spectrum_grid
+
 
 create_directory( root_dir )
 
@@ -27,8 +27,8 @@ create_directory( output_dir )
 
 
 
-# SG.Load_Grid_UVB_Rates()
-# Plot_Grid_UVB_Rates( SG, output_dir )
+SG.Load_Grid_UVB_Rates()
+Plot_Grid_UVB_Rates( SG, output_dir )
 
 
 # SG.Delete_Grid_Output_files()
