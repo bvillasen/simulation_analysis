@@ -56,7 +56,8 @@ def plot_T0_and_tau( output_dir, sim_data_sets=None, system=None ):
   for sim_data in sim_data_sets:
     z = sim_data['z']
     vals = sim_data[obs_name]
-    ax.plot( z, vals , c=color_line, label=sim_data['plot_label'], zorder=1 )
+    ax.plot( z, vals , label=sim_data['plot_label'], zorder=1 )
+    # ax.plot( z, vals , c=color_line, label=sim_data['plot_label'], zorder=1 )
 
 
   data_set = comparable_data[obs_name]
@@ -82,7 +83,8 @@ def plot_T0_and_tau( output_dir, sim_data_sets=None, system=None ):
   for sim_data in sim_data_sets:
     z = sim_data['z']
     vals = sim_data[obs_name]
-    ax.plot( z, vals, c=color_line, label=sim_data['plot_label'], zorder=1 )
+    ax.plot( z, vals,  label=sim_data['plot_label'], zorder=1 )
+    # ax.plot( z, vals, c=color_line, label=sim_data['plot_label'], zorder=1 )
 
   data_set = comparable_data[obs_name]
   data_z = data_set['z']

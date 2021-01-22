@@ -35,4 +35,4 @@ plot_power_spectrum_grid( ps_data_dir, output_dir, scales='small', sim_data_sets
 # plot_power_spectrum_grid( ps_data_dir, output_dir, scales='middle', sim_data_sets=sim_data_sets, system=system )
 
 
-# plot_T0_and_tau( output_dir, sim_data_sets=sim_data_sets, system=system )
+plot_T0_and_tau( output_dir, sim_data_sets=sim_data_sets, system=system )
