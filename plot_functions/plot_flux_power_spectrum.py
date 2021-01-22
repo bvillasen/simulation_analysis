@@ -260,6 +260,7 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
         
 
   fileName = output_dir + f'flux_ps_grid_{scales}'
+  if high_z_only: fileName += '_highZ'
   fileName += '.png'
   # fileName += '.pdf'
   fig.savefig( fileName,  pad_inches=0.1, bbox_inches='tight', dpi=fig_dpi)
