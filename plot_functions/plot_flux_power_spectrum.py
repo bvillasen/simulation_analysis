@@ -86,7 +86,7 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
   
   if high_z_only:    nrows, ncols = 1, 2
   
-  flags = np.zeros( (nrows, ncols ))
+  if scales == 'middle':flags = np.zeros( (nrows, ncols ))
   
   # if scales == 'middle': nrows = 2
   fig, ax_l = plt.subplots(nrows=nrows, ncols=ncols, figsize=(2*fig_width,5*nrows))
@@ -117,7 +117,9 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
 
     if nrows > 1: ax = ax_l[indx_i][indx_j]
     else: ax = ax_l[indx_j]
-    flags[indx_i,  indx_j] = 1
+    
+    
+    if scales == 'middle': flags[indx_i,  indx_j] = 1
 
     if sim_data_sets:
       for sim_data in sim_data_sets:
@@ -255,11 +257,11 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
 
 
 
-
-  for i in range( nrows ):
-    for j in range( ncols ):
-      if not flags[i,j]:
-        ax = ax_l[i][j].axis('off')
+  if scales == 'middle':
+    for i in range( nrows ):
+      for j in range( ncols ):
+        if not flags[i,j]:
+          ax = ax_l[i][j].axis('off')
         
 
   fileName = output_dir + f'flux_ps_grid_{scales}'
