@@ -235,6 +235,9 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
       if indx_i == 0: y_min, y_max = 4e-3, 9e-2
       if indx_i == 1: y_min, y_max = 1e-2, 5e-1
       
+    if high_z_only: y_min, y_max = 5e-2, 3
+      
+      
 
 
 
