@@ -128,7 +128,7 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
         diff_min = diff.min()
         index = np.where( diff == diff_min )[0][0]
         # print( index )
-        if diff_min < 0.05:
+        if diff_min < 0.08:
           k = sim_data['ps_kvals'][index]
           ps = sim_data['ps_mean'][index]
           delta = ps * k / np.pi 
