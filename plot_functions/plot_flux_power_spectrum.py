@@ -32,8 +32,11 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
   if system == 'Lux': matplotlib.use('Agg')
 
 
+  fig_height = 5
   fig_width = 8
   fig_dpi = 300
+  
+  if high_z_only: fig_height = 8
 
   label_size = 18
   figure_text_size = 18
@@ -89,7 +92,9 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
   if scales == 'middle':flags = np.zeros( (nrows, ncols ))
   
   # if scales == 'middle': nrows = 2
-  fig, ax_l = plt.subplots(nrows=nrows, ncols=ncols, figsize=(2*fig_width,5*nrows))
+  
+  
+  fig, ax_l = plt.subplots(nrows=nrows, ncols=ncols, figsize=(2*fig_width,fig_height*nrows))
   plt.subplots_adjust( hspace = 0.02, wspace=0.02)
 
 
@@ -132,7 +137,8 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
           k = sim_data['ps_kvals'][index]
           ps = sim_data['ps_mean'][index]
           delta = ps * k / np.pi 
-          ax.plot( k, delta, c=color_line, linewidth=3, label=sim_data['plot_label']  )
+          ax.plot( k, delta, linewidth=3, label=sim_data['plot_label']  )
+          # ax.plot( k, delta, c=color_line, linewidth=3, label=sim_data['plot_label']  )
           
 
     ax.text(0.85, 0.95, r'$z={0:.1f}$'.format(current_z), horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size, color=text_color) 
