@@ -32,6 +32,7 @@ cosmo_name = ''
 
 
 input_dir   = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/flux_power_spectrum_grid_{1}/'.format(n_points, uvb, cosmo_name )
+stats_dir   = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/transmited_flux_{1}_review/flux_power_spectrum_new/'.format(n_points, uvb, cosmo_name )
 figures_dir = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/figures/flux_ps_diagnostics/'.format( n_points )
 
 
@@ -51,15 +52,13 @@ axis = 'x'
 
 file_name = input_dir + f'ps_grid_stats_{axis}_{n_snapshot}.pkl'
 print ( f'Loading File: {file_name }' )
+ps_stats_grid = pickle.load( open( file_name, 'rb' ) ) 
+
+
+
+file_name = stats_dir + f'stats_{n_snapshot}.pkl'
+print ( f'Loading File: {file_name }' )
 ps_stats = pickle.load( open( file_name, 'rb' ) ) 
-
-
-
-# for k_index in ps_stats:
-#   data = ps_stats[k_index]
-#   k_val = data['k_val']
-#   delta_mean = data['delta_mean']
-#   print( k_val, delta_mean )
 
 
 
@@ -69,14 +68,15 @@ fig_dpi = 300
 
 label_size = 16
 figure_text_size = 14
+title_size = 14
 
 k_index = 3
-for k_index in range(1, 18):
+for k_index in range(17, 20):
 
-  data = ps_stats[k_index]
+  data = ps_stats_grid[k_index]
 
   nrows = 1
-  ncols = 2
+  ncols = 3
   fig, ax_l = plt.subplots(nrows=nrows, ncols=ncols, figsize=(ncols*fig_width,6*nrows))
   plt.subplots_adjust( hspace = 0.2, wspace=0.3)
 
@@ -114,6 +114,10 @@ for k_index in range(1, 18):
   ax.axvline( x=sigma_l, linestyle='--', c='C1'  )
   ax.axvline( x=sigma_r, linestyle='--', c='C1'  )
 
+  title = r'Distribution From $2048^2$ Skewers Along 1 Axis' 
+  ax.set_title( title, fontsize=title_size )
+
+
   text =  r'$k={0:.2e}$ '.format(k_val) + r'$\,\,  \mathrm{s}\,\mathrm{km}^{-1}$' 
   ax.text(0.2, 0.95, text, horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size ) 
 
@@ -121,7 +125,7 @@ for k_index in range(1, 18):
   y_text = 0.85
   delta_text = 0.05
 
-  text = r'$avr: {0:.1e}$ '.format( delta_mean, ) 
+  text = r'$avr: {0:.2e}$ '.format( delta_mean, ) 
   ax.text(x_text, y_text, text, horizontalalignment='left',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size ) 
 
   text = r'$\sigma_p:\,\, {0:.1e}$'.format(sigma_r - delta_mean)
@@ -153,12 +157,16 @@ for k_index in range(1, 18):
   ax.axvline( x=mean_samples_sigma_l, linestyle='--', c='C2'  )
   ax.axvline( x=mean_samples_sigma_r, linestyle='--', c='C2'  )
 
+  title = f'Distrb From {n_groups} Independent Mean Measurements' 
+  ax.set_title( title, fontsize=title_size )
+
+
   text =  r'$k={0:.2e}$ '.format(k_val) + r'$\,\,  \mathrm{s}\,\mathrm{km}^{-1}$' 
   ax.text(0.2, 0.95, text, horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size ) 
 
 
 
-  text = r'$avr: {0:.1e}$ '.format( mean_samples_mean ) 
+  text = r'$avr: {0:.2e}$ '.format( mean_samples_mean ) 
   ax.text(x_text, y_text, text, horizontalalignment='left',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size ) 
 
   text = r'$\sigma:\,\, {0:.1e}$'.format(mean_samples_sigma)
@@ -175,6 +183,60 @@ for k_index in range(1, 18):
   ax.set_ylabel( r' $P\,[\Delta_F^2]$', fontsize=label_size )
 
 
+
+
+  ax = ax_l[2]
+
+  data = ps_stats[k_index]
+  bin_centers = data['bin_centers']
+  distribution = data['distribution']
+  delta_mean = data['delta_mean']
+  delta_sigma = data['delta_sigma']
+  sigma_l = data['sigma_l']
+  sigma_r = data['sigma_r']
+
+
+
+  ax.plot( bin_centers, distribution )
+  ax.axvline( x=delta_mean, c='C3'  )
+  ax.axvline( x=sigma_l, linestyle='--', c='C3'  )
+  ax.axvline( x=sigma_r, linestyle='--', c='C3'  )
+
+
+  title = r'Distrib From 60000 Random Skewers Along 3 Axis' 
+  ax.set_title( title, fontsize=title_size )
+
+
+  text =  r'$k={0:.2e}$ '.format(k_val) + r'$\,\,  \mathrm{s}\,\mathrm{km}^{-1}$' 
+  ax.text(0.2, 0.95, text, horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size ) 
+
+
+  text = r'$avr: {0:.2e}$ '.format( delta_mean, ) 
+  ax.text(x_text, y_text, text, horizontalalignment='left',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size ) 
+
+  text = r'$\sigma_p:\,\, {0:.1e}$'.format(sigma_r - delta_mean)
+  ax.text(x_text, y_text - delta_text, text, horizontalalignment='left',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size ) 
+
+  text = r'$\sigma_m: {0:.1e}$'.format( delta_mean - sigma_l)
+  ax.text(x_text, y_text - 2*delta_text, text, horizontalalignment='left',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size ) 
+
+  text = r'$\sigma: {0:.1e}$'.format( delta_sigma)
+  ax.text(x_text, y_text - 3*delta_text, text, horizontalalignment='left',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size ) 
+
+  text = r'$\sigma / \sqrt{N_{ind}}:$' +' ${0:.1e}$'.format( delta_sigma / np.sqrt( n_independent ))
+  ax.text(x_text, y_text - 4*delta_text, text, horizontalalignment='left',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size ) 
+
+
+  ax.set_xscale('log')
+
+  ids  = np.where( distribution > 0.001 )[0]
+  left  = ids.min()
+  right = ids.max()
+  ax.set_xlim( bin_centers[left], bin_centers[right])
+  ax.set_ylim( 0, distribution.max()* 1.2 )
+
+  ax.set_xlabel( r' $\Delta_F^2$', fontsize=label_size )
+  ax.set_ylabel( r' $P\,[\Delta_F^2]$', fontsize=label_size )
 
 
   fileName = snapshot_dir + f'delta_PS_distribution_k{k_index:03}.png'

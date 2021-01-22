@@ -27,8 +27,9 @@ sim_data['plot_label'] = 'P19 Modified'
 
 sim_data_sets = [ sim_data ]
 ps_data_dir = 'lya_statistics/data/'
-plot_power_spectrum_grid( ps_data_dir, output_dir, scales='small', sim_data_sets=sim_data_sets, system=system )
-plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_sets=sim_data_sets, system=system )
+# plot_power_spectrum_grid( ps_data_dir, output_dir, scales='small', sim_data_sets=sim_data_sets, system=system )
+# plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_sets=sim_data_sets, system=system )
+plot_power_spectrum_grid( ps_data_dir, output_dir, scales='middle', sim_data_sets=sim_data_sets, system=system )
 
 
 plot_T0_and_tau( output_dir, sim_data_sets=sim_data_sets, system=system )

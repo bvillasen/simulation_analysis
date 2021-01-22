@@ -1,7 +1,6 @@
 import numpy as np
 
 
-
 def compute_distribution( values, n_bins, log=False ):
   if log: values = np.log10( values )
   val_min, val_max = values.min(), values.max()
@@ -34,9 +33,9 @@ def get_highest_probability_interval( bin_centers, distribution, fill_sum, log=F
   n = len( distribution )
   v_max = distribution.max()
   id_max = np.where( distribution == v_max )[0]
-  if len( id_max ) > 1:
-    print('ERROR: Unable to find unique maximum in distribution')
-    exit(-1)
+  # if len( id_max ) > 1:
+  #   print('ERROR: Unable to find unique maximum in distribution')
+  #   exit(-1)
   id_max  = id_max[0]
   id_l, id_r = id_max - 1, id_max + 1
   # print( id_l, id_r )

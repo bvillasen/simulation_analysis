@@ -18,6 +18,7 @@ system = 'Lux'
 # grid_name = '512_P19'
 # grid_name = '1024_P19'
 grid_name = '1024_P19_mod_0'
+# grid_name = '1024_P19_mod_single'
 
 if system == 'Lux':
   root_dir   = f'/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/{grid_name}/'

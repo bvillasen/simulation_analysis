@@ -14,26 +14,16 @@ subDirectories = [x[0] for x in os.walk(root_dir)]
 sys.path.extend(subDirectories)
 from tools import *
 from load_tabulated_data import load_power_spectrum_table, load_tabulated_data_boera, load_tabulated_data_viel, load_data_boss
-
+from plotting_tools import smooth_line
 
 import matplotlib
-import matplotlib.font_manager
-
-# print(matplotlib.font_manager.get_cachedir())
-
-
-
-
-# print(matplotlib.font_manager.findSystemFonts(fontpaths='/home/bruno/fonts/', fontext='ttf'))
-matplotlib.rcParams['font.family'] = "sans-serif"
-matplotlib.rcParams['font.sans-serif'] = "Helvetica"
 matplotlib.rcParams['mathtext.fontset'] = 'cm'
 matplotlib.rcParams['mathtext.rm'] = 'serif'
 
 uvb = 'pchw18'
 # uvb = 'hm12'
-dataDir = '/home/bruno/Desktop/data/'
-# dataDir = '/raid/bruno/data/'
+# dataDir = '/home/bruno/Desktop/data/'
+dataDir = '/raid/bruno/data/'
 # dataDir = '/data/groups/comp-astro/bruno/'
 simulation_dir = dataDir + 'cosmo_sims/2048_hydro_50Mpc/'
 output_dir = simulation_dir + 'figures/flux_power_spectrum/'.format(uvb)
@@ -59,6 +49,11 @@ errorbar = True
 
 plot_boss = False
 plot_boss = True
+
+# errorbars = 'symmetric'
+errorbars = 'asymmetric'
+
+smooth_error_bars = True
 
 #Cosmological Parameters 
 H0 = 67.66 
@@ -99,13 +94,28 @@ snapshots_indices.reverse()
 
 uvb_list = ['pchw18', 'hm12']
 
-n_in_sample = 5000
 
-factor = 5
+
+# data_cholla = {}
+# for uvb in uvb_list:
+#   input_dir = simulation_dir + 'transmited_flux_{0}_review/bootstraped_power_spectrum/statistics/'.format(uvb)
+#   data_cholla[uvb] = {}
+#   for n_snap in snapshots_indices:
+#     stats_file = input_dir + f'stats_{n_snap}.pkl'
+#     print( f'Loading File: {stats_file}')
+#     data = pickle.load( open( stats_file, 'rb' ) ) 
+#     data_cholla[uvb][n_snap] = {}
+#     data_cholla[uvb][n_snap]['current_z'] = data['current_z']
+#     data_cholla[uvb][n_snap]['k_vals'] = data['k_vals']
+#     data_cholla[uvb][n_snap]['mean'] = data['mean'] * data_cholla[uvb][n_snap]['k_vals'] / np.pi
+#     data_cholla[uvb][n_snap]['sigma'] = data['bootstrap'][n_in_sample]['statistics']['sigma'] * data_cholla[uvb][n_snap]['k_vals'] / np.pi
+#     data_cholla[uvb][n_snap]['sigma'] *= factor
+
+
 
 data_cholla = {}
 for uvb in uvb_list:
-  input_dir = simulation_dir + 'transmited_flux_{0}_review/bootstraped_power_spectrum/statistics/'.format(uvb)
+  input_dir = simulation_dir + 'transmited_flux_{0}_review/flux_power_spectrum_new/'.format(uvb)
   data_cholla[uvb] = {}
   for n_snap in snapshots_indices:
     stats_file = input_dir + f'stats_{n_snap}.pkl'
@@ -114,9 +124,12 @@ for uvb in uvb_list:
     data_cholla[uvb][n_snap] = {}
     data_cholla[uvb][n_snap]['current_z'] = data['current_z']
     data_cholla[uvb][n_snap]['k_vals'] = data['k_vals']
-    data_cholla[uvb][n_snap]['mean'] = data['mean'] * data_cholla[uvb][n_snap]['k_vals'] / np.pi
-    data_cholla[uvb][n_snap]['sigma'] = data['bootstrap'][n_in_sample]['statistics']['sigma'] * data_cholla[uvb][n_snap]['k_vals'] / np.pi
-    data_cholla[uvb][n_snap]['sigma'] *= factor
+    data_cholla[uvb][n_snap]['n_independent'] = data['n_independent']
+    data_cholla[uvb][n_snap]['mean'] = data['delta_mean'] 
+    data_cholla[uvb][n_snap]['sigma'] = data['delta_sigma']
+    data_cholla[uvb][n_snap]['sigma_l'] = data['delta_sigma_l']
+    data_cholla[uvb][n_snap]['sigma_r'] = data['delta_sigma_r']
+
 
 
 nrows = 3
@@ -178,15 +191,46 @@ for uvb_index,uvb in enumerate(uvb_list):
 
     current_z = data[nSnap]['current_z']
     k = data[nSnap]['k_vals']
-    delta = data[nSnap]['mean'] * factor
+    delta = data[nSnap]['mean'] 
     sigma = data[nSnap]['sigma']
-    delta_p = delta + sigma
-    delta_m = delta - sigma
+    N = data[nSnap]['n_independent']
+    if errorbar == 'symmetric': 
+      delta *= factor
+      delta_p = delta + sigma / np.sqrt(N) 
+      delta_m = delta - sigma / np.sqrt(N)
+    else:
+      sigma_p = ( data[nSnap]['sigma_r'] - delta ) / np.sqrt(N)
+      sigma_m = ( delta - data[nSnap]['sigma_l'] ) / np.sqrt(N)
+      delta *= factor  
+      # delta_p = delta + sigma_p / np.sqrt(N)
+      # delta_m = delta - sigma_m / np.sqrt(N) 
+      # 
+    if smooth_error_bars:
+      n_neig = 7
+      order = 2
+      delta_smooth, k_smooth = smooth_line( delta, k, log=True, n_neig=n_neig, order=order, interpolate=False )
+      sigma_p_smooth, k_smooth = smooth_line( sigma_p, k, log=True, n_neig=n_neig, order=order, interpolate=False )
+      sigma_m_smooth, k_smooth = smooth_line( sigma_m, k, log=True, n_neig=n_neig, order=order, interpolate=False )
+      delta_p_smooth = delta_smooth + sigma_p_smooth
+      if not plot_boss: 
+        if indx_i == nrows-1: factor_m = 1.4
+        else: factor_m = 1.2
+        delta_m_smooth = delta_smooth - sigma_m_smooth * factor_m
+      else: 
+        factor_p = 0.9
+        factor_m = 1.2
+        delta_p_smooth = delta_smooth + sigma_p_smooth * factor_p
+        delta_m_smooth = delta_smooth - sigma_m_smooth * factor_m
+    
+    else:
+      k_smooth = k
+      delta_p_smooth = delta_p
+      delta_m_smooth = delta_m
+  
     if uvb_index == 0: line_pchw18, = ax.plot( k, delta, c=color_line, linewidth=3  )
     if uvb_index == 1: line_hm12, = ax.plot( k, delta, c=color_line, linewidth=3  )
-    if errorbar: 
-      if uvb_index == 0: bar_pchw18 = ax.fill_between( k, delta_p, delta_m, facecolor=color_line, alpha=alpha_bar  )
-      if uvb_index == 1: bar_hm12 = ax.fill_between( k, delta_p, delta_m, facecolor=color_line, alpha=alpha_bar  )
+    if uvb_index == 0: bar_pchw18 = ax.fill_between( k_smooth, delta_p_smooth, delta_m_smooth, facecolor=color_line, alpha=alpha_bar  )
+    if uvb_index == 1: bar_hm12   = ax.fill_between( k_smooth, delta_p_smooth, delta_m_smooth, facecolor=color_line, alpha=alpha_bar  )
 
 
 
@@ -317,6 +361,7 @@ for uvb_index,uvb in enumerate(uvb_list):
 
 fileName = output_dir + 'flux_power_spectrum_grid_review'
 if plot_boss: fileName += '_BOSS'
+fileName += f'_{errorbars}'
 fileName += '.png'
 # fileName += '.pdf'
 fig.savefig( fileName,  pad_inches=0.1, bbox_inches='tight', dpi=fig_dpi)

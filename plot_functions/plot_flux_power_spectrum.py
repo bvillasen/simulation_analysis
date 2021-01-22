@@ -64,18 +64,24 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
   data_viel = load_tabulated_data_viel( data_dir_viel)
   data_z_v = data_viel['z_vals']
 
-  z_vals_small_scale = [ 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 4.2, 4.6, 5.0, 5.4 ]
-  z_vals_large_scale = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.6 ]
+  z_vals_small_scale  = [ 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 4.2, 4.6, 5.0, 5.4 ]
+  z_vals_large_scale  = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.6 ]
+  z_vals_middle_scale = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 4.2, 4.6 ]
   
   if scales == 'large': z_vals = z_vals_large_scale
   elif scales == 'small': z_vals = z_vals_small_scale
+  elif scales == 'middle': z_vals = z_vals_middle_scale
   else: 
-    print( "ERROR: Scales = large or small ")
+    print( "ERROR: Scales = large,  small of middle ")
     return
     
     
   nrows = 3
   ncols = 4
+  
+  flags = np.zeros( (nrows, ncols ))
+  
+  # if scales == 'middle': nrows = 2
   fig, ax_l = plt.subplots(nrows=nrows, ncols=ncols, figsize=(2*fig_width,5*nrows))
   plt.subplots_adjust( hspace = 0.02, wspace=0.02)
 
@@ -91,6 +97,9 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
   text_color  = 'black'
   color_line = c_pchw18
   
+  if scales == 'middle':
+    c_walther = 'C3'
+  
 
   for index, current_z in enumerate( z_vals ):
 
@@ -100,15 +109,8 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
     indx_i = index//ncols
 
     ax = ax_l[indx_i][indx_j]
+    flags[indx_i,  indx_j] = 1
 
-
-    factor = 1.0
-    if indx_i == nrows-1: factor = 1.1
-
-    if scales == 'large': 
-      factor = 1.1
-      if indx_i == nrows-1 and indx_j==ncols-1: factor = 1.0
-    
     if sim_data_sets:
       for sim_data in sim_data_sets:
         sim_z_vals = sim_data['z']
@@ -119,14 +121,14 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
         if diff_min < 0.05:
           k = sim_data['ps_kvals'][index]
           ps = sim_data['ps_mean'][index]
-          delta = ps * k / np.pi * factor
+          delta = ps * k / np.pi 
           ax.plot( k, delta, c=color_line, linewidth=3, label=sim_data['plot_label']  )
           
 
     ax.text(0.85, 0.95, r'$z={0:.1f}$'.format(current_z), horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size, color=text_color) 
 
     
-    if scales == 'large':
+    if scales == 'large' or scales == 'middle':
 
       # Add Boss data
       z_diff = np.abs( data_z_boss - current_z )
@@ -141,8 +143,8 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
         label_boss = 'eBOSS (2019)'
         d_boss = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boss, label=label_boss)
 
-    else:
-
+    if scales == 'small' or scales == 'middle':
+      
       # Add Walther data
       z_diff = np.abs( data_z_w - current_z )
       diff_min = z_diff.min()
@@ -191,12 +193,19 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
     if scales == 'large': legend_loc = 2
     label_bars =  r'1$\sigma$ skewers $P\,(\Delta_F^2)$'
 
-    if indx_j == 0:
+    add_legend = False
+    if indx_j == 0: add_legend = True
+    
+    if scales == 'middle' and indx_i == nrows-1 and indx_j == ncols-1: add_legend = True
+      
+      
+    if add_legend:
       # leg = ax.legend( loc=legend_loc, frameon=False, fontsize=12)
       leg = ax.legend(  loc=legend_loc, frameon=False, prop=prop    )
       
       for text in leg.get_texts():
           plt.setp(text, color = text_color)
+          
 
 
 
@@ -211,6 +220,11 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
       if indx_i == 1: y_min, y_max = 2e-2, 2.5e-1
       if indx_i == 2: y_min, y_max = 5e-2, 7e-1
 
+    if scales == 'middle':
+      x_min, x_max = 5e-3, 1e-1
+      if indx_i == 0: y_min, y_max = 4e-3, 9e-2
+      if indx_i == 1: y_min, y_max = 1e-2, 5e-1
+      
 
 
 
@@ -233,6 +247,12 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
 
 
 
+
+  for i in range( nrows ):
+    for j in range( ncols ):
+      if not flags[i,j]:
+        ax = ax_l[i][j].axis('off')
+        
 
   fileName = output_dir + f'flux_ps_grid_{scales}'
   fileName += '.png'

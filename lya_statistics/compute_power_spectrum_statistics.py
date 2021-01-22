@@ -5,9 +5,8 @@ import pickle
 root_dir = os.path.dirname(os.getcwd()) + '/'
 subDirectories = [x[0] for x in os.walk(root_dir)]
 sys.path.extend(subDirectories)
-from bootstrap_functions import bootstrap_sample_mean
 from tools import *
-
+from stats_functions import compute_distribution, get_highest_probability_interval
 
 use_mpi = False
 if use_mpi :
@@ -21,24 +20,26 @@ else:
   
 print_out = False
 if rank == 0: print_out = True 
-
-parameters = sys.argv
-if print_out: print( parameters )
-for option in parameters:
-  if option.find("uvb")    != -1: uvb = option[option.find('=')+1:]
+# 
+# parameters = sys.argv
+# if print_out: print( parameters )
+# for option in parameters:
+#   if option.find("uvb")    != -1: uvb = option[option.find('=')+1:]
 
 
 # if print_out: print( f'Snapshot: {n_snap}' )
 
+n_points = 2048
 
 # uvb = 'pchw18'
-# uvb = 'hm12'
+uvb = 'hm12'
+
 # dataDir = '/home/bruno/Desktop/ssd_0/data/'
 dataDir = '/raid/bruno/data/'
 # dataDir = '/data/groups/comp-astro/bruno/'
 simulation_dir = dataDir + 'cosmo_sims/2048_hydro_50Mpc/'
-input_dir = simulation_dir + 'transmited_flux_{0}_review/bootstraped_power_spectrum/'.format(uvb)
-output_dir = simulation_dir + 'transmited_flux_{0}_review/bootstraped_power_spectrum/statistics/'.format(uvb)
+input_dir  = simulation_dir + 'transmited_flux_{0}_review/flux_power_spectrum_new/'.format(uvb)
+output_dir = simulation_dir + 'transmited_flux_{0}_review/flux_power_spectrum_new/'.format(uvb)
 if rank == 0: create_directory( output_dir )
 
 snaps = [ 83, 90,  96, 102,  119, 124, 130, 136, 143, 151, 159, 169, ]
@@ -47,80 +48,89 @@ snapshots = list( set( snaps_boss ).union(set(snaps)))
 snapshots.sort()
 print(snapshots)
 
-# n_snap = 169
+# n_snap = 159
 for n_snap in snapshots:
 
-  print( f'Covariance Matrix Snapshot: {n_snap}' )
 
-  file_name = input_dir + f'bootstrap_{n_snap}.h5'
-  print( f'Writing to File: {file_name}' )
+
+  file_name = input_dir + f'flux_ps_{n_snap}.h5'
+  print( f'Loading File: {file_name}' )
   file = h5.File( file_name, 'r')
   current_z = file.attrs['current_z']
-  n_iterations = file.attrs['n_iterations']
+  vel_Hubble = file['vel_Hubble'][...]
   k_vals = file['k_vals'][...]
-  ps_mean = file['mean'][...]
+  ps_vals = file['flux_power_spectrum'][...]
+  file.close()
+
+  n_skewers, n_bins = ps_vals.shape
+  vel_max = vel_Hubble.max()
+
+  print(f'N Skewers: {n_skewers}    n_bins:{n_bins} ' )
 
 
-  ps_statistics_all = {}
-  ps_statistics_all['current_z'] = current_z
-  ps_statistics_all['n_iterations'] = n_iterations
-  ps_statistics_all['mean'] = ps_mean
-  ps_statistics_all['k_vals'] = k_vals
+  n_bins_for_distribution = 100
+  fill_sum = 0.70
 
-  ps_statistics_all['bootstrap'] = {}
+  ps_stats = {}
 
-  n_in_sample_list = [ 100, 500, 1000, 2500, 5000, 10000, 25000, 50000, 60000 ]
-  for n_in_sample in n_in_sample_list:
-    print(f'N in sample: {n_in_sample}')
-    ps_statistics_all['bootstrap'][n_in_sample] = {}
-    ps_mean_samples = file[str(n_in_sample)]['sample_mean'][...]
-    n_k_samples = ps_mean_samples.shape[1]
+  # index = 6
+  for index in range( 25 ):
+    k_val = k_vals[index]
+    vel = 2*np.pi / k_val
+    stride = n_points * ( vel / vel_max ) 
+    n_steps = int( 2048 / stride )
+    stride = int( stride )
+    ids_1d = ( np.arange( 0, n_steps, 1 ) * stride ).astype( np.int )
+    n_1d = len( ids_1d )
+    n_independent = n_1d**2
+    print ( f' id: {index},  val: {k_val:.1e}    n_independent: {n_independent}'   )
+    delta_vals = ps_vals[:, index] * k_val / np.pi 
+    delta_mean = delta_vals.mean()
+    delta_sigma = delta_vals.std()
+    distribution, bin_centers = compute_distribution( delta_vals, n_bins_for_distribution, log=True )
+    v_l, v_r, v_max, sum = get_highest_probability_interval( bin_centers, distribution, fill_sum, log=True, n_interpolate=1000)
+    ps_stats[index] = {}
+    ps_stats[index]['k_val'] = k_val
+    ps_stats[index]['bin_centers'] = bin_centers
+    ps_stats[index]['distribution'] = distribution
+    ps_stats[index]['delta_mean'] = delta_mean
+    ps_stats[index]['delta_sigma'] = delta_sigma
+    ps_stats[index]['sigma_l'] = v_l
+    ps_stats[index]['sigma_r'] = v_r
+    ps_stats[index]['sigma_max'] = v_max
+    ps_stats[index]['n_independent'] = n_independent
+    
+  
+  n_indp_list = []
+  k_list = []
+  mean_list, sigma_list = [], []
+  sigma_asim_l, sigma_asim_r = [], []
+  for index in range( 25 ):
+    n_indp_list.append( ps_stats[index]['n_independent'] )
+    k_list.append( ps_stats[index]['k_val'] )
+    mean_list.append( ps_stats[index]['delta_mean'] )
+    sigma_list.append( ps_stats[index]['delta_sigma'] )
+    sigma_asim_l.append( ps_stats[index]['sigma_l']  )
+    sigma_asim_r.append( ps_stats[index]['sigma_r']  )
 
-    # Obtain distribution of P(k)
-    n_bins_for_dist = 30
-    ps_statistics = {}
-    ps_statistics['sigma'] = []
-    for i in range(n_k_samples):
-      ps_statistics[i] = {}
-      ps_statistics[i]['k_val'] = k_vals[i]
-      p_vals = ps_mean_samples[:,i]
-      # delta_power = p_vals * k_vals[i]  / np.pi 
-      ps_statistics[i]['mean']  = p_vals.mean() 
-      ps_statistics[i]['sigma'] = p_vals.std()
-      ps_statistics['sigma'].append( ps_statistics[i]['sigma'] )  
-      bin_edges = np.linspace( p_vals.min()*0.99, p_vals.max()*1.01, n_bins_for_dist )
-      power_hist, bin_edges = np.histogram( p_vals, bins=bin_edges )
-      bin_centers = ( bin_edges[1:] + bin_edges[:-1] ) / 2
-      power_hist = power_hist.astype(np.float) / power_hist.sum()
-      ps_statistics[i]['distribution'] = {} 
-      ps_statistics[i]['distribution']['bin_centers'] = bin_centers
-      ps_statistics[i]['distribution']['histogram']   = power_hist
-    ps_statistics['sigma'] = np.array( ps_statistics['sigma'] )
+  n_independent = np.array( n_indp_list )
+  k_array = np.array( k_list )
+  mean_array = np.array( mean_list )
+  sigma_array = np.array( sigma_list )
+  sigma_l_array = np.array( sigma_asim_l )
+  sigma_r_array = np.array( sigma_asim_r )
 
-    matrix = np.zeros( [n_k_samples, n_k_samples] )
-    for i in range(n_k_samples):
-      for j in range(n_k_samples):
-        # vals_i = ps_mean_samples[:,i] * k_vals[i]  / np.pi
-        # vals_j = ps_mean_samples[:,j] * k_vals[j]  / np.pi
-        vals_i = ps_mean_samples[:,i] 
-        vals_j = ps_mean_samples[:,j] 
-        mean_i = vals_i.mean()
-        mean_j = vals_j.mean()
-        n_samples_i = vals_i.shape[0]
-        n_samples_j = vals_j.shape[0]
-        if n_samples_i != n_samples_j: 
-          print('ERROR: Number od samples mismatch')
-          exit
-        n_samples = n_samples_i
-        matrix[i,j] = np.array([ (vals_i[k] - mean_i)*(vals_j[k] - mean_j) for k in range(n_samples)  ]).mean()
-        
-    ps_statistics_all['bootstrap'][n_in_sample]['statistics'] = ps_statistics
-    ps_statistics_all['bootstrap'][n_in_sample]['cov_matrix'] = matrix
-
+  ps_stats['current_z'] = current_z
+  ps_stats['k_vals'] = k_array
+  ps_stats['n_independent'] = n_independent
+  ps_stats['delta_mean'] = mean_array
+  ps_stats['delta_sigma'] = sigma_array
+  ps_stats['delta_sigma_l'] = sigma_l_array
+  ps_stats['delta_sigma_r'] = sigma_r_array
 
   file_name = output_dir + f'stats_{n_snap}.pkl'
   f = open( file_name, 'wb' )
-  pickle.dump( ps_statistics_all, f)
+  pickle.dump( ps_stats, f)
   f.close()
   print ( f'Saved File: {file_name }' )
 
