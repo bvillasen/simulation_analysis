@@ -75,11 +75,11 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
   if scales == 'large': z_vals = z_vals_large_scale
   elif scales == 'small': z_vals = z_vals_small_scale
   elif scales == 'middle': z_vals = z_vals_middle_scale
-  elif high_z_only: z_vals = z_high
   else: 
     print( "ERROR: Scales = large,  small of middle ")
     return
     
+  if high_z_only: z_vals = z_high
     
   nrows = 3
   ncols = 4
