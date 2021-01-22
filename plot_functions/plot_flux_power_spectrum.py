@@ -27,7 +27,7 @@ matplotlib.rcParams['mathtext.rm'] = 'serif'
 
 
 
-def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_sets=None, system=None  ):
+def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_sets=None, system=None, high_z_only=False  ):
 
 
   fig_width = 8
@@ -67,10 +67,13 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
   z_vals_small_scale  = [ 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 4.2, 4.6, 5.0, 5.4 ]
   z_vals_large_scale  = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.6 ]
   z_vals_middle_scale = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 4.2, 4.6 ]
+  z_high = [ 5.0, 5.4 ]
+  
   
   if scales == 'large': z_vals = z_vals_large_scale
   elif scales == 'small': z_vals = z_vals_small_scale
   elif scales == 'middle': z_vals = z_vals_middle_scale
+  elif high_z_only: z_vals = z_high
   else: 
     print( "ERROR: Scales = large,  small of middle ")
     return
@@ -78,6 +81,8 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
     
   nrows = 3
   ncols = 4
+  
+  if high_z_only:    nrows, ncols = 1, 2
   
   flags = np.zeros( (nrows, ncols ))
   
