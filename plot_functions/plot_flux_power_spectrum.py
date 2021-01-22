@@ -115,7 +115,8 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
     indx_j = index % ncols
     indx_i = index//ncols
 
-    ax = ax_l[indx_i][indx_j]
+    if nrows > 1: ax = ax_l[indx_i][indx_j]
+    else: ax = ax_l[indx_j]
     flags[indx_i,  indx_j] = 1
 
     if sim_data_sets:
