@@ -28,6 +28,8 @@ matplotlib.rcParams['mathtext.rm'] = 'serif'
 
 
 def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_sets=None, system=None, high_z_only=False  ):
+  
+  if system == 'Lux': matplotlib.use('Agg')
 
 
   fig_width = 8
