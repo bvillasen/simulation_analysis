@@ -21,18 +21,19 @@ sim_ids = SG.sim_ids
 SG.Load_Grid_Analysis_Data( sim_ids=sim_ids, load_fit=True )
 
 sim_data_sets = [ ]
-for sim_id in sim_ids:
+sim_ids_to_plot = [ 0, 3 ]
+for sim_id in sim_ids_to_plot:
   sim_data  = SG.Grid[sim_id]['analysis']
   sim_param = SG.Grid[sim_id]['parameters']
   deltaZ_H = sim_param['deltaZ_H'] 
-  sim_data['plot_label'] = 'P19 Mod ' + r'$\Delta z_{\mathrm{H}}$' + ' = {0:.1f}'.format( deltaZ_H )
+  sim_data['plot_label'] = 'P19 Mod ' + r'$\Delta z_{\mathrm{H}}$' + ' = {0:.2f}'.format( deltaZ_H )
   sim_data_sets.append(sim_data)
 
-plot_power_spectrum_grid( ps_data_dir, output_dir, scales='small', sim_data_sets=sim_data_sets, system=system, high_z_only=True )
-
-
-# plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_sets=sim_data_sets, system=system )
+plot_power_spectrum_grid( ps_data_dir, output_dir, scales='small', sim_data_sets=sim_data_sets, system=system )
+plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_sets=sim_data_sets, system=system )
 # plot_power_spectrum_grid( ps_data_dir, output_dir, scales='middle', sim_data_sets=sim_data_sets, system=system )
+
+
 
 
 plot_T0_and_tau( output_dir, sim_data_sets=sim_data_sets, system=system )

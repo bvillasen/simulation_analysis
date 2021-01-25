@@ -16,18 +16,18 @@ from ics_grid import expand_data_grid_to_cholla
 # Box Size
 Lbox = 50000.0    #kpc
 nPoints = 256
-nBoxes  = 1
+nBoxes  = 8
 
 # data_dir = '/raid/bruno/data/'
-# data_dir = '/data/groups/comp-astro/bruno/'
-data_dir = '/home/bruno/Desktop/ssd_0/data/'
+data_dir = '/data/groups/comp-astro/bruno/'
+# data_dir = '/home/bruno/Desktop/ssd_0/data/'
 input_dir = data_dir + f'cosmo_sims/enzo/{nPoints}_hydro_50Mpc/ics/'
-output_dir = data_dir + f'cosmo_sims/{nPoints}_hydro_50Mpc/ics_{nBoxes}/'
+output_dir = data_dir + f'cosmo_sims/{nPoints}_hydro_50Mpc_halo_tests/ics_{nBoxes}/'
 print(f'Input Dir: {input_dir}' )
 print(f'Output Dir: {output_dir}' )
 create_directory( output_dir )
 
-particles = False
+particles = True
 hydro = True
 
 nSnap = 0
@@ -71,6 +71,7 @@ if particles:
   p_vel_x = data[('all', 'particle_velocity_x')].in_units('km/s')
   p_vel_y = data[('all', 'particle_velocity_y')].in_units('km/s')
   p_vel_z = data[('all', 'particle_velocity_z')].in_units('km/s')
+  N_paricles_total = len( p_mass )
 
 
   data_enzo['dm']['mass'] = p_mass
@@ -80,7 +81,8 @@ if particles:
   data_enzo['dm']['vel_x'] = p_vel_x
   data_enzo['dm']['vel_y'] = p_vel_y
   data_enzo['dm']['vel_z'] = p_vel_z
-
+  if particle_IDs: data_enzo['dm']['particle_IDs'] = np.range( N_paricles_total )
+  
 
 
 if nBoxes == 1: proc_grid = [ 1, 1, 1]

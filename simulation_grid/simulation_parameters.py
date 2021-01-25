@@ -1,7 +1,7 @@
 
 
-system = 'Lux'
-# system = 'Shamrock'
+# system = 'Lux'
+system = 'Shamrock'
 
 # grid_name = 'scale_He'
 # grid_name = 'scale_H'
