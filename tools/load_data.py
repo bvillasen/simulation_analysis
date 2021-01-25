@@ -224,7 +224,7 @@ def load_snapshot_data_distributed( data_type, fields,  nSnap, inDir,  box_size,
           if h_key in ['dims', 'dims_local', 'offset', 'bounds', 'domain', 'dx', ]: continue
           data_out[h_key] = head[h_key][0]
           if h_key == 'current_z': print((' current_z: {0}'.format( data_out[h_key]) ))
-          if h_key == 'Current_z': print((' current_z: {0}'.format( data_out[h_key]) ))
+          elif h_key == 'Current_z': print((' current_z: {0}'.format( data_out[h_key]) ))
         added_header = True
     
       if show_progess:
