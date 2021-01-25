@@ -335,7 +335,7 @@ grid_size = [ n_cells, n_cells, n_cells ] #Size of the simulation grid
 n_snapshot = 169
 
 #Load Gas data
-fields = [ ' density' ]
+fields = [ 'density' ]
 data_gas = load_snapshot_data_distributed( 'hydro', fields, n_snapshot, input_dir, box_size, grid_size,  precision, show_progess=True )
 density_gas = data['hydro']['density']  
 # 
