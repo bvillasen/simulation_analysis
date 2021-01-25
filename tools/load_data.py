@@ -334,7 +334,7 @@ n_cells = 256
 box_size = [ Lbox, Lbox, Lbox ]
 grid_size = [ n_cells, n_cells, n_cells ] #Size of the simulation grid
 
-n_snapshot = 169
+n_snapshot = 0
 
 #Load Gas data
 fields = [ 'density' ]
