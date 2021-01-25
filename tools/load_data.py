@@ -158,7 +158,7 @@ def load_snapshot_data_distributed( data_type, fields,  nSnap, inDir,  box_size,
   
   if show_progess:
     print( f'Loading {data_type}  Snapshot: {nSnap}  ')
-    print( f'Input Directory:  {inDir}  ')
+    print( f' Input Directory:  {inDir}  ')
     
   name_base = 'h5'
   # Load Header Data
