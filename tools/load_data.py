@@ -199,8 +199,7 @@ def load_snapshot_data_distributed( data_type, fields,  nSnap, inDir,  box_size,
 
   dims_all = [ nx, ny, nz ]
   data_out = {}
-  data_out[data_type] = {}
-  if get_statistics: data_out[data_type]['statistics'] = {}
+  if get_statistics: data_out['statistics'] = {}
   for field in fields:
     data_particels = False
     if field in ['pos_x', 'pos_y', 'pos_z', 'vel_x', 'vel_y', 'vel_z']: data_particels = True 
@@ -209,7 +208,7 @@ def load_snapshot_data_distributed( data_type, fields,  nSnap, inDir,  box_size,
     added_header = False
     n_to_load = len(ids_to_load)
     if get_statistics:
-      data_out[data_type]['statistics'][field] = {}
+      data_out['statistics'][field] = {}
       min_val, max_val = np.inf, -np.inf
     for i, nBox in enumerate(ids_to_load):
       if data_type == 'particles': inFileName = '{0}_particles.{1}.{2}'.format(nSnap, name_base, nBox)
@@ -267,14 +266,14 @@ def load_snapshot_data_distributed( data_type, fields,  nSnap, inDir,  box_size,
       trim_y_l, trim_y_r = int(trim_y_l), int(trim_y_r) 
       trim_z_l, trim_z_r = int(trim_z_l), int(trim_z_r) 
       data_output = data_all[trim_x_l:nx-trim_x_r, trim_y_l:ny-trim_y_r, trim_z_l:nz-trim_z_r,  ]
-      data_out[data_type][field] = data_output
+      data_out[field] = data_output
       if get_statistics:
-        data_out[data_type]['statistics'][field]['min'] = min_val
-        data_out[data_type]['statistics'][field]['max'] = max_val
+        data_out['statistics'][field]['min'] = min_val
+        data_out['statistics'][field]['max'] = max_val
         
     else:
       data_all = np.concatenate( data_all )
-      data_out[data_type][field] = data_all
+      data_out[field] = data_all
     if show_progess: print("")
   return data_out
 
@@ -339,13 +338,18 @@ n_snapshot = 169
 #Load Gas data
 fields = [ 'density' ]
 data_gas = load_snapshot_data_distributed( 'hydro', fields, n_snapshot, input_dir, box_size, grid_size,  precision, show_progess=True )
-density_gas = data_gas['hydro']['density']  # h^2 Msun / kpc^3
+density_gas = data_gas['density']  # h^2 Msun / kpc^3
 
 
 #Load DM data
-fields = [ 'density' ]
+fields = [ 'density', 'pos_x', 'pos_y', 'pos_z' ]
 data_dm = load_snapshot_data_distributed( 'particles', fields, n_snapshot, input_dir, box_size, grid_size,  precision, show_progess=True )
-density_dm = data_dm['particles']['density']  # h^2 Msun / kpc^3
+particle_mass = data_dm['particle_mass'] 
+density_dm = data_dm['density']  # h^2 Msun / kpc^3
+pos_x = data_dm['pos_x'] #h^-1 Msun
+pos_y = data_dm['pos_y'] #h^-1 Msun
+pos_z = data_dm['pos_z'] #h^-1 Msun
+
 
 # 
 # 
