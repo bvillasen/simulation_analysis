@@ -157,7 +157,7 @@ def select_ids_to_load( subgrid, domain, proc_grid ):
 def load_snapshot_data_distributed( data_type, fields,  nSnap, inDir,  box_size, grid_size,    precision, subgrid=None, proc_grid=None, show_progess=True, get_statistics=False, print_fields=False ):
   
   if show_progess:
-    print( f'Loading Snapshot: {nSnap}  ')
+    print( f'Loading {data_type}  Snapshot: {nSnap}  ')
     print( f'Input Directory:  {inDir}  ')
     
   name_base = 'h5'
