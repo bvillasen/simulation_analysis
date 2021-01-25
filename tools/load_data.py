@@ -154,11 +154,23 @@ def select_ids_to_load( subgrid, domain, proc_grid ):
 
 
 
-def load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True, get_statistics=False, print_fields=False ):
+def load_snapshot_data_distributed( nSnap, inDir, data_type, fields,   precision,  box_size, grid_size, subgrid=None proc_grid=None, show_progess=True, get_statistics=False, print_fields=False ):
   
   if show_progess:
     print( f'Loading Snapshot: {nSnap}  ')
     print( f'Input Directory:  {inDir}  ')
+    
+  name_base = 'h5'
+  # Load Header Data
+  if data_type == 'particles': inFileName = '{0}_particles.{1}.0'.format(nSnap, name_base )
+  if data_type == 'hydro': inFileName = '{0}.{1}.0'.format(nSnap, name_base )
+  
+  inFile = h5.File( inDir + inFileName, 'r')
+  available_fields = inFile.keys()
+  head = inFile.attrs
+  proc_grid = head['nprocs']
+  
+  if not subgrid:  subgrid = [ [0, grid_size[0]], [0, grid_size[1]], [0, grid_size[2]] ]
   
   # Get the doamin domain_decomposition
   domain = get_domain_block( proc_grid, box_size, grid_size )
@@ -183,6 +195,7 @@ def load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid,  p
   ny = int(boundaries['y'][1] - boundaries['y'][0])    
   nz = int(boundaries['z'][1] - boundaries['z'][0])    
 
+
   dims_all = [ nx, ny, nz ]
   data_out = {}
   data_out[data_type] = {}
@@ -198,7 +211,6 @@ def load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid,  p
       data_out[data_type]['statistics'][field] = {}
       min_val, max_val = np.inf, -np.inf
     for i, nBox in enumerate(ids_to_load):
-      name_base = 'h5'
       if data_type == 'particles': inFileName = '{0}_particles.{1}.{2}'.format(nSnap, name_base, nBox)
       if data_type == 'hydro': inFileName = '{0}.{1}.{2}'.format(nSnap, name_base, nBox)
     
@@ -302,30 +314,30 @@ def load_cholla_snapshot_file( nSnap, inDir, cool=False, dm=True, cosmo=True, hy
 
   return outDir
 
-# 
-# #Load Snapshot Data
-# 
-# # dataDir = '/raid/bruno/data/'
-# dataDir = '/data/groups/comp-astro/bruno/'
-# inDir = dataDir + 'cosmo_sims/512_hydro_50Mpc/output_files_pchw18/'
-# 
-# 
-# n_snapshot = 169
-# 
-# data_type = 'hydro'
-# # data_type = 'particles'
-# 
-# fields = ['density']
-# 
-# precision = np.float32
-# 
-# Lbox = 5000    #kpc/h
-# proc_grid = [ 4, 2, 2]
-# box_size = [ Lbox, Lbox, Lbox ]
-# grid_size = [ 512, 512, 512 ] #Size of the simulation grid
-# subgrid = [ [0, 512], [0, 512], [0, 512] ] #Size of the volume to load
-# data = load_snapshot_data_distributed( n_snapshot, inDir, data_type, fields, subgrid,  precision, proc_grid,  box_size, grid_size, show_progess=True )
-# density = data[data_type]['density']  
+
+#Load Snapshot Data
+
+data_dir = '/data/groups/comp-astro/bruno/'
+input_dir = dataDir + 'cosmo_sims/256_hydro_50Mpc_halo_tests/output_files/'
+
+
+
+
+
+
+
+precision = np.float64
+Lbox = 50000.0    #kpc/h
+n_cells = 256
+box_size = [ Lbox, Lbox, Lbox ]
+grid_size = [ n_cells, n_cells, n_cells ] #Size of the simulation grid
+
+n_snapshot = 169
+
+#Load Gas data
+fields = [ ' density' ]
+data_gas = load_snapshot_data_distributed( n_snapshot, input_dir, 'hydro', fields,  precision,  box_size, grid_size, show_progess=True )
+density_gas = data['hydro']['density']  
 # 
 # 
 # 
