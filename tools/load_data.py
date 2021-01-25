@@ -337,7 +337,7 @@ n_snapshot = 169
 #Load Gas data
 fields = [ 'density' ]
 data_gas = load_snapshot_data_distributed( 'hydro', fields, n_snapshot, input_dir, box_size, grid_size,  precision, show_progess=True )
-density_gas = data['hydro']['density']  
+density_gas = data_gas['hydro']['density']  
 # 
 # 
 # 
