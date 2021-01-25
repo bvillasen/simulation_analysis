@@ -83,7 +83,7 @@ if particles:
   data_enzo['dm']['vel_x'] = p_vel_x
   data_enzo['dm']['vel_y'] = p_vel_y
   data_enzo['dm']['vel_z'] = p_vel_z
-  if particle_IDs: data_enzo['dm']['particle_IDs'] = np.range( N_paricles_total )
+  if particle_IDs: data_enzo['dm']['particle_IDs'] = np.arange( N_paricles_total ).astype(np.int)
   
 
 
