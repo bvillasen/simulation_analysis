@@ -205,7 +205,7 @@ def load_snapshot_data_distributed( data_type, fields,  nSnap, inDir,  box_size,
   if get_statistics: data_out['statistics'] = {}
   for field in fields:
     data_particels = False
-    if field in ['pos_x', 'pos_y', 'pos_z', 'vel_x', 'vel_y', 'vel_z']: data_particels = True 
+    if field in ['pos_x', 'pos_y', 'pos_z', 'vel_x', 'vel_y', 'vel_z', 'particle_IDs']: data_particels = True 
     if not data_particels: data_all = np.zeros( dims_all, dtype=precision )
     else: data_all = []
     added_header = False
@@ -275,6 +275,7 @@ def load_snapshot_data_distributed( data_type, fields,  nSnap, inDir,  box_size,
     else:
       data_all = np.concatenate( data_all )
       data_out[field] = data_all
+      if field == 'particle_IDs': data_out[field] = data_out[field].astype( np.int ) 
     if show_progess: print("")
   return data_out
 
@@ -300,7 +301,7 @@ def load_cholla_snapshot_file( nSnap, inDir, cool=False, dm=True, cosmo=True, hy
   if dm:
     data_part = h5.File( partFileName, 'r' )
     fields_data = list(data_part.keys())
-    fields_part = [ 'density',  'grav_potential', 'pos_x', 'pos_y', 'pos_z', 'vel_x', 'vel_y', 'vel_z' ]
+    fields_part = [ 'density',  'grav_potential', 'pos_x', 'pos_y', 'pos_z', 'vel_x', 'vel_y', 'vel_z', 'particle_IDs' ]
     # current_z = data_part.attrs['current_z']
     # current_a = data_part.attrs['current_a']
     # outDir['current_a'] = current_a
