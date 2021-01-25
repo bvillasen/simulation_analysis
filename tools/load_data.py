@@ -345,11 +345,11 @@ density_gas = data_gas['density']  # h^2 Msun / kpc^3
 #Load DM data
 fields = [ 'density', 'pos_x', 'pos_y', 'pos_z' ]
 data_dm = load_snapshot_data_distributed( 'particles', fields, n_snapshot, input_dir, box_size, grid_size,  precision, show_progess=True )
-particle_mass = data_dm['particle_mass'] 
+particle_mass = data_dm['particle_mass'] #h^-1 Msun 
 density_dm = data_dm['density']  # h^2 Msun / kpc^3
-pos_x = data_dm['pos_x'] #h^-1 Msun
-pos_y = data_dm['pos_y'] #h^-1 Msun
-pos_z = data_dm['pos_z'] #h^-1 Msun
+pos_x = data_dm['pos_x'] #h^-1 kpc
+pos_y = data_dm['pos_y'] #h^-1 kpc
+pos_z = data_dm['pos_z'] #h^-1 kpc
 
 
 # 
