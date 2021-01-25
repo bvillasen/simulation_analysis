@@ -154,7 +154,7 @@ def select_ids_to_load( subgrid, domain, proc_grid ):
 
 
 
-def load_snapshot_data_distributed( nSnap, inDir, data_type, fields,   precision,  box_size, grid_size, subgrid=None proc_grid=None, show_progess=True, get_statistics=False, print_fields=False ):
+def load_snapshot_data_distributed( data_type, fields,  nSnap, inDir,  box_size, grid_size,    precision, subgrid=None, proc_grid=None, show_progess=True, get_statistics=False, print_fields=False ):
   
   if show_progess:
     print( f'Loading Snapshot: {nSnap}  ')
@@ -336,7 +336,7 @@ n_snapshot = 169
 
 #Load Gas data
 fields = [ ' density' ]
-data_gas = load_snapshot_data_distributed( n_snapshot, input_dir, 'hydro', fields,  precision,  box_size, grid_size, show_progess=True )
+data_gas = load_snapshot_data_distributed( 'hydro', fields, n_snapshot, input_dir, box_size, grid_size,  precision, show_progess=True )
 density_gas = data['hydro']['density']  
 # 
 # 
