@@ -351,8 +351,5 @@ density_dm = data_dm['density']          # h^2 Msun / kpc^3
 pos_x = data_dm['pos_x']                 #h^-1 kpc
 pos_y = data_dm['pos_y']                 #h^-1 kpc
 pos_z = data_dm['pos_z']                 #h^-1 kpc
+p_ids = data_dm['particle_IDs']      
 
-
-# 
-# 
-# 
