@@ -324,11 +324,6 @@ data_dir = '/data/groups/comp-astro/bruno/'
 input_dir = data_dir + 'cosmo_sims/256_hydro_50Mpc_halo_tests/output_files/'
 
 
-
-
-
-
-
 precision = np.float64
 Lbox = 50000.0    #kpc/h
 n_cells = 256
@@ -342,7 +337,6 @@ fields = [ 'density' ]
 data_gas = load_snapshot_data_distributed( 'hydro', fields, n_snapshot, input_dir, box_size, grid_size,  precision, show_progess=True )
 current_z = data_gas['Current_z']  #redshift
 density_gas = data_gas['density']  # h^2 Msun / kpc^3
-
 
 #Load DM data
 fields = [ 'density', 'pos_x', 'pos_y', 'pos_z', 'particle_IDs' ]
