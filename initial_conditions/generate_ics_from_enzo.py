@@ -27,8 +27,10 @@ print(f'Input Dir: {input_dir}' )
 print(f'Output Dir: {output_dir}' )
 create_directory( output_dir )
 
-particles = True
 hydro = True
+particles = True
+particle_IDs = True
+
 
 nSnap = 0
 snapKey = '{0:03}'.format(nSnap)
