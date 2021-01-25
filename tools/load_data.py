@@ -169,6 +169,7 @@ def load_snapshot_data_distributed( data_type, fields,  nSnap, inDir,  box_size,
   available_fields = inFile.keys()
   head = inFile.attrs
   proc_grid = head['nprocs']
+  print( f' proc_grid: {proc_grid}' )
   
   if not subgrid:  subgrid = [ [0, grid_size[0]], [0, grid_size[1]], [0, grid_size[2]] ]
   
