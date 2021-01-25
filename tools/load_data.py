@@ -318,7 +318,7 @@ def load_cholla_snapshot_file( nSnap, inDir, cool=False, dm=True, cosmo=True, hy
 #Load Snapshot Data
 
 data_dir = '/data/groups/comp-astro/bruno/'
-input_dir = dataDir + 'cosmo_sims/256_hydro_50Mpc_halo_tests/output_files/'
+input_dir = data_dir + 'cosmo_sims/256_hydro_50Mpc_halo_tests/output_files/'
 
 
 
