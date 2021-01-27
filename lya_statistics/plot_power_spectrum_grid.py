@@ -47,7 +47,7 @@ prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/bruno/f
 
 errorbar = True
 
-plot_boss = False
+# plot_boss = False
 plot_boss = True
 
 # errorbars = 'symmetric'
@@ -227,10 +227,10 @@ for uvb_index,uvb in enumerate(uvb_list):
       delta_p_smooth = delta_p
       delta_m_smooth = delta_m
   
-    if uvb_index == 0: line_pchw18, = ax.plot( k, delta, c=color_line, linewidth=3  )
-    if uvb_index == 1: line_hm12, = ax.plot( k, delta, c=color_line, linewidth=3  )
-    if uvb_index == 0: bar_pchw18 = ax.fill_between( k_smooth, delta_p_smooth, delta_m_smooth, facecolor=color_line, alpha=alpha_bar  )
-    if uvb_index == 1: bar_hm12   = ax.fill_between( k_smooth, delta_p_smooth, delta_m_smooth, facecolor=color_line, alpha=alpha_bar  )
+    if uvb_index == 0: line_pchw18, = ax.plot( k, delta, c=color_line, linewidth=3, zorder=1  )
+    if uvb_index == 1: line_hm12, = ax.plot( k, delta, c=color_line, linewidth=3, zorder=1  )
+    if uvb_index == 0: bar_pchw18 = ax.fill_between( k_smooth, delta_p_smooth, delta_m_smooth, facecolor=color_line, alpha=alpha_bar, zorder=1  )
+    if uvb_index == 1: bar_hm12   = ax.fill_between( k_smooth, delta_p_smooth, delta_m_smooth, facecolor=color_line, alpha=alpha_bar, zorder=1  )
 
 
 
@@ -253,7 +253,7 @@ for uvb_index,uvb in enumerate(uvb_list):
           data_delta_power = data_boss[data_index]['delta_power']
           data_delta_power_error = data_boss[data_index]['delta_power_error']
           label_boss = 'eBOSS (2019)'
-          d_boss = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boss, )
+          d_boss = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boss, zorder=2 )
 
       else:
 
@@ -268,7 +268,7 @@ for uvb_index,uvb in enumerate(uvb_list):
           data_delta_power = data_walther[data_index]['delta_power']
           data_delta_power_error = data_walther[data_index]['delta_power_error']
           label_walther ='Walther et al. (2018)' 
-          d_walther = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_walther, )
+          d_walther = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_walther, zorder=2 )
 
 
         # Add Boera data
@@ -282,7 +282,7 @@ for uvb_index,uvb in enumerate(uvb_list):
           data_delta_power = data_boera[data_index]['delta_power']
           data_delta_power_error = data_boera[data_index]['delta_power_error']
           label_boera ='Boera et al. (2019)'
-          d_boera = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boera,  )
+          d_boera = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boera, zorder=2  )
 
 
         # Add Viel data
@@ -296,7 +296,7 @@ for uvb_index,uvb in enumerate(uvb_list):
           data_delta_power = data_viel[data_index]['delta_power']
           data_delta_power_error = data_viel[data_index]['delta_power_error']
           label_viel = 'Viel et al. (2013)'
-          d_viel = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_viel, )
+          d_viel = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_viel, zorder=2 )
 
 
     legend_loc = 3
@@ -361,9 +361,9 @@ for uvb_index,uvb in enumerate(uvb_list):
 
 fileName = output_dir + 'flux_power_spectrum_grid_review'
 if plot_boss: fileName += '_BOSS'
-fileName += f'_{errorbars}'
-fileName += '.png'
-# fileName += '.pdf'
+# fileName += f'_{errorbars}'
+# fileName += '.png'
+fileName += '.pdf'
 fig.savefig( fileName,  pad_inches=0.1, bbox_inches='tight', dpi=fig_dpi)
 print('Saved Image: ', fileName)
 

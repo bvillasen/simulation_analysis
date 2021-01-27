@@ -17,7 +17,7 @@ system = 'Lux'
 # grid_name = '256_P19'
 # grid_name = '512_P19'
 # grid_name = '1024_P19'
-grid_name = '1024_P19_mod_0'
+grid_name = '1024_P19_mod_0_HeII'
 # grid_name = '1024_P19_mod_single'
 
 if system == 'Lux':
