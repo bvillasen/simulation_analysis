@@ -63,13 +63,17 @@ def load_analysis_data( n_file, input_dir, phase_diagram=True, lya_statistics=Tr
     
     if load_flux_Pk:
       data_out['lya_statistics']['power_spectrum'] = {}
-      ps_data = lya_statistics['power_spectrum']
-      k_vals  = ps_data['k_vals'][...]
-      ps_mean = ps_data['p(k)'][...]
-      indices = ps_mean > 0
-      data_out['lya_statistics']['power_spectrum']['k_vals']  = k_vals[indices]
-      data_out['lya_statistics']['power_spectrum']['ps_mean'] = ps_mean[indices]
-  
+      if 'power_spectrum' in lya_statistics:
+        ps_data = lya_statistics['power_spectrum']
+        k_vals  = ps_data['k_vals'][...]
+        ps_mean = ps_data['p(k)'][...]
+        indices = ps_mean > 0
+        data_out['lya_statistics']['power_spectrum']['k_vals']  = k_vals[indices]
+        data_out['lya_statistics']['power_spectrum']['ps_mean'] = ps_mean[indices]
+      else:
+        data_out['lya_statistics']['power_spectrum']['k_vals']  = None
+        data_out['lya_statistics']['power_spectrum']['ps_mean'] = None
+
     if load_skewer:
       skewer = lya_statistics['skewer']
       data_out['lya_statistics']['skewer'] = {}
