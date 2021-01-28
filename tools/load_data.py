@@ -60,6 +60,10 @@ def load_analysis_data( n_file, input_dir, phase_diagram=True, lya_statistics=Tr
     F_mean = max( F_mean, 1e-60 )
     data_out['lya_statistics']['Flux_mean'] = F_mean
     data_out['lya_statistics']['tau'] = -np.log( F_mean )
+    F_mean = lya_statistics.attrs['Flux_mean_HeII'][0]
+    F_mean = max( F_mean, 1e-60 )
+    data_out['lya_statistics']['Flux_mean_HeII'] = F_mean
+    data_out['lya_statistics']['tau_HeII'] = -np.log( F_mean )
     
     if load_flux_Pk:
       data_out['lya_statistics']['power_spectrum'] = {}

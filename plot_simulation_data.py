@@ -37,3 +37,5 @@ plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_sets
 
 
 plot_T0_and_tau( output_dir, sim_data_sets=sim_data_sets, system=system )
+
+plot_tau_HeII( output_dir, sim_data_sets=sim_data_sets, system=system )
