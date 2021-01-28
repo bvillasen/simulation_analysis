@@ -316,6 +316,7 @@ class Simulation_Grid:
     sim_data['gamma']  = []
     sim_data['F_mean'] = []
     sim_data['tau'] = []
+    sim_data['tau_HeII'] = []
     sim_data['ps_mean']  = []
     sim_data['ps_kvals'] = []
     
@@ -327,6 +328,7 @@ class Simulation_Grid:
       gamma = data['phase_diagram']['fit']['gamma']
       F_mean = data['lya_statistics']['Flux_mean']
       tau = data['lya_statistics']['tau']
+      tau_HeII = data['lya_statistics']['tau_HeII']
       sim_data['ps_kvals'].append( data['lya_statistics']['power_spectrum']['k_vals'] )
       sim_data['ps_mean'].append( data['lya_statistics']['power_spectrum']['ps_mean'] )
       sim_data['z'].append(z)
@@ -334,11 +336,13 @@ class Simulation_Grid:
       sim_data['gamma'].append(gamma)
       sim_data['F_mean'].append(F_mean)
       sim_data['tau'].append(tau)
+      sim_data['tau_HeII'].append(tau_HeII)
     sim_data['z'] = np.array( sim_data['z'] )
     sim_data['T0'] = np.array( sim_data['T0'] )
     sim_data['gamma'] = np.array( sim_data['gamma'] )
     sim_data['F_mean'] = np.array( sim_data['F_mean'] )
-    sim_data['tau'] = np.array( sim_data['tau'] )  
+    sim_data['tau'] = np.array( sim_data['tau'] )
+    sim_data['tau_HeII'] = np.array( sim_data['tau_HeII'] )  
     self.Grid[sim_id]['analysis'] = sim_data
 
   def Load_Grid_Analysis_Data( self, sim_ids=None, load_fit=False  ):
