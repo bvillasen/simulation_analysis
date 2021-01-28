@@ -12,7 +12,7 @@ def load_analysis_data( n_file, input_dir, phase_diagram=True, lya_statistics=Tr
 
   data_out = {}
   attrs = file.attrs
-  # print( attrs.keys() )
+  print( attrs.keys() )
   
   data_out['box'] = {}
   data_out['box']['Lbox'] = attrs['Lbox']
