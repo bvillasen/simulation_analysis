@@ -9,7 +9,7 @@ from parameters_UVB_rates import param_UVB_Rates
 from simulation_grid import Simulation_Grid
 from simulation_parameters import *
 from plot_flux_power_spectrum import plot_power_spectrum_grid
-from plot_T0_tau import plot_T0_and_tau
+from plot_T0_tau import plot_T0_and_tau, plot_tau_HeII
 
 
 ps_data_dir = 'lya_statistics/data/'
