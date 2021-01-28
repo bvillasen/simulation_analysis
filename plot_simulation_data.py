@@ -21,7 +21,7 @@ sim_ids = SG.sim_ids
 SG.Load_Grid_Analysis_Data( sim_ids=sim_ids, load_fit=True )
 
 sim_data_sets = [ ]
-sim_ids_to_plot = [ 0, 3 ]
+sim_ids_to_plot = [ 1 ]
 for sim_id in sim_ids_to_plot:
   sim_data  = SG.Grid[sim_id]['analysis']
   sim_param = SG.Grid[sim_id]['parameters']
