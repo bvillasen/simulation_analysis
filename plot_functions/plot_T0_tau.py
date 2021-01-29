@@ -141,7 +141,7 @@ def plot_tau_HeII( output_dir, sim_data_sets=None, system=None ):
   color_line = c_pchw18
   color_data = c_boss
 
-  fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,8*nrows))
+  fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,5*nrows))
 
   
   obs_name = 'tau_HeII'
@@ -164,7 +164,7 @@ def plot_tau_HeII( output_dir, sim_data_sets=None, system=None ):
   ax.set_ylabel( r'$\tau_{eff} \,\, \mathrm{HeII}$', fontsize=font_size  )
   ax.set_xlabel( r'$z$', fontsize=font_size )
   leg = ax.legend(loc=1, frameon=False, fontsize=font_size, prop=prop)
-  ax.set_xlim( 2, 4 )
+  ax.set_xlim( 2, 4.0 )
   ax.set_ylim( 1, 10 )
 
 

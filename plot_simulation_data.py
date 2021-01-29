@@ -21,7 +21,7 @@ sim_ids = SG.sim_ids
 SG.Load_Grid_Analysis_Data( sim_ids=sim_ids, load_fit=True )
 
 sim_data_sets = [ ]
-sim_ids_to_plot = [ 1 ]
+sim_ids_to_plot = [ 1, 0 ]
 for sim_id in sim_ids_to_plot:
   sim_data  = SG.Grid[sim_id]['analysis']
   sim_param = SG.Grid[sim_id]['parameters']
@@ -31,7 +31,7 @@ for sim_id in sim_ids_to_plot:
 
 plot_power_spectrum_grid( ps_data_dir, output_dir, scales='small', sim_data_sets=sim_data_sets, system=system )
 plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_sets=sim_data_sets, system=system )
-# plot_power_spectrum_grid( ps_data_dir, output_dir, scales='middle', sim_data_sets=sim_data_sets, system=system )
+plot_power_spectrum_grid( ps_data_dir, output_dir, scales='middle', sim_data_sets=sim_data_sets, system=system )
 
 
 
