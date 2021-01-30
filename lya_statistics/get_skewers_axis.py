@@ -66,7 +66,7 @@ ids_z_local = np.arange(0, box_size, skewer_stride)
 
 Lbox = 50000
 proc_grid = [ 8, 8, 8]
-box_size = [ Lbox, Lbox, Lbox ]
+box_size  = [ Lbox, Lbox, Lbox ]
 grid_size = [ 2048, 2048, 2048 ]
 
 
