@@ -54,14 +54,14 @@ show_progess = True
 
 
 
-box_size = 256
+block_size = 256
 skewer_stride = 8
-n_per_box = box_size // skewer_stride
+n_per_box = block_size // skewer_stride
 n_per_dimension = nPoints // skewer_stride
-n_boxes = nPoints // box_size
+n_boxes = nPoints // block_size
 
-ids_y_local = np.arange(0, box_size, skewer_stride)
-ids_z_local = np.arange(0, box_size, skewer_stride)
+ids_y_local = np.arange(0, block_size, skewer_stride)
+ids_z_local = np.arange(0, block_size, skewer_stride)
 
 
 Lbox = 50000
@@ -89,17 +89,17 @@ for axis in ['x', 'y', 'z']:
 
       if axis == 'x':
         subgrid_x = [ 0, nPoints ]
-        subgrid_y = [ index_y*box_size, (index_y+1)*box_size ]
-        subgrid_z = [ index_z*box_size, (index_z+1)*box_size ]
+        subgrid_y = [ index_y*block_size, (index_y+1)*block_size ]
+        subgrid_z = [ index_z*block_size, (index_z+1)*block_size ]
 
       if axis == 'y':
-        subgrid_x = [ index_y*box_size, (index_y+1)*box_size ]
+        subgrid_x = [ index_y*block_size, (index_y+1)*block_size ]
         subgrid_y = [ 0, nPoints ]
-        subgrid_z = [ index_z*box_size, (index_z+1)*box_size ]
+        subgrid_z = [ index_z*block_size, (index_z+1)*block_size ]
 
       if axis == 'z':
-        subgrid_x = [ index_y*box_size, (index_y+1)*box_size ]
-        subgrid_y = [ index_z*box_size, (index_z+1)*box_size ]
+        subgrid_x = [ index_y*block_size, (index_y+1)*block_size ]
+        subgrid_y = [ index_z*block_size, (index_z+1)*block_size ]
         subgrid_z = [ 0, nPoints ]
 
 
@@ -125,8 +125,8 @@ for axis in ['x', 'y', 'z']:
       for id_y_local in ids_y_local:
         for id_z_local in ids_z_local:
 
-          id_y_global = index_y * box_size + id_y_local
-          id_z_global = index_z * box_size + id_z_local
+          id_y_global = index_y * block_size + id_y_local
+          id_z_global = index_z * block_size + id_z_local
 
           skewer_index_y = index_y * n_per_box + id_y_local/skewer_stride
           skewer_index_z = index_z * n_per_box + id_z_local/skewer_stride
