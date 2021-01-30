@@ -56,9 +56,9 @@ show_progess = True
 
 box_size = 256
 skewer_stride = 8
-n_per_box = box_size / skewer_stride
-n_per_dimension = nPoints / skewer_stride
-n_boxes = nPoints / box_size
+n_per_box = box_size // skewer_stride
+n_per_dimension = nPoints // skewer_stride
+n_boxes = nPoints // box_size
 
 ids_y_local = np.arange(0, box_size, skewer_stride)
 ids_z_local = np.arange(0, box_size, skewer_stride)
@@ -71,7 +71,8 @@ grid_size = [ 2048, 2048, 2048 ]
 
 
 for axis in ['x', 'y', 'z']:
-
+  
+  if rank >= len(snapshots_indices): continue
 
   nSnap = snapshots_indices[rank]
   # if nSnap in snapshots_indices_0: 
