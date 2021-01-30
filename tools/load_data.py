@@ -176,7 +176,7 @@ def load_snapshot_data_distributed( data_type, fields,  nSnap, inDir,  box_size,
   inFile = h5.File( inDir + inFileName, 'r')
   available_fields = inFile.keys()
   head = inFile.attrs
-  proc_grid = head['nprocs']
+  if not proc_grid:  proc_grid = head['nprocs']
   print( f' proc_grid: {proc_grid}' )
   if 'current_z' in head: print(' current_z: {0}'.format( head['current_z'][0] ) )
   elif 'Current_z' in head: print(' current_z: {0}'.format( head['Current_z'][0] ) )
