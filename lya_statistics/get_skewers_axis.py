@@ -114,12 +114,12 @@ for axis in ['x', 'y', 'z']:
       fields = ['density', 'temperature', vel_field, 'HI_density', 'HeII_density' ]
       # data_snapshot = load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid, domain, precision, proc_grid,  show_progess=show_progess )
       data_snapshot = load_snapshot_data_distributed( data_type, fields,  nSnap, inDir,  box_size, grid_size, precision, subgrid=subgrid, proc_grid=proc_grid, show_progess=show_progess  )
-      current_z   = data_snapshot['Current_z']
-      density     = data_snapshot['density']
-      temperature = data_snapshot['temperature']
-      HI_density  = data_snapshot['HI_density']
-      HeII_density  = data_snapshot['HeII_density']
-      velocity    = data_snapshot[vel_field] / density 
+      current_z    = data_snapshot['Current_z']
+      density      = data_snapshot['density']
+      temperature  = data_snapshot['temperature']
+      HI_density   = data_snapshot['HI_density']
+      HeII_density = data_snapshot['HeII_density']
+      velocity     = data_snapshot[vel_field] / density 
 
 
       for id_y_local in ids_y_local:
@@ -165,11 +165,11 @@ for axis in ['x', 'y', 'z']:
           skewer_group = outFile.create_group( str(skewer_id) )
           skewer_group.attrs['index_y'] = id_y_global
           skewer_group.attrs['index_z'] = id_z_global 
-          skewer_group.create_dataset( 'density', data=skewer_density )
-          skewer_group.create_dataset( 'temperature', data=skewer_temperature )
-          skewer_group.create_dataset( 'HI_density', data=skewer_HI_density )
-          skewer_group.create_dataset( 'HeII_density', data=skewer_HI_density )
-          skewer_group.create_dataset( 'velocity', data=skewer_velocity )
+          skewer_group.create_dataset( 'density',      data=skewer_density )
+          skewer_group.create_dataset( 'temperature',  data=skewer_temperature )
+          skewer_group.create_dataset( 'HI_density',   data=skewer_HI_density )
+          skewer_group.create_dataset( 'HeII_density', data=skewer_HeII_density )
+          skewer_group.create_dataset( 'velocity',     data=skewer_velocity )
 
   skewer_ids = np.sort( skewer_ids )
   n_skewers = len(skewer_ids)
