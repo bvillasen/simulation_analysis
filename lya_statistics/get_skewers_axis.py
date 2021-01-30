@@ -118,7 +118,7 @@ for axis in ['x', 'y', 'z']:
       density     = data_snapshot['density']
       temperature = data_snapshot['temperature']
       HI_density  = data_snapshot['HI_density']
-      HI_density  = data_snapshot['HeII_density']
+      HeII_density  = data_snapshot['HeII_density']
       velocity    = data_snapshot[vel_field] / density 
 
 
