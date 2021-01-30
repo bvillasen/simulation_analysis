@@ -114,12 +114,12 @@ for axis in ['x', 'y', 'z']:
       fields = ['density', 'temperature', vel_field, 'HI_density', 'HeII_density' ]
       # data_snapshot = load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid, domain, precision, proc_grid,  show_progess=show_progess )
       data_snapshot = load_snapshot_data_distributed( data_type, fields,  nSnap, inDir,  box_size, grid_size, precision, subgrid=subgrid, proc_grid=proc_grid, show_progess=show_progess  )
-      current_z = data_snapshot['Current_z']
-      density = data_snapshot[data_type]['density']
-      temperature = data_snapshot[data_type]['temperature']
-      HI_density = data_snapshot[data_type]['HI_density']
-      HI_density = data_snapshot[data_type]['HeII_density']
-      velocity = data_snapshot[data_type][vel_field] / density 
+      current_z   = data_snapshot['Current_z']
+      density     = data_snapshot['density']
+      temperature = data_snapshot['temperature']
+      HI_density  = data_snapshot['HI_density']
+      HI_density  = data_snapshot['HeII_density']
+      velocity    = data_snapshot[vel_field] / density 
 
 
       for id_y_local in ids_y_local:
