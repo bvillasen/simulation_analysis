@@ -176,7 +176,6 @@ def load_snapshot_data_distributed( data_type, fields,  nSnap, inDir,  box_size,
   inFile = h5.File( inDir + inFileName, 'r')
   available_fields = inFile.keys()
   head = inFile.attrs
-  current_z = inFile['Current_z'][0]
   if not proc_grid:  proc_grid = head['nprocs']
   inFile.close()
   if not subgrid:  subgrid = [ [0, grid_size[0]], [0, grid_size[1]], [0, grid_size[2]] ]
@@ -185,8 +184,9 @@ def load_snapshot_data_distributed( data_type, fields,  nSnap, inDir,  box_size,
     print( f' proc_grid: {proc_grid}' )
     print( f' grid_size: {grid_size}' )
     print( f' sub_grid:  {sub_grid}' )
-    print( f' current_z: {current_z}' )
-  
+    if 'current_z' in head: print(' current_z: {0}'.format( head['current_z'][0] ) )
+    elif 'Current_z' in head: print(' current_z: {0}'.format( head['Current_z'][0] ) )
+    
   # Get the doamin domain_decomposition
   domain = get_domain_block( proc_grid, box_size, grid_size )
   
