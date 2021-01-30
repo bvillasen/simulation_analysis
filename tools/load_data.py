@@ -183,7 +183,7 @@ def load_snapshot_data_distributed( data_type, fields,  nSnap, inDir,  box_size,
   if show_progess:
     print( f' proc_grid: {proc_grid}' )
     print( f' grid_size: {grid_size}' )
-    print( f' sub_grid:  {sub_grid}' )
+    print( f' subgrid:   {subgrid}' )
     if 'current_z' in head: print(' current_z: {0}'.format( head['current_z'][0] ) )
     elif 'Current_z' in head: print(' current_z: {0}'.format( head['Current_z'][0] ) )
     
