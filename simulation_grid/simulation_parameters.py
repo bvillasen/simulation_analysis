@@ -3,6 +3,11 @@
 system = 'Lux'
 # system = 'Shamrock'
 
+# n_points = 256
+# n_points = 512
+n_points = 1024
+
+
 # grid_name = 'scale_He'
 # grid_name = 'scale_H'
 # grid_name = 'deltaZ_He'
@@ -19,7 +24,8 @@ system = 'Lux'
 # grid_name = '1024_P19'
 # grid_name = '1024_P19_mod_0_HeII'
 # grid_name = '1024_P19_mod_single'
-grid_name = '512_P19m_np3'
+# grid_name = '512_P19m_np3'
+grid_name = f'{n_points}_P19'
 
 
 if system == 'Lux':
@@ -37,9 +43,6 @@ if system == 'Shamrock':
 figures_dir = root_dir + 'figures/'
 
 
-# n_points = 256
-# n_points = 512
-n_points = 1024
 Lbox = 50000.0 # kpc
 
 sim_params = {}
