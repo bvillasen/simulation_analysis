@@ -39,13 +39,14 @@ cosmo_name = ''
 
 
 inDir = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/output_files_{1}/'.format(nPoints, uvb, cosmo_name )
-output_dir = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/skewers_{1}/'.format(nPoints, uvb, cosmo_name )
+output_dir = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/skewers_{1}_HeII/'.format(nPoints, uvb, cosmo_name )
 create_directory( output_dir )
 
 # snapshots_indices_0 = [83, 86, 90, 93, 96, 99, 102, 106, 110, 114, 119, 124, 130, 136, 143, 151, 159, 169 ]
 # snapshots_indices = [74, 77, 80, 83, 86, 90, 93, 96, 99, 102, 106, 110, 114, 119, 124, 130, 136, 143, 151, 159, 169]
 # snapshots_indices = [74, 76, 77, 79, 80, 82, 83, 85, 86, 88, 90, 91, 93, 94, 96, 97, 99, 101, 102, 104, 106, 108, 110, 112, 114, 117, 119, 122, 124, 127, 130, 133, 136, 139, 143, 147, 151, 155, 159, 164, 169]
-snapshots_indices = list(range( 74, 170, 1))
+# snapshots_indices = list(range( 74, 170, 1))
+snapshots_indices = list(range( 100, 170, 1))
 
 
 data_type = 'hydro'
@@ -53,12 +54,6 @@ show_progess = True
 
 
 
-Lbox = 50000
-proc_grid = [ 8, 8, 8]
-box_size = [ Lbox, Lbox, Lbox ]
-grid_size = [ 2048, 2048, 2048 ]
-domain = get_domain_block( proc_grid, box_size, grid_size )
-grid_complete_size = [ 2048, 2048, 2048 ]
 
 
 box_size = 256
@@ -71,7 +66,12 @@ ids_y_local = np.arange(0, box_size, skewer_stride)
 ids_z_local = np.arange(0, box_size, skewer_stride)
 
 
-axis = 'z'
+Lbox = 50000
+proc_grid = [ 8, 8, 8]
+box_size = [ Lbox, Lbox, Lbox ]
+grid_size = [ 2048, 2048, 2048 ]
+
+
 for axis in ['x', 'y', 'z']:
 
 
@@ -112,12 +112,14 @@ for axis in ['x', 'y', 'z']:
       if axis == 'y': vel_field = 'momentum_y'
       if axis == 'z': vel_field = 'momentum_z'
       
-      fields = ['density', 'temperature', vel_field, 'HI_density' ]
-      data_snapshot = load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid, domain, precision, proc_grid,  show_progess=show_progess )
+      fields = ['density', 'temperature', vel_field, 'HI_density', 'HeII_density' ]
+      # data_snapshot = load_snapshot_data_distributed( nSnap, inDir, data_type, fields, subgrid, domain, precision, proc_grid,  show_progess=show_progess )
+      data_snapshot = load_snapshot_data_distributed( data_type, fields,  nSnap, inDir,  box_size, grid_size, precision, subgrid=subgrid, proc_grid=proc_grid, show_progess=show_progess  )
       current_z = data_snapshot['Current_z']
       density = data_snapshot[data_type]['density']
       temperature = data_snapshot[data_type]['temperature']
       HI_density = data_snapshot[data_type]['HI_density']
+      HI_density = data_snapshot[data_type]['HeII_density']
       velocity = data_snapshot[data_type][vel_field] / density 
 
 
@@ -134,27 +136,31 @@ for axis in ['x', 'y', 'z']:
           skewer_ids.append(skewer_id)
           
           if axis == 'x':
-            skewer_density = density[:,id_y_local, id_z_local]
-            skewer_temperature = temperature[:,id_y_local, id_z_local]
-            skewer_HI_density = HI_density[:,id_y_local, id_z_local]
-            skewer_velocity = velocity[:,id_y_local, id_z_local]
+            skewer_density      = density[:,id_y_local, id_z_local]
+            skewer_temperature  = temperature[:,id_y_local, id_z_local]
+            skewer_HI_density   = HI_density[:,id_y_local, id_z_local]
+            skewer_HeII_density = HeII_density[:,id_y_local, id_z_local]
+            skewer_velocity     = velocity[:,id_y_local, id_z_local]
 
           if axis == 'y':
-            skewer_density = density[id_y_local, :, id_z_local]
-            skewer_temperature = temperature[id_y_local, :, id_z_local]
-            skewer_HI_density = HI_density[id_y_local, :, id_z_local]
-            skewer_velocity = velocity[id_y_local, :, id_z_local]
+            skewer_density      = density[id_y_local, :, id_z_local]
+            skewer_temperature  = temperature[id_y_local, :, id_z_local]
+            skewer_HI_density   = HI_density[id_y_local, :, id_z_local]
+            skewer_HeII_density = HeII_density[id_y_local, :, id_z_local]
+            skewer_velocity     = velocity[id_y_local, :, id_z_local]
 
           if axis == 'z':
-            skewer_density = density[id_y_local, id_z_local, :]
-            skewer_temperature = temperature[id_y_local, id_z_local, :]
-            skewer_HI_density = HI_density[id_y_local, id_z_local, :]
-            skewer_velocity = velocity[id_y_local, id_z_local, :]
+            skewer_density      = density[id_y_local, id_z_local, :]
+            skewer_temperature  = temperature[id_y_local, id_z_local, :]
+            skewer_HI_density   = HI_density[id_y_local, id_z_local, :]
+            skewer_HeII_density = HeII_density[id_y_local, id_z_local, :]
+            skewer_velocity     = velocity[id_y_local, id_z_local, :]
             
-          if skewer_density.shape[0]     != nPoints: print("ERROR: Skewer has the wrong length")
-          if skewer_temperature.shape[0] != nPoints: print("ERROR: Skewer has the wrong length")
-          if skewer_HI_density.shape[0]  != nPoints: print("ERROR: Skewer has the wrong length")
-          if skewer_velocity.shape[0]    != nPoints: print("ERROR: Skewer has the wrong length")
+          if skewer_density.shape[0]      != nPoints: print("ERROR: Skewer has the wrong length")
+          if skewer_temperature.shape[0]  != nPoints: print("ERROR: Skewer has the wrong length")
+          if skewer_HI_density.shape[0]   != nPoints: print("ERROR: Skewer has the wrong length")
+          if skewer_HeII_density.shape[0] != nPoints: print("ERROR: Skewer has the wrong length")
+          if skewer_velocity.shape[0]     != nPoints: print("ERROR: Skewer has the wrong length")
 
 
           skewer_group = outFile.create_group( str(skewer_id) )
@@ -163,6 +169,7 @@ for axis in ['x', 'y', 'z']:
           skewer_group.create_dataset( 'density', data=skewer_density )
           skewer_group.create_dataset( 'temperature', data=skewer_temperature )
           skewer_group.create_dataset( 'HI_density', data=skewer_HI_density )
+          skewer_group.create_dataset( 'HeII_density', data=skewer_HI_density )
           skewer_group.create_dataset( 'velocity', data=skewer_velocity )
 
   skewer_ids = np.sort( skewer_ids )
