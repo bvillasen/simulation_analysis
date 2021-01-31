@@ -26,6 +26,7 @@ n_points = 1024
 # grid_name = '1024_P19_mod_single'
 # grid_name = '512_P19m_np3'
 grid_name = f'{n_points}_P19'
+grid_name = f'{n_points}_P19m'
 
 
 if system == 'Lux':
