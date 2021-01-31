@@ -165,7 +165,7 @@ def plot_tau_HeII( output_dir, sim_data_sets=None, system=None ):
   ax.set_xlabel( r'$z$', fontsize=font_size )
   leg = ax.legend(loc=1, frameon=False, fontsize=font_size, prop=prop)
   ax.set_xlim( 2, 4.0 )
-  ax.set_ylim( 1, 10 )
+  ax.set_ylim( 0, 10 )
 
 
 
