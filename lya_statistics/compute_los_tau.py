@@ -31,15 +31,15 @@ for option in parameters:
 
 if print_out: print( f'Snapshot: {n_snap}' )
 
-# 
-# uvb = 'pchw18'
+
+uvb = 'pchw18'
 # uvb = 'hm12'
 # dataDir = '/home/bruno/Desktop/ssd_0/data/'
 # dataDir = '/raid/bruno/data/'
 dataDir = '/data/groups/comp-astro/bruno/'
 simulation_dir = dataDir + 'cosmo_sims/2048_hydro_50Mpc/'
-input_dir = simulation_dir + 'skewers_{0}/'.format(uvb)
-output_dir = simulation_dir + 'transmited_flux_{0}_review/los_F/'.format(uvb)
+input_dir = simulation_dir + 'skewers_{0}_HeII/'.format(uvb)
+output_dir = simulation_dir + 'skewers_{0}_HeII/los_F/'.format(uvb)
 if rank == 0: create_directory( output_dir )
 
 
@@ -82,53 +82,53 @@ los_HI_density = skewer_dataset['HI_density']
 los_velocity = skewer_dataset['velocity']
 los_temperature = skewer_dataset['temperature']
 
-
-n_skewers = sum( n_skewers_proc_list )
-skewers_ids = range(n_skewers)
-
-
-processed_F = []
-for i,skewer_id in enumerate(skewers_ids):
-
-  if i%(n_skewers//10)==0: 
-    text = ' Skewer {0}/{1}    {2:.0f} %'.format(i, n_skewers,  float(i)/n_skewers*100)
-    # if rank == 0: print_line_flush( text )
-    if rank == 0: print( text )
-
-  skewer_data = {}  
-  skewer_data['HI_density']  = los_HI_density[skewer_id]
-  skewer_data['temperature'] = los_temperature[skewer_id]
-  skewer_data['velocity']    = los_velocity[skewer_id]
-
-  tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function' )
-  los_vel_hubble = tau_los_data['vel_Hubble']
-  los_tau = tau_los_data['tau']
-  los_F = np.exp( -los_tau )
-  processed_F.append( los_F )
-
-
-processed_F   = np.array( processed_F )
-
-#Send the power spectrum to root process
-if print_out: print( '\nGathering global data')
-global_F   = comm.gather( processed_F, root=0 )
-
-
-
-if rank == 0:
-
-  global_F   = np.concatenate( global_F )
-  n_processed = global_F.shape[0]
-  print( f'n_processed: {n_processed},   ps_data shape: {global_F.shape}' )
-
-  file_name = output_dir + f'los_transmitted_flux_{n_snap}.h5'
-  file = h5.File( file_name, 'w')
-  file.attrs['n_skewers'] = n_processed
-  file.attrs['current_z'] = current_z
-  file.create_dataset( 'los_F', data=global_F )
-  file.create_dataset( 'vel_Hubble', data=los_vel_hubble )
-  file.close()
-  print( f'Saved File: {file_name}')
-
-
-
+# 
+# n_skewers = sum( n_skewers_proc_list )
+# skewers_ids = range(n_skewers)
+# 
+# 
+# processed_F = []
+# for i,skewer_id in enumerate(skewers_ids):
+# 
+#   if i%(n_skewers//10)==0: 
+#     text = ' Skewer {0}/{1}    {2:.0f} %'.format(i, n_skewers,  float(i)/n_skewers*100)
+#     # if rank == 0: print_line_flush( text )
+#     if rank == 0: print( text )
+# 
+#   skewer_data = {}  
+#   skewer_data['HI_density']  = los_HI_density[skewer_id]
+#   skewer_data['temperature'] = los_temperature[skewer_id]
+#   skewer_data['velocity']    = los_velocity[skewer_id]
+# 
+#   tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function' )
+#   los_vel_hubble = tau_los_data['vel_Hubble']
+#   los_tau = tau_los_data['tau']
+#   los_F = np.exp( -los_tau )
+#   processed_F.append( los_F )
+# 
+# 
+# processed_F   = np.array( processed_F )
+# 
+# #Send the power spectrum to root process
+# if print_out: print( '\nGathering global data')
+# global_F   = comm.gather( processed_F, root=0 )
+# 
+# 
+# 
+# if rank == 0:
+# 
+#   global_F   = np.concatenate( global_F )
+#   n_processed = global_F.shape[0]
+#   print( f'n_processed: {n_processed},   ps_data shape: {global_F.shape}' )
+# 
+#   file_name = output_dir + f'los_transmitted_flux_{n_snap}.h5'
+#   file = h5.File( file_name, 'w')
+#   file.attrs['n_skewers'] = n_processed
+#   file.attrs['current_z'] = current_z
+#   file.create_dataset( 'los_F', data=global_F )
+#   file.create_dataset( 'vel_Hubble', data=los_vel_hubble )
+#   file.close()
+#   print( f'Saved File: {file_name}')
+# 
+# 
+# 
