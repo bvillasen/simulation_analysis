@@ -79,6 +79,7 @@ current_z = skewer_dataset['current_z']
 cosmology['current_z'] = current_z
 los_density = skewer_dataset['density']
 los_HI_density = skewer_dataset['HI_density']
+los_HeII_density = skewer_dataset['HeII_density']
 los_velocity = skewer_dataset['velocity']
 los_temperature = skewer_dataset['temperature']
 
