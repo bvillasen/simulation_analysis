@@ -83,6 +83,7 @@ sim_params['analysis_scale_outputs_file'] = cholla_dir + 'scale_output_files/out
 
 
 job_params = {}
+job_params['exclude'] = ['gpu001']
 job_params['partition'] = 'gpu'
 # job_params['partition'] = 'comp-astro'
 if n_points == 512:
@@ -96,3 +97,4 @@ job_params['time'] = '20:00:00'
 job_params['output'] = 'output'
 job_params['command'] = cholla_dir + 'cholla'
 job_params['command_params'] = 'param.txt'
+
