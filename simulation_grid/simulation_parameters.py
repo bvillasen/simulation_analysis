@@ -83,7 +83,7 @@ sim_params['analysis_scale_outputs_file'] = cholla_dir + 'scale_output_files/out
 
 
 job_params = {}
-job_params['exclude'] = ['gpu000', 'gpu001', 'gpu002', 'gpu003', ] 
+job_params['exclude'] = ['gpu001', 'gpu002', 'gpu003', 'gpu004' ] 
 job_params['partition'] = 'gpu'
 # job_params['partition'] = 'comp-astro'
 if n_points == 512:
