@@ -244,13 +244,10 @@ class Simulation_Grid:
     if partition == 'gpuq':       partition_key = 'gpu'
     
     # --exclude=gpu017,gpu022
-    if job['exclude'] != []:
-      exclude_comand = '--exclude='
-      for node in job['exclude']:
-        exclude_comand += node
-    else:
-      exclude_comand = '' 
-    command = f'submit_script {partition_key} {exclude_comand} submit_job_lux'
+    exclude_comand = '' 
+    for node in job['exclude']:
+      exclude_comand += node
+    command = f'submit_script {partition_key} submit_job_lux {exclude_comand}'
     print( f'Changed Directory to: {sim_dir}')
     print( f' Submitting: {command}' )
     os.system( command )
