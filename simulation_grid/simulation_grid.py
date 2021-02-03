@@ -246,7 +246,8 @@ class Simulation_Grid:
     # --exclude=gpu017,gpu022
     exclude_comand = '' 
     for node in job['exclude']:
-      exclude_comand += node
+      exclude_comand += node + ','
+    if exclude_comand != '': exclude_comand = exclude_comand[:-1]
     command = f'submit_script {partition_key} submit_job_lux {exclude_comand}'
     print( f'Changed Directory to: {sim_dir}')
     print( f' Submitting: {command}' )
