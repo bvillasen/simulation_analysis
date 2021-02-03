@@ -83,12 +83,14 @@ sim_params['analysis_scale_outputs_file'] = cholla_dir + 'scale_output_files/out
 
 
 job_params = {}
-# job_params['partition'] = 'gpu'
-# job_params['n_mpi'] = 8
-# job_params['n_nodes'] = 4
-job_params['partition'] = 'comp-astro'
-job_params['n_mpi'] = 16
-job_params['n_nodes'] = 8
+job_params['partition'] = 'gpu'
+# job_params['partition'] = 'comp-astro'
+if n_points == 512:
+  job_params['n_mpi'] = 8
+  job_params['n_nodes'] = 4
+if n_points == 1024:
+  job_params['n_mpi'] = 16
+  job_params['n_nodes'] = 8
 job_params['n_tasks_per_node'] = 2
 job_params['time'] = '20:00:00'
 job_params['output'] = 'output'
