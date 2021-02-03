@@ -75,9 +75,9 @@ sim_params['lya_Pk_d_log_k'] = 0.1
 sim_params['init'] = 'Read_Grid'
 sim_params['nfile'] = 1
 # sim_params['nfile'] = 1
-# sim_params['indir'] = root_dir + 'ics/512_50Mpc/ics_8_z20/'
 # sim_params['indir'] = ics_dir + f'{n_points}_50Mpc/ics_8_z100/'
-sim_params['indir'] = ics_dir + f'{n_points}_50Mpc/ics_16_z20/'
+if n_points == 512:  sim_params['indir'] = ics_dir + f'512_50Mpc/ics_8_z20/'
+if n_points == 1024: sim_params['indir'] = ics_dir + f'1024_50Mpc/ics_16_z20/'
 sim_params['scale_outputs_file'] = cholla_dir + 'scale_output_files/outputs_single_output_z2.txt'
 sim_params['analysis_scale_outputs_file'] = cholla_dir + 'scale_output_files/outputs_cosmo_analysis_150.txt'
 
