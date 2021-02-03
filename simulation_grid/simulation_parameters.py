@@ -4,8 +4,8 @@ system = 'Lux'
 # system = 'Shamrock'
 
 # n_points = 256
-# n_points = 512
-n_points = 1024
+n_points = 512
+# n_points = 1024
 
 
 # grid_name = 'scale_He'
@@ -24,9 +24,9 @@ n_points = 1024
 # grid_name = '1024_P19'
 # grid_name = '1024_P19_mod_0_HeII'
 # grid_name = '1024_P19_mod_single'
-# grid_name = '512_P19m_np3'
-grid_name = f'{n_points}_P19'
-grid_name = f'{n_points}_P19m'
+grid_name = f'{n_points}_P19m_np3'
+# grid_name = f'{n_points}_P19'
+# grid_name = f'{n_points}_P19m'
 
 
 if system == 'Lux':
@@ -70,7 +70,7 @@ sim_params['yl_bcnd'] = 1
 sim_params['yu_bcnd'] = 1
 sim_params['zl_bcnd'] = 1
 sim_params['zu_bcnd'] = 1
-sim_params['lya_skewers_stride'] = 16
+sim_params['lya_skewers_stride'] = 8
 sim_params['lya_Pk_d_log_k'] = 0.1
 sim_params['init'] = 'Read_Grid'
 sim_params['nfile'] = 1
