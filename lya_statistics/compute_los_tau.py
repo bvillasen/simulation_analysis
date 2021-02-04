@@ -60,7 +60,7 @@ cosmology['H0'] = 67.66
 cosmology['Omega_M'] = 0.3111
 cosmology['Omega_L'] = 0.6889
 
-n_skewers_total = 12000
+n_skewers_total = 120
 n_skewers_axis = n_skewers_total// 3 
 n_skewers_list = [ n_skewers_axis, n_skewers_axis, n_skewers_axis ]
 axis_list = [ 'x', 'y', 'z' ]
@@ -76,7 +76,7 @@ if print_out: print(f"\nComputing LOS tau, s_nap:{n_snap}   n_skewers:{n_skewers
 
 
 # Load skewer data
-skewer_dataset = load_skewers_multiple_axis( axis_list, n_skewers_proc_list, n_snap, input_dir, set_random_seed=False, print_out=print_out)
+skewer_dataset = load_skewers_multiple_axis( axis_list, n_skewers_proc_list, n_snap, input_dir, load_HeII=True, set_random_seed=False, print_out=print_out)
 current_z = skewer_dataset['current_z']
 cosmology['current_z'] = current_z
 los_density = skewer_dataset['density']
