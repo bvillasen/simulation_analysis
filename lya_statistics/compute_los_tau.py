@@ -60,7 +60,9 @@ cosmology['H0'] = 67.66
 cosmology['Omega_M'] = 0.3111
 cosmology['Omega_L'] = 0.6889
 
-n_skewers_total = 1200
+chem_type = 'HeII'
+
+n_skewers_total = 60000
 n_skewers_axis = n_skewers_total// 3 
 n_skewers_list = [ n_skewers_axis, n_skewers_axis, n_skewers_axis ]
 axis_list = [ 'x', 'y', 'z' ]
@@ -104,7 +106,7 @@ for i,skewer_id in enumerate(skewers_ids):
   skewer_data['velocity']    = los_velocity[skewer_id]
   skewer_data['HeII_density']  = los_HeII_density[skewer_id]
   
-  tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function', chem_type='HeII' )
+  tau_los_data = compute_optical_depth( cosmology, box, skewer_data, space='redshift', method='error_function', chem_type=chem_type )
   los_vel_hubble = tau_los_data['vel_Hubble']
   los_tau = tau_los_data['tau']
   los_F = np.exp( -los_tau )
@@ -125,10 +127,11 @@ if rank == 0:
   n_processed = global_F.shape[0]
   print( f'n_processed: {n_processed},   ps_data shape: {global_F.shape}' )
 
-  file_name = output_dir + f'los_transmitted_flux_{n_snap}.h5'
+  file_name = output_dir + f'los_transmitted_flux_{n_snap}_{chem_type}.h5'
   file = h5.File( file_name, 'w')
   file.attrs['n_skewers'] = n_processed
   file.attrs['current_z'] = current_z
+  file.attrs['F_mean'] = global_F.mean()
   file.create_dataset( 'los_F', data=global_F )
   file.create_dataset( 'vel_Hubble', data=los_vel_hubble )
   file.close()
