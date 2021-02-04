@@ -56,7 +56,7 @@ show_progess = True
 
 
 block_size = 256
-skewer_stride = 16
+skewer_stride = 32
 n_per_box = block_size // skewer_stride
 n_per_dimension = nPoints // skewer_stride
 n_boxes = nPoints // block_size
