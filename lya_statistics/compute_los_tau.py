@@ -62,7 +62,7 @@ cosmology['Omega_L'] = 0.6889
 
 chem_type = 'HeII'
 
-n_skewers_total = 60000
+n_skewers_total = 30000
 n_skewers_axis = n_skewers_total// 3 
 n_skewers_list = [ n_skewers_axis, n_skewers_axis, n_skewers_axis ]
 axis_list = [ 'x', 'y', 'z' ]
@@ -126,12 +126,14 @@ if rank == 0:
   global_F   = np.concatenate( global_F )
   n_processed = global_F.shape[0]
   print( f'n_processed: {n_processed},   ps_data shape: {global_F.shape}' )
-
+  F_mean = global_F.mean()
+  tau = np.log( F_mean )
+  print( f'z: {current_z:.2}   F_mean: {F_mean:.2e}    tau: {tau:.2e}')
   file_name = output_dir + f'los_transmitted_flux_{n_snap}_{chem_type}.h5'
   file = h5.File( file_name, 'w')
   file.attrs['n_skewers'] = n_processed
   file.attrs['current_z'] = current_z
-  file.attrs['F_mean'] = global_F.mean()
+  file.attrs['F_mean'] = F_mean
   file.create_dataset( 'los_F', data=global_F )
   file.create_dataset( 'vel_Hubble', data=los_vel_hubble )
   file.close()

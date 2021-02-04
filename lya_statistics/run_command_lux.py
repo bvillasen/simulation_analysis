@@ -7,6 +7,7 @@ import subprocess
 # snapshots.sort()
 
 snapshots = range( 100, 170 )
+snapshots.reverse()
 print(snapshots)
 
 
