@@ -62,7 +62,7 @@ cosmology['Omega_L'] = 0.6889
 
 chem_type = 'HeII'
 
-n_skewers_total = 6000
+n_skewers_total = 12000
 n_skewers_axis = n_skewers_total// 3 
 n_skewers_list = [ n_skewers_axis, n_skewers_axis, n_skewers_axis ]
 axis_list = [ 'x', 'y', 'z' ]
