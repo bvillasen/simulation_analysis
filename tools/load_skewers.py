@@ -7,7 +7,7 @@ def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_ra
   inFileName = input_dir + f'skewers_{skewer_axis}_{nSnap}.h5'
   inFile = h5.File( inFileName, 'r' )
   n_total = inFile.attrs['n']
-  # if print_out: print( f'Availbale squewers: {n_total}')
+  if print_out: print( f'Availbale squewers: {n_total}')
   current_z = inFile.attrs['current_z']
   
   if print_out: print(f"Loading {n_skewers} skewers {skewer_axis} axis from {n_total} available")
