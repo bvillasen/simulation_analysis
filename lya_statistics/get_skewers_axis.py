@@ -38,7 +38,7 @@ cosmo_name = ''
 
 
 inDir = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/output_files_{1}/'.format(nPoints, uvb, cosmo_name )
-output_dir = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/skewers_{1}_HeII/'.format(nPoints, uvb, cosmo_name )
+output_dir = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/skewers_{1}_HeII_new/'.format(nPoints, uvb, cosmo_name )
 create_directory( output_dir )
 
 # snapshots_indices_0 = [83, 86, 90, 93, 96, 99, 102, 106, 110, 114, 119, 124, 130, 136, 143, 151, 159, 169 ]
@@ -56,13 +56,13 @@ show_progess = True
 
 
 block_size = 256
-skewer_stride = 8
+skewer_stride = 16
 n_per_box = block_size // skewer_stride
 n_per_dimension = nPoints // skewer_stride
 n_boxes = nPoints // block_size
 
-ids_y_local = np.arange(0, block_size, skewer_stride)
-ids_z_local = np.arange(0, block_size, skewer_stride)
+ids_y_local = np.arange(0, block_size, skewer_stride).astype(np.int)
+ids_z_local = np.arange(0, block_size, skewer_stride).astype(np.int)
 
 
 Lbox = 50000
