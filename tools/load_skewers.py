@@ -57,7 +57,7 @@ def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_ra
 def load_skewers_multiple_axis( axis_list, n_skewers_list, nSnap, input_dir, set_random_seed=False, print_out=True, ids_to_load_list=None, load_HeII=False):
   n_axis = len(axis_list)
 
-  dens_list, HI_list, temp_list, vel_list = [], [], [], []
+  dens_list, HI_list, temp_list, vel_list, HeII_list = [], [], [], [], []
 
   for i in range( n_axis ):
     skewer_axis = axis_list[i]
