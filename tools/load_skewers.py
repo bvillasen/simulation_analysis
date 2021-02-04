@@ -27,7 +27,7 @@ def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_ra
 
 
 
-  skewers_dens, skewers_temp, skewers_HI, skewers_vel = [], [], [], []
+  skewers_dens, skewers_temp, skewers_HI, skewers_vel, skewers_HeII = [], [], [], [], []
   for skewer_id in skewer_ids:
     skewer_data = inFile[str(skewer_id)]
     density = skewer_data['density'][...]
