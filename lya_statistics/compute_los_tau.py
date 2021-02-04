@@ -127,7 +127,7 @@ if rank == 0:
   n_processed = global_F.shape[0]
   print( f'n_processed: {n_processed},   ps_data shape: {global_F.shape}' )
   F_mean = global_F.mean()
-  tau = np.log( F_mean )
+  tau    = -np.log( F_mean )
   print( f'z: {current_z:.2}   F_mean: {F_mean:.2e}    tau: {tau:.2e}')
   file_name = output_dir + f'los_transmitted_flux_{n_snap}_{chem_type}.h5'
   file = h5.File( file_name, 'w')
