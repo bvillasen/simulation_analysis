@@ -23,6 +23,10 @@ else:
 print_out = False
 if rank == 0: print_out = True 
 
+# uvb = 'hm12'
+uvb = 'pchw18'
+n_snap = 169
+
 parameters = sys.argv
 if print_out: print( parameters )
 for option in parameters:
@@ -32,9 +36,6 @@ for option in parameters:
 if print_out: print( f'Snapshot: {n_snap}' )
 
 
-n_snap = 169
-uvb = 'pchw18'
-# uvb = 'hm12'
 # dataDir = '/home/bruno/Desktop/ssd_0/data/'
 # dataDir = '/raid/bruno/data/'
 dataDir = '/data/groups/comp-astro/bruno/'
