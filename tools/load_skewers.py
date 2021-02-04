@@ -40,7 +40,7 @@ def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_ra
     skewers_vel.append(velocity)
     if load_HeII:
       HeII_density = skewer_data['HeII_density'][...]
-      skewers_HI.append( HI_density )
+      skewers_HeII.append( HeII_density )
 
   inFile.close() 
   data_out  = {}
