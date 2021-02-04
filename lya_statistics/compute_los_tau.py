@@ -10,7 +10,7 @@ from spectra_functions import compute_optical_depth
 from tools import *
 
 
-use_mpi = True
+use_mpi = False
 if use_mpi :
   from mpi4py import MPI
   comm = MPI.COMM_WORLD
