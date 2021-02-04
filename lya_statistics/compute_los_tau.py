@@ -10,7 +10,7 @@ from spectra_functions import compute_optical_depth
 from tools import *
 
 
-use_mpi = False
+use_mpi = True
 if use_mpi :
   from mpi4py import MPI
   comm = MPI.COMM_WORLD
@@ -60,7 +60,7 @@ cosmology['H0'] = 67.66
 cosmology['Omega_M'] = 0.3111
 cosmology['Omega_L'] = 0.6889
 
-n_skewers_total = 120
+n_skewers_total = 1200
 n_skewers_axis = n_skewers_total// 3 
 n_skewers_list = [ n_skewers_axis, n_skewers_axis, n_skewers_axis ]
 axis_list = [ 'x', 'y', 'z' ]
