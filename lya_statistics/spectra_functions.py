@@ -3,8 +3,10 @@ import numpy as np
 from scipy.special import erf
 import constants_cgs as cgs
 
-def get_Doppler_parameter( T ):
-  b = np.sqrt( 2* cgs.K_b / cgs.M_p * T )
+def get_Doppler_parameter( T, chem_type='HI' ):
+  if chem_type == 'HI':   M = cgs.M_p
+  if chem_type == 'HeII': M = 4 * cgs.M_p
+  b = np.sqrt( 2* cgs.K_b / M * T )
   return b
 
   
@@ -19,12 +21,12 @@ def extend_periodic( arr, n_ghost):
   
 
 
-def get_optical_depth_velocity( current_z, H, dr, dv, n_HI_los, vel_peculiar_los, temp_los, space='redshift', method='error_function' ):
+def get_optical_depth_velocity( current_z, H, dr, dv, n_HI_los, vel_peculiar_los, temp_los, space='redshift', method='error_function', chem_type='HI' ):
   # Lymann Alpha Parameters
   Lya_lambda = 1.21567e-5 #cm  Rest wave length of the Lyman Alpha Transition
-  Lya_nu = cgs.c / Lya_lambda
   f_12 = 0.416 #Oscillator strength
-  Lya_sigma = np.pi * cgs.e_charge**2 / cgs.M_e / cgs.c * f_12
+  Lya_sigma = np.pi * cgs.e_charge**2 / cgs.M_e / cgs.c * f_12 * Lya_lambda 
+  if chem_type == 'HeII': Lya_sigma /= 4              # source: https://arxiv.org/pdf/astro-ph/9812429.pdf
   H_cgs = H * 1e5 / cgs.kpc 
   dr_cgs = dr * cgs.kpc
   
@@ -47,7 +49,7 @@ def get_optical_depth_velocity( current_z, H, dr, dv, n_HI_los, vel_peculiar_los
     print ('ERROR: Invalid space ( Real or Redshift )')
     return None
   
-  b_all = get_Doppler_parameter( temp ) 
+  b_all = get_Doppler_parameter( temp, chem_type=chem_type ) 
   tau_los = np.zeros(n_points) #Initialize arrays of zeros for the total optical delpth along the line of sight
     
   if method=='error_function':
@@ -57,7 +59,7 @@ def get_optical_depth_velocity( current_z, H, dr, dv, n_HI_los, vel_peculiar_los
       v_j = vel_Hubble[j]                      #Hubble Velocity of the cell
       y_l = ( ( v_j - 0.5 * H_cgs * dr_cgs ) - velocity ) / b_all
       y_r = ( ( v_j + 0.5 * H_cgs * dr_cgs ) - velocity ) / b_all
-      tau_val = Lya_sigma * Lya_lambda  / H_cgs  * np.sum( n_HI * ( erf(y_r) - erf(y_l) ) ) / 2
+      tau_val = Lya_sigma  / H_cgs  * np.sum( n_HI * ( erf(y_r) - erf(y_l) ) ) / 2
       tau_los[j] = tau_val 
             
   # Trim the ghost cells from the global optical depth 
@@ -67,7 +69,7 @@ def get_optical_depth_velocity( current_z, H, dr, dv, n_HI_los, vel_peculiar_los
 
 
 
-def compute_optical_depth( cosmology, box, skewer, space='redshift', method='error_function' ):
+def compute_optical_depth( cosmology, box, skewer, space='redshift', method='error_function', chem_type='HI' ):
   H0 = cosmology['H0'] 
   Omega_M = cosmology['Omega_M']
   Omega_L = cosmology['Omega_L']
@@ -83,6 +85,7 @@ def compute_optical_depth( cosmology, box, skewer, space='redshift', method='err
   HI_density  = skewer['HI_density']
   velocity    = skewer['velocity']
   temperature = skewer['temperature']
+  if chem_type == 'HeII': HeII_density = skewer['HeII_density']
   
   
   nPoints = len( HI_density )
@@ -108,7 +111,15 @@ def compute_optical_depth( cosmology, box, skewer, space='redshift', method='err
   dv_cms = dv * 1e5
   # print( f'dv_Hubble: {dv_cms}')
   
-  tau, vel_Hubble = get_optical_depth_velocity( current_z,  H, dr, dv_cms, n_HI_los, vel_los_cms, temp_los, space=space, method=method )
+  if chem_type == 'HeII':
+    dens_HeII_los = HeII_density / (current_a)**3
+    dens_HeII_los *=  cgs.Msun / cgs.kpc**3 * cosmo_h**2
+    n_HeII_los = dens_HeII_los / cgs.M_p
+  
+  if chem_type == 'HI':   n_los = n_HI_los  
+  if chem_type == 'HeII': n_los = n_HeII_los  
+    
+  tau, vel_Hubble = get_optical_depth_velocity( current_z,  H, dr, dv_cms, n_los, vel_los_cms, temp_los, space=space, method=method, chem_type=chem_type )
   data_out = {}
   data_out['vel_Hubble'] = vel_Hubble
   data_out['tau'] = tau
