@@ -75,11 +75,14 @@ for axis in ['x', 'y', 'z']:
   if rank >= len(snapshots_indices): continue
 
   nSnap = snapshots_indices[rank]
-  # if nSnap in snapshots_indices_0: 
-  #   print 'Skiping Snap: {0}'.format(nSnap)
-  #   exit()
 
   out_file_name = output_dir + 'skewers_{0}_{1}.h5'.format(axis, nSnap)
+  file_path = Path(out_file_name)
+  if file_path.is_file():
+    print( f' Skiping File: {out_file_name} ') 
+    continue
+  
+  
   outFile = h5.File( out_file_name, 'w')
 
 
