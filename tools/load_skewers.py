@@ -3,7 +3,7 @@ import h5py as h5
 import numpy as np
 
 
-def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_random_seed=False, print_out=True, ids_to_load=None ):
+def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_random_seed=False, print_out=True, ids_to_load=None, load_HeII=False ):
   inFileName = input_dir + f'skewers_{skewer_axis}_{nSnap}.h5'
   inFile = h5.File( inFileName, 'r' )
   n_total = inFile.attrs['n']
@@ -38,6 +38,9 @@ def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_ra
     skewers_HI.append( HI_density )
     skewers_temp.append( temperature )
     skewers_vel.append(velocity)
+    if load_HeII:
+      HeII_density = skewer_data['HeII_density'][...]
+      skewers_HI.append( HI_density )
 
   inFile.close() 
   data_out  = {}
@@ -47,6 +50,7 @@ def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_ra
   data_out['HI_density']  = np.array( skewers_HI )
   data_out['temperature'] = np.array( skewers_temp )
   data_out['velocity']    = np.array( skewers_vel )
+  if load_HeII: data_out['HeII_density']  = np.array( skewers_HeII )
   return data_out
 
 
