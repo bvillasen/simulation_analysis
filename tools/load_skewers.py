@@ -54,7 +54,7 @@ def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_ra
   return data_out
 
 
-def load_skewers_multiple_axis( axis_list, n_skewers_list, nSnap, input_dir, set_random_seed=False, print_out=True, ids_to_load_list=None):
+def load_skewers_multiple_axis( axis_list, n_skewers_list, nSnap, input_dir, set_random_seed=False, print_out=True, ids_to_load_list=None, load_HeII=False):
   n_axis = len(axis_list)
 
   dens_list, HI_list, temp_list, vel_list = [], [], [], []
@@ -64,17 +64,18 @@ def load_skewers_multiple_axis( axis_list, n_skewers_list, nSnap, input_dir, set
     n_skewers = n_skewers_list[i]
     if ids_to_load_list != None:  ids_to_load = ids_to_load_list[i]
     else: ids_to_load = None
-    data_skewers = load_skewers_single_axis( n_skewers, skewer_axis,  nSnap, input_dir, set_random_seed=set_random_seed, print_out=print_out, ids_to_load=ids_to_load )
+    data_skewers = load_skewers_single_axis( n_skewers, skewer_axis,  nSnap, input_dir, set_random_seed=set_random_seed, print_out=print_out, ids_to_load=ids_to_load, load_HeII=load_HeII )
     current_z = data_skewers['current_z']
     skewers_dens = data_skewers['density']
     skewers_HI = data_skewers['HI_density']
     skewers_temp = data_skewers['temperature']
     skewers_vel = data_skewers['velocity']
+    if load_HeII: skewers_HeII = data_skewers['HeII_density']
     dens_list.append( skewers_dens )
     HI_list.append( skewers_HI )
     temp_list.append( skewers_temp )
     vel_list.append( skewers_vel )
-    
+    if load_HeII:  HeII_list.append( skewers_HeII )
   dens_all = np.concatenate( dens_list )
   dens_list = []
   HI_all = np.concatenate( HI_list )
@@ -83,6 +84,9 @@ def load_skewers_multiple_axis( axis_list, n_skewers_list, nSnap, input_dir, set
   temp_list = []
   vel_all = np.concatenate( vel_list )
   vel_list = []
+  if load_HeII:
+    HeII_all = np.concatenate( HeII_list )
+    HeII_list = []
   n_skewers = len( dens_all)
   data_skewers = {}
   data_skewers['current_z'] = current_z
@@ -91,6 +95,7 @@ def load_skewers_multiple_axis( axis_list, n_skewers_list, nSnap, input_dir, set
   data_skewers['HI_density'] = HI_all
   data_skewers['velocity'] = vel_all
   data_skewers['temperature'] = temp_all
+  if load_HeII: data_skewers['HeII_density'] = HeII_all  
   return data_skewers
 
 
