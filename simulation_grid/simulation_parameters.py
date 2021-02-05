@@ -70,7 +70,8 @@ sim_params['yl_bcnd'] = 1
 sim_params['yu_bcnd'] = 1
 sim_params['zl_bcnd'] = 1
 sim_params['zu_bcnd'] = 1
-sim_params['lya_skewers_stride'] = 8
+if n_points == 512:  sim_params['lya_skewers_stride'] = 8
+if n_points == 1024: sim_params['lya_skewers_stride'] = 16
 sim_params['lya_Pk_d_log_k'] = 0.1
 sim_params['init'] = 'Read_Grid'
 sim_params['nfile'] = 1
