@@ -10,8 +10,8 @@ snapshots = range( 101, 170 )
 print(snapshots)
 
 
-n_procs = 200
-n_procs_per_node = 40
+n_procs = 100
+n_procs_per_node = 20
 
 uvb = 'pchw18'
 for n_snap in snapshots:
