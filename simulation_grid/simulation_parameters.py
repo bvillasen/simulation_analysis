@@ -4,8 +4,8 @@ system = 'Lux'
 # system = 'Shamrock'
 
 # n_points = 256
-n_points = 512
-# n_points = 1024
+# n_points = 512
+n_points = 1024
 
 
 # grid_name = 'scale_He'
@@ -24,9 +24,9 @@ n_points = 512
 # grid_name = '1024_P19'
 # grid_name = '1024_P19_mod_0_HeII'
 # grid_name = '1024_P19_mod_single'
-grid_name = f'{n_points}_P19m_np3'
+# grid_name = f'{n_points}_P19m_np3'
 # grid_name = f'{n_points}_P19'
-# grid_name = f'{n_points}_P19m'
+grid_name = f'{n_points}_P19m'
 
 
 if system == 'Lux':
@@ -93,7 +93,7 @@ if n_points == 1024:
   job_params['n_mpi'] = 16
   job_params['n_nodes'] = 8
 job_params['n_tasks_per_node'] = 2
-job_params['time'] = '20:00:00'
+job_params['time'] = '24:00:00'
 job_params['output'] = 'output'
 job_params['command'] = cholla_dir + 'cholla'
 job_params['command_params'] = 'param.txt'
