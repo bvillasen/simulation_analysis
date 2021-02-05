@@ -6,7 +6,7 @@ import subprocess
 # snapshots = list( set( snaps_boss ).union(set(snaps)))
 # snapshots.sort()
 
-snapshots = range( 100, 170, 3 )
+snapshots = range( 100, 170 )
 print(snapshots)
 
 
