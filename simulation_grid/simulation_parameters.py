@@ -1,7 +1,7 @@
 
 
-system = 'Lux'
-# system = 'Shamrock'
+# system = 'Lux'
+system = 'Shamrock'
 
 # n_points = 256
 # n_points = 512
@@ -26,7 +26,8 @@ n_points = 1024
 # grid_name = '1024_P19_mod_single'
 # grid_name = f'{n_points}_P19m_np3'
 # grid_name = f'{n_points}_P19'
-grid_name = f'{n_points}_P19m'
+# grid_name = f'{n_points}_P19m'
+grid_name = f'{n_points}_P19m_np3_nsim8'
 
 
 if system == 'Lux':
