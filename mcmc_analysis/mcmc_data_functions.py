@@ -10,11 +10,61 @@ sys.path.append(analysis_dir + 'tools')
 from tools import *
 from data_thermal_history import data_thermal_history_Gaikwad_2020a, data_thermal_history_Gaikwad_2020b
 from data_optical_depth import *
+from load_tabulated_data import load_power_spectrum_table, load_tabulated_data_boera, load_tabulated_data_viel, load_data_boss
+
+# ps_data_dir = '../lya_statistics/data/'
+# z_min = 2.0
+# z_max = 5.0 
+# data_sets = [ 'Boss', 'Walther', 'Boera', 'Viel' ]
+# 
+# # def Get_Comparable_Power_Spectrum():
+# dir_boss = ps_data_dir + 'data_power_spectrum_boss/'
+# data_filename = dir_boss + 'data_table.py'
+# data_boss = load_data_boss( data_filename )
+# 
+# data_filename = ps_data_dir + 'data_power_spectrum_walther_2019/data_table.txt'
+# data_walther = load_power_spectrum_table( data_filename )
+# 
+# dir_data_boera = ps_data_dir + 'data_power_spectrum_boera_2019/'
+# data_boera = load_tabulated_data_boera( dir_data_boera )
+# 
+# data_dir_viel = ps_data_dir + 'data_power_spectrum_viel_2013/'
+# data_viel = load_tabulated_data_viel( data_dir_viel)
+# 
+# data_dir = { 'Boss':data_boss, 'Walther':data_walther, 'Boera':data_boera, 'Viel':data_viel }
+
+
+# data_kvals, data_ps, data_ps_sigma = [], [], []
+# 
+# for data_name in data_sets:
+#   print( f'Loading P(k) Data: {data_name}' )
+#   data_set = data_dir[data_name]
+#   keys = data_set.keys()
+#   n_indices = len(keys) - 1
+#   for index in range(n_indices):
+#     data = data_set[index]
+#     z = data['z']
+#     k_vals = data['k_vals']
+#     delta_ps = data['delta_power']
+#     delta_ps_sigma = data['delta_power_error']
+#     if z >= z_min and z <= z_max:
+#       data_kvals.append( k_vals )
+#       data_ps.append( delta_ps )
+#       data_ps_sigma.append( delta_ps_sigma )
+# # 
+# k_vals_all         = np.concatenate( data_kvals )
+# delta_ps_all       = np.concatenate( data_ps )
+# delta_ps_sigma_all = np.concatenate( data_ps_sigma )
+# 
+# n_data_points = len( k_vals_all )
+# print( f'N data points: {n_data_points}' )
+
+
 
 def Get_Chi2( observables, params, comparable_grid, comparable_data, SG ):
   chi2_vals = {}
   for field in observables:
-    obs_mean = Interpolate_MultiDim(  params[0]['mean'], params[1]['mean'], params[2]['mean'], params[3]['mean'],  comparable_grid, field, 'mean', SG, clip_params=True ) 
+    obs_mean = Interpolate_3D(  params[0]['mean'], params[1]['mean'], params[2]['mean'], comparable_grid, field, 'mean', SG, clip_params=True ) 
     data_z     = comparable_data[field]['z']
     data_mean  = comparable_data[field]['mean']  
     data_sigma = comparable_data[field]['sigma']
@@ -34,7 +84,8 @@ def Sample_Observables( n_samples, observables, params, data_grid, SG  ):
     for p_id in params.keys():
       p_rand.append( np.random.normal( params[p_id]['mean'], params[p_id]['sigma']  ) )
     for observable in observables:
-      obs_interp = Interpolate_MultiDim(  p_rand[0], p_rand[1], p_rand[2], p_rand[3], data_grid, observable, 'mean', SG, clip_params=True ) 
+      # obs_interp = Interpolate_MultiDim(  p_rand[0], p_rand[1], p_rand[2], p_rand[3], data_grid, observable, 'mean', SG, clip_params=True ) 
+      obs_interp = Interpolate_3D(  p_rand[0], p_rand[1], p_rand[2], data_grid, observable, 'mean', SG, clip_params=True ) 
       observables_samples[observable]['samples'].append( obs_interp )
   for observable in observables:
     obs_all = np.array(observables_samples[observable]['samples']).T
@@ -72,6 +123,7 @@ def Find_Parameter_Value_Near_IDs( param_id, param_value, parameters, clip_param
   param_min = grid_param_values.min() 
   param_max = grid_param_values.max()
   n_param_values = len( grid_param_values )
+  # print( f' Param_id:{param_id}   value:{param_value}' )
   if n_param_values == 1:
     p_val_id_l,  p_val_id_r = 0, 0
     return p_val_id_l, p_val_id_r  
@@ -80,7 +132,7 @@ def Find_Parameter_Value_Near_IDs( param_id, param_value, parameters, clip_param
     if param_value > param_max: param_value = param_max
   else:  
     if param_value < param_min or param_value > param_max:
-      print( f'ERROR: Paramneter Value outside {param_name} Range: [ {param_min} , {param_max} ] ')
+      print( f'ERROR: Paramneter Value outside {param_name} Range: [ {param_min} , {param_max} ] value:{param_value}')
       exit(-1)
   if are_floats_equal( param_value, param_min ):
     p_val_id_l,  p_val_id_r = 0, 1
@@ -103,6 +155,7 @@ def Get_Parameter_Grid( param_values, parameters, clip_params=False ):
   parameter_grid = {}
   for p_id, p_val in enumerate(param_values):
     parameter_grid[p_id] = {}
+    # print( f' Param_id:{p_id}   value:{p_val}' )
     v_id_l, v_id_r = Find_Parameter_Value_Near_IDs( p_id, p_val, parameters, clip_params=clip_params )
     parameter_grid[p_id]['v_id_l'] = v_id_l
     parameter_grid[p_id]['v_id_r'] = v_id_r
@@ -134,7 +187,46 @@ def Get_Value_From_Simulation( sim_coords, data_to_interpolate, field, sub_field
  
 
 
-def Interpolate_MultiDim( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, clip_params=False, parameter_grid=None, param_id=None, sim_coords_before=None ):
+def Interpolate_MultiDim( param_values, data_to_interpolate, field, sub_field, SG, clip_params=False, parameter_grid=None, param_id=None, sim_coords_before=None ):
+  n_param = len(param_values)
+  if param_id == None: param_id = n_param - 1
+  if sim_coords_before == None:  sim_coords_before = [ -1 for param_id in range(n_param)] 
+  print( f' n_param: {n_param}  Param_id:{param_id}   value:{param_values}' )
+  if parameter_grid == None: parameter_grid = Get_Parameter_Grid( param_values, SG.parameters, clip_params=clip_params )
+  
+  sim_coords_l = sim_coords_before.copy()
+  sim_coords_r = sim_coords_before.copy()
+  
+  v_id_l = parameter_grid[param_id]['v_id_l']
+  v_id_r = parameter_grid[param_id]['v_id_r']
+  p_val_l = parameter_grid[param_id]['v_l']
+  p_val_r = parameter_grid[param_id]['v_r']
+  sim_coords_l[param_id] = v_id_l
+  sim_coords_r[param_id] = v_id_r
+  p_val = param_values[param_id]
+  
+  if clip_params:
+    if p_val < p_val_l: p_val = p_val_l
+    if p_val > p_val_r: p_val = p_val_r
+  else:      
+    if p_val < p_val_l or p_val > p_val_r:
+      print( ' ERROR: Parameter outside left and right values')
+      exit()
+  if p_val_l == p_val_r: delta = 0.5
+  else: delta = ( p_val - p_val_l ) / ( p_val_r - p_val_l )  
+  if param_id == 0:
+    value_l = Get_Value_From_Simulation( sim_coords_l, data_to_interpolate, field, sub_field, SG )
+    value_r = Get_Value_From_Simulation( sim_coords_r, data_to_interpolate, field, sub_field, SG )
+    value_interp = delta*value_r + (1-delta)*value_l 
+    return value_interp
+  
+  value_l = Interpolate_MultiDim( param_values, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_l, clip_params=clip_params )
+  value_r = Interpolate_MultiDim( param_values, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_r, clip_params=clip_params )
+  value_interp = delta*value_r + (1-delta)*value_l
+  return value_interp
+
+
+def Interpolate_4D( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, clip_params=False, parameter_grid=None, param_id=None, sim_coords_before=None ):
   param_values = np.array([ p0, p1, p2, p3 ])
   n_param = len(param_values)
   if param_id == None: param_id = n_param - 1
@@ -169,6 +261,45 @@ def Interpolate_MultiDim( p0, p1, p2, p3, data_to_interpolate, field, sub_field,
   
   value_l = Interpolate_MultiDim( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_l, clip_params=clip_params )
   value_r = Interpolate_MultiDim( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_r, clip_params=clip_params )
+  value_interp = delta*value_r + (1-delta)*value_l
+  return value_interp
+
+
+def Interpolate_3D( p0, p1, p2, data_to_interpolate, field, sub_field, SG, clip_params=False, parameter_grid=None, param_id=None, sim_coords_before=None ):
+  param_values = np.array([ p0, p1, p2 ])
+  n_param = len(param_values)
+  if param_id == None: param_id = n_param - 1
+  if sim_coords_before == None:  sim_coords_before = [ -1 for param_id in range(n_param)] 
+  if parameter_grid == None: parameter_grid = Get_Parameter_Grid( param_values, SG.parameters, clip_params=clip_params )
+  
+  sim_coords_l = sim_coords_before.copy()
+  sim_coords_r = sim_coords_before.copy()
+  
+  v_id_l = parameter_grid[param_id]['v_id_l']
+  v_id_r = parameter_grid[param_id]['v_id_r']
+  p_val_l = parameter_grid[param_id]['v_l']
+  p_val_r = parameter_grid[param_id]['v_r']
+  sim_coords_l[param_id] = v_id_l
+  sim_coords_r[param_id] = v_id_r
+  p_val = param_values[param_id]
+  
+  if clip_params:
+    if p_val < p_val_l: p_val = p_val_l
+    if p_val > p_val_r: p_val = p_val_r
+  else:      
+    if p_val < p_val_l or p_val > p_val_r:
+      print( ' ERROR: Parameter outside left and right values')
+      exit()
+  if p_val_l == p_val_r: delta = 0.5
+  else: delta = ( p_val - p_val_l ) / ( p_val_r - p_val_l )  
+  if param_id == 0:
+    value_l = Get_Value_From_Simulation( sim_coords_l, data_to_interpolate, field, sub_field, SG )
+    value_r = Get_Value_From_Simulation( sim_coords_r, data_to_interpolate, field, sub_field, SG )
+    value_interp = delta*value_r + (1-delta)*value_l 
+    return value_interp
+  
+  value_l = Interpolate_3D( p0, p1, p2, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_l, clip_params=clip_params )
+  value_r = Interpolate_3D( p0, p1, p2, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_r, clip_params=clip_params )
   value_interp = delta*value_r + (1-delta)*value_l
   return value_interp
 

@@ -325,6 +325,12 @@ class Simulation_Grid:
     sim_data['tau_HeII'] = []
     sim_data['ps_mean']  = []
     sim_data['ps_kvals'] = []
+    z_power_spectrum = []
+    data_ps_mean = []
+    data_kvals = []
+    data_kmin, data_kmax = [], []
+    ps_available_indices = []
+    
     
     for n_file in indices:
       n_file = int(n_file)
@@ -335,8 +341,17 @@ class Simulation_Grid:
       F_mean = data['lya_statistics']['Flux_mean']
       tau = data['lya_statistics']['tau']
       tau_HeII = data['lya_statistics']['tau_HeII']
-      sim_data['ps_kvals'].append( data['lya_statistics']['power_spectrum']['k_vals'] )
-      sim_data['ps_mean'].append( data['lya_statistics']['power_spectrum']['ps_mean'] )
+      k_vals  = data['lya_statistics']['power_spectrum']['k_vals']
+      ps_mean = data['lya_statistics']['power_spectrum']['ps_mean']
+      if ps_mean is not None:
+        ps_available_indices.append(n_file)
+        # z_power_spectrum.append( z )
+        # data_ps_mean.append( ps_mean )
+        # data_kvals.append( k_vals )
+        # data_kmin.append( k_vals.min() )
+        # data_kmax.append( k_vals.max() )
+      sim_data['ps_kvals'].append( k_vals )
+      sim_data['ps_mean'].append( ps_mean )
       sim_data['z'].append(z)
       sim_data['T0'].append(T0)
       sim_data['gamma'].append(gamma)
@@ -349,13 +364,60 @@ class Simulation_Grid:
     sim_data['F_mean'] = np.array( sim_data['F_mean'] )
     sim_data['tau'] = np.array( sim_data['tau'] )
     sim_data['tau_HeII'] = np.array( sim_data['tau_HeII'] )  
+    sim_data['ps_available_indices'] = ps_available_indices
+    # z_power_spectrum = np.array( z_power_spectrum )
+    # data_kmin, data_kmax = np.array( data_kmin ), np.array( data_kmax )
+    # data_ps = { 'z':z_power_spectrum, 'k_min':data_kmin, 'k_max':data_kmax, 'k_vals':data_kvals, 'ps_mean':data_ps_mean, 'available_indices':ps_available_indices }
+    # sim_data['power_spectrum'] = data_ps
     self.Grid[sim_id]['analysis'] = sim_data
+    
+  def Load_Simulation_Power_Spectum_Data( self, sim_id, indices  ):
+    
+    sim_dir = self.Get_Simulation_Directory( sim_id )
+    input_dir = sim_dir + 'analysis_files/'
+    indices.sort()
+    n_files = len( files )
+    sim_data = {}
+    
+    z_vals = []
+    data_ps_mean = []
+    data_kvals = []
+    data_kmin, data_k_max = [], [] 
+    
+    
+    for n_file in indices:
+      n_file = int(n_file)
+      data = load_analysis_data( n_file, input_dir, phase_diagram=False, lya_statistics=True, load_skewer=False, load_fit=True )
+      z = data['cosmology']['current_z']
+      k_vals  = data['lya_statistics']['power_spectrum']['k_vals']
+      ps_mean = data['lya_statistics']['power_spectrum']['ps_mean']
+      z_vals.append(z)
+      data_kvals.append( k_vals )
+      data_ps_mean.append( ps_mean )
+      data_kmin.append( k_vals.min() )
+      data_kmax.append( k_vals.max() )
+    sim_data['z'] = np.array( sim_data['z'] )
+    z_vals = np.array( z_vals )
+    data_kmin, data_kmax = np.array( data_kmin ), np.array( data_kmax )
+    data_ps = { 'z':z_vals, 'k_min':data_kmin, 'k_max':data_kmax, 'k_vals':data_kvals, 'ps_mean':data_ps_mean }
+    self.Grid[sim_id]['analysis']['power_spectrum'] = data_ps
+  
 
   def Load_Grid_Analysis_Data( self, sim_ids=None, load_fit=False  ):
     if sim_ids == None:  sim_ids = self.Grid.keys()
     
     for sim_id in sim_ids:
       self.Load_Simulation_Analysis_Data( sim_id, load_fit=load_fit  )
+      
+    indices = self.Grid[0]['analysis']['ps_available_indices']
+    available_indices = []
+    for n in indices:
+      available = True
+      for sim_id in sim_ids:
+        if n not in self.Grid[sim_id]['analysis']['ps_available_indices']: available = False
+      if available: available_indices.append( n )
+    
+    
     print('\n')
   
   def Load_Simulation_UVB_Rates( self, sim_id ):

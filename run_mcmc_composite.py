@@ -53,7 +53,7 @@ else:
   # nIter = 100000
   nBurn = nIter / 5
   nThin = 1
-  model, params_mcmc = mcmc_model_4D( comparable_data, comparable_grid, field, 'mean', SG )
+  model, params_mcmc = mcmc_model_3D( comparable_data, comparable_grid, field, 'mean', SG )
   MDL = pymc.MCMC( model )  
   MDL.sample( iter=nIter, burn=nBurn, thin=nThin )
   stats = MDL.stats()
@@ -73,7 +73,8 @@ else:
     samples[p_id]['trace'] = param['sampler'].trace() 
 
 
-  labels = { 'scale_He':r'$\beta_{\mathrm{He}}$', 'scale_H':r'$\beta_{\mathrm{H}}$', 'deltaZ_He':r'$\Delta z_{\mathrm{He}}$', 'deltaZ_H':r'$\Delta z_{\mathrm{H}}$'    }
+  # labels = { 'scale_He':r'$\beta_{\mathrm{He}}$', 'scale_H':r'$\beta_{\mathrm{H}}$', 'deltaZ_He':r'$\Delta z_{\mathrm{He}}$', 'deltaZ_H':r'$\Delta z_{\mathrm{H}}$'    }
+  labels = { 'scale_He':r'$\beta_{\mathrm{He}}$', 'scale_H':r'$\beta_{\mathrm{H}}$', 'deltaZ_He':r'$\Delta z_{\mathrm{He}}$'    }
 
 
   Plot_Corner( samples, labels, output_dir  )

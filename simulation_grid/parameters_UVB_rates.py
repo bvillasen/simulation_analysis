@@ -7,7 +7,8 @@ from simulation_parameters import grid_name, system
 # Select UVB parameters from file
 if grid_name == '1024_P19':     from parameters_UVB_rates_P19 import param_UVB_Rates
 if grid_name == '1024_P19m':    from parameters_UVB_rates_P19m import param_UVB_Rates
-if grid_name == '512_P19m_np3': from parameters_UVB_rates_P19m_np3 import param_UVB_Rates
+if grid_name == '512_P19m_np3_nsim64': from parameters_UVB_rates_P19m_np3 import param_UVB_Rates
+if grid_name == '512_P19m_np2_HeII'  : from parameters_UVB_rates_P19m_np2_HeII import param_UVB_Rates
 if grid_name == '1024_P19m_np3_nsim8': from parameters_UVB_rates_P19m_np3_small import param_UVB_Rates
 
 

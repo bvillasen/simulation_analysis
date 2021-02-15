@@ -37,6 +37,7 @@ def load_tabulated_data_boera( dir_data_boera ):
     delta_power = k_vals * power_vals / np.pi
     delta_power_error = k_vals * power_error / np.pi
     data_out[data_index] = {}
+    data_out[data_index]['z'] = z_vals[data_index]
     data_out[data_index]['k_vals'] = k_vals
     data_out[data_index]['delta_power'] = delta_power
     data_out[data_index]['delta_power_error'] = delta_power_error

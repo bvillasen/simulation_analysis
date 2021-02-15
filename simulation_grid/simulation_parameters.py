@@ -4,27 +4,11 @@ system = 'Lux'
 # system = 'Shamrock'
 
 # n_points = 256
-# n_points = 512
-n_points = 1024
+n_points = 512
+# n_points = 1024
 
 
-# grid_name = 'scale_He'
-# grid_name = 'scale_H'
-# grid_name = 'deltaZ_He'
-# grid_name = 'deltaZ_H'
-# grid_name = 'grid_16'
-# grid_name = 'grid_256_large'
-# grid_name  = 'scale_H_photoion'
-# grid_name  = 'scale_H_photoheat'
-# grid_name = 'grid_81'
-# grid_name = 'deltaZ_H_small'
-# grid_name = 'grid_36'
-# grid_name = '256_P19'
-# grid_name = '512_P19'
-# grid_name = '1024_P19'
-# grid_name = '1024_P19_mod_0_HeII'
-# grid_name = '1024_P19_mod_single'
-# grid_name = f'{n_points}_P19m_np3'
+# grid_name = f'{n_points}_P19m_np3_nsim64'
 # grid_name = f'{n_points}_P19'
 # grid_name = f'{n_points}_P19m'
 grid_name = f'{n_points}_P19m_np3_nsim8'
