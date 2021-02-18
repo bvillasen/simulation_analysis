@@ -6,11 +6,11 @@ import subprocess
 # snapshots = list( set( snaps_boss ).union(set(snaps)))
 # snapshots.sort()
 
-snapshots = range( 101, 170 )
+snapshots = range( 100, 170 )
 print(snapshots)
 
 
-n_procs = 100
+n_procs = 140
 n_procs_per_node = 20
 
 uvb = 'pchw18'
