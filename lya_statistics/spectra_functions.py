@@ -114,7 +114,7 @@ def compute_optical_depth( cosmology, box, skewer, space='redshift', method='err
   if chem_type == 'HeII':
     dens_HeII_los = HeII_density / (current_a)**3
     dens_HeII_los *=  cgs.Msun / cgs.kpc**3 * cosmo_h**2
-    n_HeII_los = dens_HeII_los / cgs.M_p
+    n_HeII_los = dens_HeII_los / ( 4 * cgs.M_p )
   
   if chem_type == 'HI':   n_los = n_HI_los  
   if chem_type == 'HeII': n_los = n_HeII_los  
