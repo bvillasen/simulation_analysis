@@ -12,53 +12,111 @@ from data_thermal_history import data_thermal_history_Gaikwad_2020a, data_therma
 from data_optical_depth import *
 from load_tabulated_data import load_power_spectrum_table, load_tabulated_data_boera, load_tabulated_data_viel, load_data_boss
 
-# ps_data_dir = '../lya_statistics/data/'
-# z_min = 2.0
-# z_max = 5.0 
-# data_sets = [ 'Boss', 'Walther', 'Boera', 'Viel' ]
-# 
-# # def Get_Comparable_Power_Spectrum():
-# dir_boss = ps_data_dir + 'data_power_spectrum_boss/'
-# data_filename = dir_boss + 'data_table.py'
-# data_boss = load_data_boss( data_filename )
-# 
-# data_filename = ps_data_dir + 'data_power_spectrum_walther_2019/data_table.txt'
-# data_walther = load_power_spectrum_table( data_filename )
-# 
-# dir_data_boera = ps_data_dir + 'data_power_spectrum_boera_2019/'
-# data_boera = load_tabulated_data_boera( dir_data_boera )
-# 
-# data_dir_viel = ps_data_dir + 'data_power_spectrum_viel_2013/'
-# data_viel = load_tabulated_data_viel( data_dir_viel)
-# 
-# data_dir = { 'Boss':data_boss, 'Walther':data_walther, 'Boera':data_boera, 'Viel':data_viel }
+ 
+def Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_sets, ps_range ):
+  print( f'Loading P(k) Data:' )
+  dir_boss = ps_data_dir + 'data_power_spectrum_boss/'
+  data_filename = dir_boss + 'data_table.py'
+  data_boss = load_data_boss( data_filename )
+
+  data_filename = ps_data_dir + 'data_power_spectrum_walther_2019/data_table.txt'
+  data_walther = load_power_spectrum_table( data_filename )
+
+  dir_data_boera = ps_data_dir + 'data_power_spectrum_boera_2019/'
+  data_boera = load_tabulated_data_boera( dir_data_boera )
+
+  data_dir_viel = ps_data_dir + 'data_power_spectrum_viel_2013/'
+  data_viel = load_tabulated_data_viel( data_dir_viel)
+
+  data_dir = { 'Boss':data_boss, 'Walther':data_walther, 'Boera':data_boera, 'Viel':data_viel }
 
 
-# data_kvals, data_ps, data_ps_sigma = [], [], []
-# 
-# for data_name in data_sets:
-#   print( f'Loading P(k) Data: {data_name}' )
-#   data_set = data_dir[data_name]
-#   keys = data_set.keys()
-#   n_indices = len(keys) - 1
-#   for index in range(n_indices):
-#     data = data_set[index]
-#     z = data['z']
-#     k_vals = data['k_vals']
-#     delta_ps = data['delta_power']
-#     delta_ps_sigma = data['delta_power_error']
-#     if z >= z_min and z <= z_max:
-#       data_kvals.append( k_vals )
-#       data_ps.append( delta_ps )
-#       data_ps_sigma.append( delta_ps_sigma )
-# # 
-# k_vals_all         = np.concatenate( data_kvals )
-# delta_ps_all       = np.concatenate( data_ps )
-# delta_ps_sigma_all = np.concatenate( data_ps_sigma )
-# 
-# n_data_points = len( k_vals_all )
-# print( f'N data points: {n_data_points}' )
+  data_kvals, data_ps, data_ps_sigma, data_indices, data_z  = [], [], [], [], []
 
+  sim_z, sim_kmin, sim_kmax = ps_range['z'], ps_range['k_min'], ps_range['k_max']
+
+  ps_data = {}
+  data_id = 0
+  for data_index, data_name in enumerate(data_sets):
+    print( f' Loading P(k) Data: {data_name}' )
+    data_set = data_dir[data_name]
+    keys = data_set.keys()
+    n_indices = len(keys) - 1
+    for index in range(n_indices):
+      data = data_set[index]
+      z = data['z']
+      if z >= z_min and z <= z_max:
+        diff = np.abs( sim_z - z )
+        id_min = np.where( diff == diff.min() )[0][0]
+        z_sim = sim_z[id_min]
+        # print( f'data_z: {z:.1f} sim_z: {z_sim:.1f}')
+        kmin = sim_kmin[id_min]
+        kmax = sim_kmax[id_min]
+        k_vals = data['k_vals']
+        k_indices = np.where( (k_vals >= kmin) & (k_vals <= kmax) )
+        k_vals = k_vals[k_indices]
+        delta_ps = data['delta_power'][k_indices]
+        delta_ps_sigma = data['delta_power_error'][k_indices]
+        ps_data[data_id] = {'z':z, 'k_vals':k_vals, 'delta_ps':delta_ps, 'delta_ps_sigma':delta_ps_sigma }
+        data_z.append( z )
+        data_kvals.append( k_vals )
+        data_ps.append( delta_ps )
+        data_ps_sigma.append( delta_ps_sigma )
+        data_id += 1
+  k_vals_all         = np.concatenate( data_kvals )
+  delta_ps_all       = np.concatenate( data_ps )
+  delta_ps_sigma_all = np.concatenate( data_ps_sigma )
+  ps_data_out = {'P(k)':{}, 'separate':ps_data }
+  ps_data_out['P(k)']['k_vals'] = k_vals_all
+  ps_data_out['P(k)']['mean']   = delta_ps_all
+  ps_data_out['P(k)']['sigma']  = delta_ps_sigma_all
+
+  n_data_points = len( k_vals_all )
+  print( f' N data points: {n_data_points}' )
+  return ps_data_out
+
+def Get_Comparable_Power_Spectrum_from_Grid( comparable_data, SG ):
+  
+  print( 'Generating Simulation P(k) comparable data:')
+  indices = comparable_data.keys()
+  
+  
+  comparable_grid = {}
+  sim_ids = SG.sim_ids
+  for sim_id in sim_ids:
+    comparable_grid[sim_id] = {}
+    comparable_grid[sim_id]['P(k)'] = {}
+    
+    
+    sim_data = SG.Grid[sim_id]['analysis']['power_spectrum']
+    sim_z_all = sim_data['z']
+    sim_k_vals_all = sim_data['k_vals']
+    sim_ps_all = sim_data['ps_mean']
+    
+    sim_delta_all = []
+    
+    for index in indices:
+      data = comparable_data[index]
+      data_z = data['z']
+      data_kvals = data['k_vals']
+      data_delta_vals = data['delta_ps']
+      diff = np.abs( sim_z_all - data_z )
+      id_sim = np.where( diff == diff.min() )[0][0]
+      sim_z = sim_z_all[id_sim]
+      sim_kvals = sim_k_vals_all[id_sim]
+      sim_ps = sim_ps_all[id_sim]
+      sim_delta = sim_ps * sim_kvals / np.pi 
+      sim_delta_interp = np.interp( data_kvals, sim_kvals, sim_delta )
+      diff = ( sim_delta_interp - data_delta_vals ) / data_delta_vals
+      sim_delta_all.append( sim_delta_interp )
+      
+    comparable_grid[sim_id]['P(k)']['mean'] = np.concatenate( sim_delta_all )
+  
+  n_points = len(  comparable_grid[0]['P(k)']['mean'] )
+  print ( f' N sim points: {n_points}' )
+  return comparable_grid  
+    
+    
 
 
 def Get_Chi2( observables, params, comparable_grid, comparable_data, SG ):

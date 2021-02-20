@@ -11,8 +11,9 @@ n_points = 1024
 # grid_name = f'{n_points}_P19m_np3_nsim64'
 # grid_name = f'{n_points}_P19m_np2_HeII'
 # grid_name = f'{n_points}_P19'
-grid_name = f'{n_points}_P19m'
+# grid_name = f'{n_points}_P19m'
 # grid_name = f'{n_points}_P19m_np3_nsim8'
+grid_name = f'{n_points}_P19m_np3_nsim8_v2'
 
 
 if system == 'Lux':

@@ -376,13 +376,12 @@ class Simulation_Grid:
     sim_dir = self.Get_Simulation_Directory( sim_id )
     input_dir = sim_dir + 'analysis_files/'
     indices.sort()
-    n_files = len( files )
     sim_data = {}
     
     z_vals = []
     data_ps_mean = []
     data_kvals = []
-    data_kmin, data_k_max = [], [] 
+    data_kmin, data_kmax = [], [] 
     
     
     for n_file in indices:
@@ -396,7 +395,6 @@ class Simulation_Grid:
       data_ps_mean.append( ps_mean )
       data_kmin.append( k_vals.min() )
       data_kmax.append( k_vals.max() )
-    sim_data['z'] = np.array( sim_data['z'] )
     z_vals = np.array( z_vals )
     data_kmin, data_kmax = np.array( data_kmin ), np.array( data_kmax )
     data_ps = { 'z':z_vals, 'k_min':data_kmin, 'k_max':data_kmax, 'k_vals':data_kvals, 'ps_mean':data_ps_mean }
@@ -417,8 +415,24 @@ class Simulation_Grid:
         if n not in self.Grid[sim_id]['analysis']['ps_available_indices']: available = False
       if available: available_indices.append( n )
     
+    for sim_id in sim_ids:
+      self.Load_Simulation_Power_Spectum_Data( sim_id, available_indices )
     
     print('\n')
+  
+  def Get_Power_Spectrum_Range( self, sim_id=0, kmin=None, kmax=None ):
+    
+    data_ps = self.Grid[sim_id]['analysis']['power_spectrum']
+    z = data_ps['z']
+    k_min = data_ps['k_min']
+    k_max = data_ps['k_max']
+    
+    if kmin != None: k_min = max( k_min, kmin )
+    if kmax != None: k_max = min( k_max, kmax )
+    
+    ps_range = { 'z':z, 'k_min':k_min, 'k_max':k_max }
+    return ps_range
+    
   
   def Load_Simulation_UVB_Rates( self, sim_id ):
     sim_dir = self.Get_Simulation_Directory( sim_id )

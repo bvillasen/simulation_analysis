@@ -30,7 +30,7 @@ for sim_id in sim_ids_to_plot:
   # beta_H  = sim_param['scale_H'] 
   # deltaZ_He = sim_param['deltaZ_He'] 
   # label = r'$\beta_{\mathrm{He}}:$' + f'{beta_He:.1f}' + ' ' + r'$\beta_{\mathrm{H}}:$' + f'{beta_H:.1f}' + ' ' + r'$\Delta_z:$' + f'{deltaZ_He:.1f}' 
-  label = ''
+  label = 'P19 Modified'
   sim_data['plot_label'] = label
   sim_data_sets.append(sim_data)
 

@@ -113,6 +113,9 @@ def plot_tau_HeII( output_dir, sim_data_sets=None, system=None ):
 
   # Load T0 and tau data
   # comparable_data = Get_Comparable_Composite_T0_tau()
+  
+  
+  from data_optical_depth_HeII import data_tau_HeII
 
   import matplotlib
   import matplotlib.font_manager
@@ -150,6 +153,12 @@ def plot_tau_HeII( output_dir, sim_data_sets=None, system=None ):
     vals = sim_data[obs_name]
     ax.plot( z, vals , label=sim_data['plot_label'], zorder=1 )
     # ax.plot( z, vals , c=color_line, label=sim_data['plot_label'], zorder=1 )
+  
+  
+  data_z = data_tau_HeII['z']
+  data_tau = data_tau_HeII['tau']
+  ax.scatter( data_z, data_tau, color=color_data, s=4, label='Worseck et al. 2019' )
+
 
   # 
   # data_set = comparable_data[obs_name]
@@ -164,8 +173,8 @@ def plot_tau_HeII( output_dir, sim_data_sets=None, system=None ):
   ax.set_ylabel( r'$\tau_{eff} \,\, \mathrm{HeII}$', fontsize=font_size  )
   ax.set_xlabel( r'$z$', fontsize=font_size )
   leg = ax.legend(loc=1, frameon=False, fontsize=font_size, prop=prop)
-  ax.set_xlim( 2, 4.0 )
-  ax.set_ylim( 0, 10 )
+  ax.set_xlim( 2, 3.4 )
+  ax.set_ylim( 0, 8 )
 
 
 

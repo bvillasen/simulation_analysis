@@ -14,11 +14,17 @@ from mcmc_data_functions import *
 from data_thermal_history import *
 from mcmc_plotting_functions import *
 
-# field = 'T0'
-# field = 'tau'
-# field = 'T0+tau'
+# data_sets = [ 'Boss', 'Walther', 'Boera', 'Viel' ]
+# data_sets = [ 'Boss' ]
+# data_sets = [ 'Walther' ]
+# data_sets = [ 'Boss', 'Walther' ]
+data_sets = [ 'Walther', 'Boera' ]
+data_sets = [ 'Walther', 'Viel' ]
+
+
 field = 'P(k)'
-output_dir = root_dir + f'fit_results_{field}/'
+ps_data_dir = 'lya_statistics/data/'
+output_dir = root_dir + f'fit_results_{field}_walther+viel/'
 create_directory( output_dir )
 
 load_mcmc_stats = False
@@ -26,20 +32,53 @@ load_mcmc_stats = False
 
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
 SG.Load_Grid_Analysis_Data()
+ps_range = SG.Get_Power_Spectrum_Range( kmax=0.2 )
 sim_ids = SG.sim_ids
 
-# k_min = SG.Grid[0]['analysis']['power_spectrum']['k_min']
-# for sim_id in sim_ids:
-#   comp = SG.Grid[sim_id]['analysis']['power_spectrum']['k_min'] - k_min
-#   print( comp)
+z_min = 2.0
+z_max = 5.0 
+comparable_data = Get_Comparable_Power_Spectrum(  ps_data_dir, z_min, z_max, data_sets, ps_range )
+comparable_grid = Get_Comparable_Power_Spectrum_from_Grid( comparable_data['separate'], SG )
 
-# comparable_data = Get_Comparable_Composite_T0_tau( factor_sigma_tau_becker=6.0, factor_sigma_tau_keating=4.0, )
-# comparable_grid = Get_Comparable_Composite_T0_tau_from_Grid( comparable_data, SG )
-# 
-# 
-# stats_file = output_dir + 'fit_mcmc.pkl'
-# 
-# fields = [ 'T0', 'tau' ]
+
+
+
+  
+
+
+
+z_vals = [ 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.6, 5.0,  ]
+
+stats_file = output_dir + 'fit_mcmc.pkl'
+
+fields = [ 'P(k)' ]
+
+# def Get_Data_Grid_Power_spectrum( z_vals ):
+
+data_grid = {}
+
+id_z = 0
+z_val = z_vals[id_z]   
+
+data_grid[id_z] = {}
+data_grid[id_z]['z'] = z_val
+
+sim_ids = SG.sim_ids
+for sim_id in sim_ids:
+  sim_ps_data = SG.Grid[sim_id]['analysis']['power_spectrum']
+  sim_z_vals = sim_ps_data['z']
+  diff_z = np.abs( sim_z_vals - z_val )
+  diff_min = diff_z.min()
+  if diff_min > 0.05: print( f'Warning: Large Z difference: {diff_min}')
+  index = np.where( diff_z == diff_min )[0][0]
+  k_vals = sim_ps_data['k_vals'][index]
+  ps_vals = sim_ps_data['ps_mean'][index]
+  delta_ps = ps_vals * k_vals / np.pi
+  data_grid[id_z][sim_id] = {  } 
+  data_grid[id_z][sim_id]['mean'] = delta_ps
+  
+  
+
 # data_grid = Get_Data_Grid( fields, SG )
 # 
 # params = SG.parameters
@@ -78,11 +117,8 @@ sim_ids = SG.sim_ids
 #     samples[p_id]['name'] = param['name']
 #     samples[p_id]['trace'] = param['sampler'].trace() 
 # 
-# 
 #   # labels = { 'scale_He':r'$\beta_{\mathrm{He}}$', 'scale_H':r'$\beta_{\mathrm{H}}$', 'deltaZ_He':r'$\Delta z_{\mathrm{He}}$', 'deltaZ_H':r'$\Delta z_{\mathrm{H}}$'    }
 #   labels = { 'scale_He':r'$\beta_{\mathrm{He}}$', 'scale_H':r'$\beta_{\mathrm{H}}$', 'deltaZ_He':r'$\Delta z_{\mathrm{He}}$'    }
-# 
-# 
 #   Plot_Corner( samples, labels, output_dir  )
 # 
 # 
@@ -104,3 +140,27 @@ sim_ids = SG.sim_ids
 # Plot_Observables( observables_samples, comparable_data, params, SG, 'sampling', output_dir, chi2=chi2_vals)
 # Plot_Observables( observables_samples, comparable_data, params, SG, 'grid', output_dir, chi2=None)
 # 
+
+
+
+
+
+# nrows, ncols = 1, 1
+# fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(20*ncols,5*nrows))
+# 
+# data_mean = comparable_data['P(k)']['mean']
+# data_sigma = comparable_data['P(k)']['sigma']
+# n_points = len( data_mean )
+# x = np.arange( 0, n_points, 1)
+# 
+# sim_id = 0
+# sim_mean = comparable_grid[sim_id]['P(k)']['mean']
+# 
+# ax.errorbar( x, data_mean, yerr=data_sigma, fmt='o', c='C0', label='Data', ms=1)
+# ax.scatter(x, sim_mean, color='C1', s=1 )
+# 
+# ax.set_yscale('log')
+# 
+# figure_name = output_dir + 'ps_data_sim.png'
+# fig.savefig( figure_name, bbox_inches='tight', dpi=500 )
+# print( f'Saved Figure: {figure_name}' )
