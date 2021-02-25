@@ -426,9 +426,11 @@ class Simulation_Grid:
     z = data_ps['z']
     k_min = data_ps['k_min']
     k_max = data_ps['k_max']
+    # print( k_max )
     
-    if kmin != None: k_min = max( k_min, kmin )
-    if kmax != None: k_max = min( k_max, kmax )
+    if kmin != None: k_min = [ max( k_min_i, kmin ) for k_min_i in k_min ] 
+    if kmax != None: k_max = [ min( k_max_i, kmax ) for k_max_i in k_max ]
+    # print( k_max )
     
     ps_range = { 'z':z, 'k_min':k_min, 'k_max':k_max }
     return ps_range

@@ -112,7 +112,7 @@ def Plot_MCMC_Stats( stats, MDL, params_mcmc,  stats_file, output_dir, plot_corn
     import corner
     corner_fig = corner.corner(samples[:,:], labels=labels )
     corner_fig.savefig( 'corner_fig.png' )  
-    os.chdir( cwd )  
+  os.chdir( cwd )  
 
 
 def Plot_Observables( observables_samples, comparable_data, params, SG, plot_type, output_dir, chi2=None):

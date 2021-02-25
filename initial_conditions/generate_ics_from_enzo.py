@@ -15,19 +15,19 @@ from ics_grid import expand_data_grid_to_cholla
 
 # Box Size
 Lbox = 50000.0    #kpc
-nPoints = 256
-nBoxes  = 2
+nPoints = 1024
+nBoxes  = 64
 
-data_dir = '/raid/bruno/data/'
-# data_dir = '/data/groups/comp-astro/bruno/'
+# data_dir = '/raid/bruno/data/'
+data_dir = '/data/groups/comp-astro/bruno/'
 # data_dir = '/home/bruno/Desktop/ssd_0/data/'
-input_dir = data_dir + f'cosmo_sims/enzo/{nPoints}_dm_50Mpc/ics/'
-output_dir = data_dir + f'cosmo_sims/{nPoints}_dm_50Mpc/ics_{nBoxes}/'
+input_dir = data_dir + f'cosmo_sims/enzo/{nPoints}_hydro_50Mpc/ics/'
+output_dir = data_dir + f'cosmo_sims/{nPoints}_hydro_50Mpc/ics_{nBoxes}/'
 print(f'Input Dir: {input_dir}' )
 print(f'Output Dir: {output_dir}' )
 create_directory( output_dir )
 
-hydro = False
+hydro = True
 particles = True
 
 
@@ -84,10 +84,11 @@ if particles:
   
 
 
-if nBoxes == 1: proc_grid = [ 1, 1, 1]
-if nBoxes == 2: proc_grid = [ 2, 1, 1]
-if nBoxes == 8: proc_grid = [ 2, 2, 2]
-if nBoxes == 16: proc_grid = [ 4, 2, 2]
+if nBoxes == 1: proc_grid  = [ 1, 1, 1 ]
+if nBoxes == 2: proc_grid  = [ 2, 1, 1 ]
+if nBoxes == 8: proc_grid  = [ 2, 2, 2 ]
+if nBoxes == 16: proc_grid = [ 4, 2, 2 ]
+if nBoxes == 64: proc_grid = [ 4, 4, 4 ]
 
 box_size = [ Lbox, Lbox, Lbox ]
 grid_size = [ nPoints, nPoints, nPoints ]

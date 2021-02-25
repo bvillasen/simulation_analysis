@@ -130,9 +130,43 @@ def Get_Chi2( observables, params, comparable_grid, comparable_data, SG ):
     chi2_vals[field] = chi2
   return chi2_vals
 
+def Sample_Power_Spectrum( n_samples, params, data_grid, SG ):
+  print(f'\nSampling Power Spectrum')
+  ps_samples = {}
+  n_param = len( params.keys() )
+
+  n_z_ids = len( data_grid.keys() )
+
+  for id_z in range( n_z_ids ):
+    ps_data = data_grid[id_z]
+    ps_samples[id_z] = {}
+    ps_samples[id_z]['z'] = ps_data['z']
+
+    samples = []
+    for i in range( n_samples ):
+      p_rand = []
+      for p_id in params.keys():
+        p_rand.append( np.random.normal( params[p_id]['mean'], params[p_id]['sigma']  ) )
+      if n_param == 3: ps_interp = Interpolate_3D(  p_rand[0], p_rand[1], p_rand[2], ps_data, 'P(k)', 'mean', SG, clip_params=True ) 
+      if n_param == 4: ps_interp = Interpolate_3D(  p_rand[0], p_rand[1], p_rand[2], p_rand[3], ps_data, 'P(k)', 'mean', SG, clip_params=True ) 
+      samples.append( ps_interp )
+    samples = np.array( samples ).T
+    ps_mean = np.array([ ps_vals.mean() for ps_vals in samples ])
+    ps_sigma = [ ]
+    for i in range( len( samples ) ):
+      ps_sigma.append( np.sqrt(  ( (samples[i] - ps_mean[i])**2).mean()  ) )
+    ps_sigma = np.array( ps_sigma )
+    ps_samples[id_z]['mean'] = ps_mean
+    ps_samples[id_z]['sigma'] = ps_sigma
+    ps_samples[id_z]['k_vals'] = ps_data[0]['P(k)']['k_vals']
+  return ps_samples
+  
+
 def Sample_Observables( n_samples, observables, params, data_grid, SG  ):
   print(f'\nSampling Observables: {observables}')
   observables_samples = {}
+  n_param = len( params.keys() )
+  
   for observable in observables:
     observables_samples[observable] = {}
     observables_samples[observable]['samples'] = []
@@ -143,7 +177,8 @@ def Sample_Observables( n_samples, observables, params, data_grid, SG  ):
       p_rand.append( np.random.normal( params[p_id]['mean'], params[p_id]['sigma']  ) )
     for observable in observables:
       # obs_interp = Interpolate_MultiDim(  p_rand[0], p_rand[1], p_rand[2], p_rand[3], data_grid, observable, 'mean', SG, clip_params=True ) 
-      obs_interp = Interpolate_3D(  p_rand[0], p_rand[1], p_rand[2], data_grid, observable, 'mean', SG, clip_params=True ) 
+      if n_param == 3: obs_interp = Interpolate_3D(  p_rand[0], p_rand[1], p_rand[2], data_grid, observable, 'mean', SG, clip_params=True ) 
+      if n_param == 4: obs_interp = Interpolate_3D(  p_rand[0], p_rand[1], p_rand[2], p_rand[3], data_grid, observable, 'mean', SG, clip_params=True ) 
       observables_samples[observable]['samples'].append( obs_interp )
   for observable in observables:
     obs_all = np.array(observables_samples[observable]['samples']).T
@@ -168,6 +203,26 @@ def Get_Data_Grid( fields, SG ):
       data_grid[sim_id][field]['mean'] = SG.Grid[sim_id]['analysis'][field]
   return data_grid
 
+def Get_Data_Grid_Power_spectrum( z_vals, SG ):
+  data_grid = {}
+  for id_z, z_val in enumerate( z_vals ):
+    data_grid[id_z] = {}
+    data_grid[id_z]['z'] = z_val
+    sim_ids = SG.sim_ids
+    for sim_id in sim_ids:
+      sim_ps_data = SG.Grid[sim_id]['analysis']['power_spectrum']
+      sim_z_vals = sim_ps_data['z']
+      diff_z = np.abs( sim_z_vals - z_val )
+      diff_min = diff_z.min()
+      if diff_min > 0.05: print( f'Warning: Large Z difference: {diff_min}')
+      index = np.where( diff_z == diff_min )[0][0]
+      k_vals = sim_ps_data['k_vals'][index]
+      ps_vals = sim_ps_data['ps_mean'][index]
+      delta_ps = ps_vals * k_vals / np.pi
+      data_grid[id_z][sim_id] = { 'P(k)':{} } 
+      data_grid[id_z][sim_id]['P(k)']['mean'] = delta_ps
+      data_grid[id_z][sim_id]['P(k)']['k_vals'] = k_vals
+  return data_grid
 
 def are_floats_equal( a, b, epsilon=1e-10 ):
   if np.abs( a - b ) < epsilon: return True
@@ -544,3 +599,6 @@ def Get_Comparable_T0_from_Grid( comparable_data, SG ):
     comparable_grid[sim_id]['z'] = sim_analysis['z'][indices].flatten()
     comparable_grid[sim_id]['mean'] = sim_analysis['T0'][indices].flatten()    
   return comparable_grid
+  
+
+
