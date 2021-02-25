@@ -27,8 +27,8 @@ print(f'Input Dir: {input_dir}' )
 print(f'Output Dir: {output_dir}' )
 create_directory( output_dir )
 
-hydro = True
-particles = False
+hydro = False
+particles = True
 
 
 nSnap = 0
