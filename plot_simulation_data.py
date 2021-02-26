@@ -26,11 +26,11 @@ sim_ids_to_plot = sim_ids
 for sim_id in sim_ids_to_plot:
   sim_data  = SG.Grid[sim_id]['analysis']
   sim_param = SG.Grid[sim_id]['parameters']
-  # beta_He = sim_param['scale_He'] 
-  # beta_H  = sim_param['scale_H'] 
-  # deltaZ_He = sim_param['deltaZ_He'] 
-  # label = r'$\beta_{\mathrm{He}}:$' + f'{beta_He:.1f}' + ' ' + r'$\beta_{\mathrm{H}}:$' + f'{beta_H:.1f}' + ' ' + r'$\Delta_z:$' + f'{deltaZ_He:.1f}' 
-  label = 'P19 Modified'
+  beta_He = sim_param['scale_He'] 
+  beta_H  = sim_param['scale_H'] 
+  deltaZ_He = sim_param['deltaZ_He'] 
+  label = r'$\beta_{\mathrm{He}}:$' + f'{beta_He:.1f}' + ' ' + r'$\beta_{\mathrm{H}}:$' + f'{beta_H:.1f}' + ' ' + r'$\Delta_z:$' + f'{deltaZ_He:.1f}' 
+  # label = 'P19 Modified'
   sim_data['plot_label'] = label
   sim_data_sets.append(sim_data)
 

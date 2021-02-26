@@ -11,7 +11,7 @@ from tools import *
 from data_thermal_history import data_thermal_history_Gaikwad_2020a, data_thermal_history_Gaikwad_2020b
 from data_optical_depth import *
 from load_tabulated_data import load_power_spectrum_table, load_tabulated_data_boera, load_tabulated_data_viel, load_data_boss
-
+from stats_functions import compute_distribution, get_highest_probability_interval
  
 def Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_sets, ps_range ):
   print( f'Loading P(k) Data:' )
@@ -130,7 +130,54 @@ def Get_Chi2( observables, params, comparable_grid, comparable_data, SG ):
     chi2_vals[field] = chi2
   return chi2_vals
 
-def Sample_Power_Spectrum( n_samples, params, data_grid, SG ):
+
+def Sample_Power_Spectrum_Multiple_Params( n_samples, params_all, data_grid, SG, sampling='gaussian', hpi_sum=0.7,  ):
+  print(f'\nSampling Power Spectrum')
+  ps_samples = {}
+  
+  n_param = len(params_all[0]['params'])
+  
+  n_z_ids = len( data_grid.keys() )
+
+  for id_z in range( n_z_ids ):
+    ps_data = data_grid[id_z]
+    ps_samples[id_z] = {}
+    ps_samples[id_z]['z'] = ps_data['z']
+
+    samples = []
+    for i in range( n_samples ):
+      p_rand = []
+      params_z = params_all[id_z]
+      for p_id in params_z['params'].keys():
+        if sampling == 'gaussian': p_rand.append( np.random.normal( params_z['params'][p_id]['mean'], params_z['params'][p_id]['sigma']  ) )
+      if n_param == 3: ps_interp = Interpolate_3D(  p_rand[0], p_rand[1], p_rand[2], ps_data, 'P(k)', 'mean', SG, clip_params=True ) 
+      if n_param == 4: ps_interp = Interpolate_3D(  p_rand[0], p_rand[1], p_rand[2], p_rand[3], ps_data, 'P(k)', 'mean', SG, clip_params=True ) 
+      samples.append( ps_interp )
+    samples = np.array( samples ).T
+    ps_mean = np.array([ ps_vals.mean() for ps_vals in samples ])
+    ps_sigma = [ ]
+    ps_lower, ps_higher = [], []
+    for i in range( len( samples ) ):
+      ps_sigma.append( np.sqrt(  ( (samples[i] - ps_mean[i])**2).mean()  ) )
+      values = samples[i]
+      n_bins = 100
+      distribution, bin_centers = compute_distribution( values, n_bins, log=True )
+      fill_sum = hpi_sum
+      v_l, v_r, v_max, sum = get_highest_probability_interval( bin_centers, distribution, fill_sum, log=True, n_interpolate=1000)
+      ps_lower.append( v_l )
+      ps_higher.append( v_r )
+    ps_sigma  = np.array( ps_sigma )
+    ps_lower  = np.array( ps_lower )
+    ps_higher = np.array( ps_higher )
+    ps_samples[id_z]['mean'] = ps_mean
+    ps_samples[id_z]['sigma'] = ps_sigma
+    ps_samples[id_z]['k_vals'] = ps_data[0]['P(k)']['k_vals']
+    ps_samples[id_z]['lower'] = ps_lower
+    ps_samples[id_z]['higher'] = ps_higher
+  return ps_samples
+
+
+def Sample_Power_Spectrum( n_samples, params, data_grid, SG, sampling='gaussian', hpi_sum=0.7 ):
   print(f'\nSampling Power Spectrum')
   ps_samples = {}
   n_param = len( params.keys() )
@@ -146,19 +193,35 @@ def Sample_Power_Spectrum( n_samples, params, data_grid, SG ):
     for i in range( n_samples ):
       p_rand = []
       for p_id in params.keys():
-        p_rand.append( np.random.normal( params[p_id]['mean'], params[p_id]['sigma']  ) )
+        if sampling == 'gaussian': p_rand.append( np.random.normal( params[p_id]['mean'], params[p_id]['sigma']  ) )
+        if sampling == 'uniform':
+          p_min = params[p_id]['min']
+          p_max = params[p_id]['max']
+          p_rand.append( np.random.rand() * ( p_max - p_min) + p_min )
       if n_param == 3: ps_interp = Interpolate_3D(  p_rand[0], p_rand[1], p_rand[2], ps_data, 'P(k)', 'mean', SG, clip_params=True ) 
       if n_param == 4: ps_interp = Interpolate_3D(  p_rand[0], p_rand[1], p_rand[2], p_rand[3], ps_data, 'P(k)', 'mean', SG, clip_params=True ) 
       samples.append( ps_interp )
     samples = np.array( samples ).T
     ps_mean = np.array([ ps_vals.mean() for ps_vals in samples ])
     ps_sigma = [ ]
+    ps_lower, ps_higher = [], []
     for i in range( len( samples ) ):
       ps_sigma.append( np.sqrt(  ( (samples[i] - ps_mean[i])**2).mean()  ) )
-    ps_sigma = np.array( ps_sigma )
+      values = samples[i]
+      n_bins = 100
+      distribution, bin_centers = compute_distribution( values, n_bins, log=True )
+      fill_sum = hpi_sum
+      v_l, v_r, v_max, sum = get_highest_probability_interval( bin_centers, distribution, fill_sum, log=True, n_interpolate=1000)
+      ps_lower.append( v_l )
+      ps_higher.append( v_r )
+    ps_sigma  = np.array( ps_sigma )
+    ps_lower  = np.array( ps_lower )
+    ps_higher = np.array( ps_higher )
     ps_samples[id_z]['mean'] = ps_mean
     ps_samples[id_z]['sigma'] = ps_sigma
     ps_samples[id_z]['k_vals'] = ps_data[0]['P(k)']['k_vals']
+    ps_samples[id_z]['lower'] = ps_lower
+    ps_samples[id_z]['higher'] = ps_higher
   return ps_samples
   
 
