@@ -5,15 +5,10 @@
 
 def Create_Submit_Job_Script_Summit( job_params, save_file=True, file_name='submit_job_summit.lsf' ):
   
+  summit_project = job_params['summit_project']
   job_name = job_params['name']
-  partition = job_params['partition']
   n_mpi_tasks = job_params['n_mpi']
-  n_nodes = job_params['n_nodes']
-  n_tasks_per_node = job_params['n_tasks_per_node']
   time = job_params['time']
-  output = job_params['output']
-  command = job_params['command']
-  command_params = job_params['command_params']
   sim_directory = job_params['sim_directory']
   
   submit_str = f"""#!/bin/bash          
