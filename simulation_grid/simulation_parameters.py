@@ -84,6 +84,9 @@ job_params = {}
 job_params['exclude'] = ['gpu006', 'gpu023' ] 
 job_params['partition'] = 'gpu'
 # job_params['partition'] = 'comp-astro'
+
+job_params['summit_project'] = 'CSC434'
+
 if n_points == 512:
   job_params['n_mpi'] = 8
   job_params['n_nodes'] = 4
