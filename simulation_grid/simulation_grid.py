@@ -7,7 +7,7 @@ import subprocess
 #Append analysis directories to path
 extend_path()
 from parameters_UVB_rates import param_UVB_Rates
-from submit_job_scripts import Create_Submit_Job_Script_Lux
+from submit_job_scripts import Create_Submit_Job_Script_Lux, Create_Submit_Job_Script_Summit
 from generate_grackle_uvb_file import Generate_Modified_Rates_File
 from load_data import load_analysis_data
 from phase_diagram_functions import fit_thermal_parameters_mcmc, get_density_tyemperature_values_to_fit
@@ -152,8 +152,9 @@ class Simulation_Grid:
     job_params['name'] = name
     job_params['sim_directory'] = root_dir + name
     job_params['partition'] = partition
-    Create_Submit_Job_Script_Lux( job_params, save_file=save_file )
-  
+    if system == 'Lux': Create_Submit_Job_Script_Lux( job_params, save_file=save_file )
+    if system == 'Summit': Create_Submit_Job_Script_Summit( job_params, save_file=save_file )
+
   def Create_All_Submit_Job_Scripts( self, save_file=True ):
     
     print("Creating Submit Job Scripts:")
@@ -234,21 +235,26 @@ class Simulation_Grid:
   def Submit_Simulation_Job( self, sim_id, partition=None ):
     sim_dir = self.Get_Simulation_Directory( sim_id )
     job = self.job_parameters
-    if partition == None: partition = job['partition']
-    partition_key = partition
-    self.Create_Submit_Job_Script( sim_id, save_file=True, partition=partition )
-    print( f'Submiting job to queue: {partition}')
-    cwd = os.getcwd()
-    os.chdir( sim_dir )
-    if partition == 'comp-astro': partition_key = 'comp'
-    if partition == 'gpuq':       partition_key = 'gpu'
+    if system == 'Summit':
+      self.Create_Submit_Job_Script( sim_id, save_file=True )
+      cwd = os.getcwd()
+      os.chdir( sim_dir )
+      command = f'bsub submit_job_summit.lsf'
     
-    # --exclude=gpu017,gpu022
-    exclude_comand = '' 
-    for node in job['exclude']:
-      exclude_comand += node + ','
-    if exclude_comand != '': exclude_comand = exclude_comand[:-1]
-    command = f'submit_script {partition_key} submit_job_lux {exclude_comand}'
+    if system == 'Lux':
+      if partition == None: partition = job['partition']
+      partition_key = partition
+      self.Create_Submit_Job_Script( sim_id, save_file=True, partition=partition )
+      print( f'Submiting job to queue: {partition}')
+      cwd = os.getcwd()
+      os.chdir( sim_dir )
+      if partition == 'comp-astro': partition_key = 'comp'
+      if partition == 'gpuq':       partition_key = 'gpu'
+      exclude_comand = '' 
+      for node in job['exclude']:
+        exclude_comand += node + ','
+      if exclude_comand != '': exclude_comand = exclude_comand[:-1]
+      command = f'submit_script {partition_key} submit_job_lux {exclude_comand}'
     print( f'Changed Directory to: {sim_dir}')
     print( f' Submitting: {command}' )
     os.system( command )
