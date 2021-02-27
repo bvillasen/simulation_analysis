@@ -8,6 +8,7 @@ def Create_Submit_Job_Script_Summit( job_params, save_file=True, file_name='subm
   summit_project = job_params['summit_project']
   job_name = job_params['name']
   n_mpi_tasks = job_params['n_mpi']
+  n_nodes = job_params['n_nodes']
   time = job_params['time']
   sim_directory = job_params['sim_directory']
   
