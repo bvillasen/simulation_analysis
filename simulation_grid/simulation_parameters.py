@@ -87,12 +87,21 @@ job_params['partition'] = 'gpu'
 
 job_params['summit_project'] = 'CSC434'
 
-if n_points == 512:
-  job_params['n_mpi'] = 8
-  job_params['n_nodes'] = 4
-if n_points == 1024:
-  job_params['n_mpi'] = 16
-  job_params['n_nodes'] = 8
+if system == 'Lux':
+  if n_points == 512:
+    job_params['n_mpi'] = 8
+    job_params['n_nodes'] = 4
+  if n_points == 1024:
+    job_params['n_mpi'] = 16
+    job_params['n_nodes'] = 8
+    
+
+if system == 'Summit':
+  if n_points == 1024:
+    job_params['n_mpi'] = 64
+    job_params['n_nodes'] = 11
+    
+    
 job_params['n_tasks_per_node'] = 2
 job_params['time'] = '24:00:00'
 job_params['output'] = 'output'
