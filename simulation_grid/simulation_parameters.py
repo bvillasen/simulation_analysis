@@ -101,9 +101,13 @@ if system == 'Summit':
     job_params['n_mpi'] = 64
     job_params['n_nodes'] = 11
     
-    
-job_params['n_tasks_per_node'] = 2
-job_params['time'] = '24:00:00'
+if system == 'Lux'    
+  job_params['n_tasks_per_node'] = 2
+  job_params['time'] = '24:00:00'
+
+if system == 'Summit'  
+  job_params['time'] = '2:00'
+
 job_params['output'] = 'output'
 job_params['command'] = cholla_dir + 'cholla'
 job_params['command_params'] = 'param.txt'
