@@ -1,7 +1,8 @@
 
 
-system = 'Lux'
+# system = 'Lux'
 # system = 'Shamrock'
+system = 'Summit'
 
 # n_points = 256
 # n_points = 512
@@ -26,6 +27,11 @@ if system == 'Shamrock':
   root_dir   = f'/raid/bruno/data/cosmo_sims/sim_grid/{grid_name}/'
   ics_dir    = f'/raid/bruno/data/cosmo_sims/sim_grid/ics/'
   cholla_dir = '/home/bruno/cholla/'    
+
+if system == 'Summit':
+  root_dir   = f'/gpfs/alpine/csc434/scratch/bvilasen/cosmo_sims/sim_grid/{grid_name}/'
+  ics_dir    = f'/gpfs/alpine/csc434/scratch/bvilasen/cosmo_sims/ics/'
+  cholla_dir = '/ccs/home/bvilasen/cholla/'    
 
 
 
@@ -60,13 +66,15 @@ sim_params['zl_bcnd'] = 1
 sim_params['zu_bcnd'] = 1
 if n_points == 512:  sim_params['lya_skewers_stride'] = 8
 if n_points == 1024: sim_params['lya_skewers_stride'] = 16
+if n_points == 2048: sim_params['lya_skewers_stride'] = 32
 sim_params['lya_Pk_d_log_k'] = 0.1
 sim_params['init'] = 'Read_Grid'
 sim_params['nfile'] = 1
-# sim_params['nfile'] = 1
-# sim_params['indir'] = ics_dir + f'{n_points}_50Mpc/ics_8_z100/'
-if n_points == 512:  sim_params['indir'] = ics_dir + f'512_50Mpc/ics_8_z20/'
-if n_points == 1024: sim_params['indir'] = ics_dir + f'1024_50Mpc/ics_16_z20/'
+if system == 'Lux':
+  if n_points == 512:  sim_params['indir'] = ics_dir + f'512_50Mpc/ics_8_z20/'
+  if n_points == 1024: sim_params['indir'] = ics_dir + f'1024_50Mpc/ics_16_z20/'
+if system == 'Simmit':
+  if n_points == 1024: sim_params['indir'] = ics_dir + f'1024_50Mpc/ics_64_z16/'
 sim_params['scale_outputs_file'] = cholla_dir + 'scale_output_files/outputs_single_output_z2.txt'
 sim_params['analysis_scale_outputs_file'] = cholla_dir + 'scale_output_files/outputs_cosmo_analysis_150.txt'
 
