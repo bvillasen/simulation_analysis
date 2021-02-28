@@ -17,8 +17,8 @@ def Create_Submit_Job_Script_Summit( job_params, save_file=True, file_name='subm
 #BSUB -W {time}          
 #BSUB -nnodes {n_nodes}               
 #BSUB -J {job_name}    
-#BSUB -o {job_name}.output
-#BSUB -e {job_name}.error
+#BSUB -o log_output.txt
+#BSUB -e log_error.txt
 #BSUB -alloc_flags "smt4"
 
 module load gcc/6.4.0
