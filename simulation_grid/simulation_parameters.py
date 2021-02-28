@@ -77,7 +77,7 @@ if system == 'Summit':
   if n_points == 1024: sim_params['indir'] = ics_dir + f'1024_50Mpc/ics_64_z16/'
 if system == 'Lux':    sim_params['scale_outputs_file'] = cholla_dir + 'scale_output_files/outputs_single_output_z2.txt'
 if system == 'Summit': sim_params['scale_outputs_file'] = cholla_dir + 'scale_output_files/outputs_cosmo_15.txt'
-sim_params['analysis_scale_outputs_file'] = cholla_dir + 'scale_output_files/outputs_cosmo_analysis_150.txt'
+sim_params['analysis_scale_outputs_file'] = cholla_dir + 'scale_output_files/outputs_cosmo_analysis_94.txt'
 
 
 job_params = {}
