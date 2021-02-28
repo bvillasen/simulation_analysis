@@ -185,9 +185,6 @@ class Simulation_Grid:
     
     sim_dir = self.Get_Simulation_Directory( sim_id )
     sim_params = self.simulation_parameters.copy()
-    sim_params['UVB_rates_file'] = sim_dir + 'UVB_rates.h5'
-    sim_params['outdir'] = sim_dir + 'snapshot_files/'
-    sim_params['analysisdir'] = sim_dir + 'analysis_files/'
     
     if save_file:
       file_name = sim_dir + 'param.txt'
