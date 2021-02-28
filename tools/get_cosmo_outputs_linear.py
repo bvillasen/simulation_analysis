@@ -7,6 +7,7 @@ output_dir = '/Users/bruno/Desktop/'
 
 z_range_all = [ [ 2, 2.4 ], [ 2.5, 4.4 ], [ 4.5, 6.4 ], [6.5, 12] ]
 n_zvals_all = [     5,          39,             39,         11    ]
+n_zvals_all = [     5,          20,             20,         11    ]
 n_ranges = len( z_range_all )
 z_vals_all = np.array([])
 
@@ -26,5 +27,5 @@ print(z_vals_all )
 z_vals = z_vals_all[::-1] 
 a_vals = 1 / ( z_vals + 1 )
 
-file_name = output_dir + 'outputs_cosmo_94.txt' 
+file_name = output_dir + f'outputs_cosmo_analysis_{n_z_vals}.txt' 
 np.savetxt( file_name, a_vals )
