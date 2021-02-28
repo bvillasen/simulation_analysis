@@ -607,7 +607,8 @@ class Simulation_Grid:
       self.Delete_Simulation_Output_Files( sim_id )
       
   def Get_Queue_Staus( self ):
-    command = [ 'squeue', '--user=brvillas' ]
+    if system == 'Lux': command = [ 'squeue', '--user=brvillas' ]
+    if system == 'Summit': command = [ 'bjobs' ]
     queue = str( subprocess.check_output( command ) )
     queue = queue.split('\\n')
     return queue
