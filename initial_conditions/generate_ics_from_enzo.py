@@ -16,7 +16,7 @@ from ics_grid import expand_data_grid_to_cholla
 # Box Size
 Lbox = 50000.0    #kpc
 nPoints = 1024
-nBoxes  = 64
+nBoxes  = 128
 
 # data_dir = '/raid/bruno/data/'
 data_dir = '/data/groups/comp-astro/bruno/'
@@ -89,6 +89,7 @@ if nBoxes == 2: proc_grid  = [ 2, 1, 1 ]
 if nBoxes == 8: proc_grid  = [ 2, 2, 2 ]
 if nBoxes == 16: proc_grid = [ 4, 2, 2 ]
 if nBoxes == 64: proc_grid = [ 4, 4, 4 ]
+if nBoxes == 128: proc_grid = [ 8, 4, 4 ]
 
 box_size = [ Lbox, Lbox, Lbox ]
 grid_size = [ nPoints, nPoints, nPoints ]
