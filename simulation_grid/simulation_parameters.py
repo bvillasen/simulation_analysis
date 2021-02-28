@@ -79,9 +79,9 @@ if system == 'Lux':    sim_params['scale_outputs_file'] = cholla_dir + 'scale_ou
 if system == 'Summit': sim_params['scale_outputs_file'] = cholla_dir + 'scale_output_files/outputs_cosmo_15.txt'
 sim_params['analysis_scale_outputs_file'] = cholla_dir + 'scale_output_files/outputs_cosmo_analysis_150.txt'
 
-  sim_params['UVB_rates_file'] = sim_dir + 'UVB_rates.h5'
-  sim_params['outdir'] = sim_dir + 'snapshot_files/'
-  sim_params['analysisdir'] = sim_dir + 'analysis_files/'
+sim_params['UVB_rates_file'] = sim_dir + 'UVB_rates.h5'
+sim_params['outdir'] = sim_dir + 'snapshot_files/'
+sim_params['analysisdir'] = sim_dir + 'analysis_files/'
 
 job_params = {}
 job_params['exclude'] = ['gpu006', 'gpu023' ] 
