@@ -201,7 +201,7 @@ class Simulation_Grid:
     if root_dir[-1] != '/': root_dir += '/'
     simulation = self.Grid[sim_id]
     name = self.Grid[sim_id]['key']
-    outdir = root_dir + 'snapshot_files/' + '/' + name + '/'
+    outdir = root_dir + 'snapshot_files/' + name + '/'
     sim_params['outdir'] = outdir
     
     if save_file:
