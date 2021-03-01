@@ -50,12 +50,16 @@ class Simulation_Grid:
     self.n_simulations = n_sims
     self.parameters = parameters
     self.root_dir = dir
+    self.snapshots_dir = dir + 'snapshot_files/'
     self.job_parameters = job_params
     self.simulation_parameters = sim_params
     print( f" n_paramters: {self.n_paramters}")
     print( f" Paramters: {self.parameter_names}")
     print( f" n_simulations: {self.n_simulations}")
     print( f" Root Dir: {self.root_dir}")
+    
+    create_directory( self.root_dir )
+    create_directory( self.snapshots_dir )
     
     param_keys = []
     indices_list = []
@@ -171,11 +175,16 @@ class Simulation_Grid:
     return sim_dir
 
   def Create_Directories_for_Simulation( self, sim_id ):
-    sim_dir = self.Get_Simulation_Directory( sim_id )
     
-    directories = ['analysis_files', 'snapshot_files' ]
+    sim_dir = self.Get_Simulation_Directory( sim_id )
+    sim_name = self.Grid[sim_id]['key']
+    analysis_dir = sim_dir + 'analysis_files'
+    snapshots_dir = self.snapshots_dir + sim_name  
+        
+    # directories = ['analysis_files', 'snapshot_files' ]
+    directories = [ analysis_dir, snapshots_dir ]
     for dir in directories:
-      create_directory( sim_dir + dir )
+      create_directory( dir )
       
   def Create_Directories_for_Simulations( self ):
     for sim_id in self.Grid.keys():
@@ -192,7 +201,7 @@ class Simulation_Grid:
     if root_dir[-1] != '/': root_dir += '/'
     simulation = self.Grid[sim_id]
     name = self.Grid[sim_id]['key']
-    outdir = root_dir + 'snapshot_files/' + '/' name + '/'
+    outdir = root_dir + 'snapshot_files/' + '/' + name + '/'
     sim_params['outdir'] = outdir
     
     if save_file:
