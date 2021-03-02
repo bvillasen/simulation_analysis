@@ -20,13 +20,13 @@ from load_tabulated_data import load_power_spectrum_table, load_tabulated_data_b
 
 def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_sets=None, system=None, high_z_only=False  ):
   
+  import matplotlib
   if system == 'Lux' or system == 'Summit': matplotlib.use('Agg')
   import pylab
   from matplotlib.legend_handler import HandlerTuple
   import matplotlib.pyplot as plt
   import matplotlib.gridspec as gridspec
   import matplotlib as mpl
-  import matplotlib
   import matplotlib.font_manager
   matplotlib.rcParams['mathtext.fontset'] = 'cm'
   matplotlib.rcParams['mathtext.rm'] = 'serif'
