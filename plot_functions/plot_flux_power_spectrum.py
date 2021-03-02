@@ -26,7 +26,6 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
   from matplotlib.legend_handler import HandlerTuple
   import matplotlib.pyplot as plt
   import matplotlib.gridspec as gridspec
-  import matplotlib as mpl
   import matplotlib.font_manager
   matplotlib.rcParams['mathtext.fontset'] = 'cm'
   matplotlib.rcParams['mathtext.rm'] = 'serif'
