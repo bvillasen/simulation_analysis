@@ -1,16 +1,8 @@
 import sys, os
-import matplotlib
-matplotlib.use('Agg')
 import numpy as np
 import h5py as h5
 import pickle
-import palettable
-import pylab
-from matplotlib.legend_handler import HandlerTuple
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
-import matplotlib as mpl
-import matplotlib.font_manager
+import os, sys
 root_dir = os.path.dirname(os.getcwd()) + '/'
 subDirectories = [x[0] for x in os.walk(root_dir)]
 sys.path.extend(subDirectories)
@@ -27,6 +19,15 @@ from load_tabulated_data import load_power_spectrum_table, load_tabulated_data_b
 
 def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_sets=None, system=None, high_z_only=False  ):
   
+  import matplotlib
+  if system == 'Lux' or system == 'Summit': matplotlib.use('Agg')
+  import palettable
+  import pylab
+  from matplotlib.legend_handler import HandlerTuple
+  import matplotlib.pyplot as plt
+  import matplotlib.gridspec as gridspec
+  import matplotlib as mpl
+  import matplotlib.font_manager
   matplotlib.rcParams['mathtext.fontset'] = 'cm'
   matplotlib.rcParams['mathtext.rm'] = 'serif'
 
