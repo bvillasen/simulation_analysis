@@ -365,7 +365,7 @@ class Simulation_Grid:
       tau_HeII = data['lya_statistics']['tau_HeII']
       k_vals  = data['lya_statistics']['power_spectrum']['k_vals']
       ps_mean = data['lya_statistics']['power_spectrum']['ps_mean']
-      if ps_mean is not None:
+      if ps_mean is not None and z < 5.5:
         ps_available_indices.append(n_file)
         # z_power_spectrum.append( z )
         # data_ps_mean.append( ps_mean )
