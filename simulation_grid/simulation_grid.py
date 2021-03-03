@@ -562,7 +562,8 @@ class Simulation_Grid:
         q_line = q_line[1:]
         elem = q_line[0]
       job_id = q_line.split( ' ')[0]
-      command = f'scancel {job_id}'
+      if system == 'Lux': command = f'scancel {job_id}'
+      if system == 'Summit': command = f'bkill {job_id}'
       print( command )
       os.system( command )
       
