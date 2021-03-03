@@ -8,7 +8,8 @@ if grid_name == '512_P19m_np3_nsim64': from parameters_UVB_rates_P19m_np3 import
 if grid_name == '512_P19m_np2_HeII'  : from parameters_UVB_rates_P19m_np2_HeII import param_UVB_Rates
 if grid_name == '1024_P19m_np3_nsim8': from parameters_UVB_rates_P19m_np3_small import param_UVB_Rates
 if grid_name == '1024_P19m_np3_nsim8_v2': from parameters_UVB_rates_P19m_np3_small_v2 import param_UVB_Rates
-if grid_name == '1024_P19m_np4_nsim16': from parameters_UVB_rates_P19m_np4_small import param_UVB_Rates
+if grid_name == '1024_P19m_np4_nsim16':  from parameters_UVB_rates_P19m_np4_nsim16  import param_UVB_Rates
+if grid_name == '1024_P19m_np4_nsim256': from parameters_UVB_rates_P19m_np4_nsim256 import param_UVB_Rates
 
 
 
