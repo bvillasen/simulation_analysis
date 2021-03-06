@@ -42,7 +42,7 @@ SG.Load_Grid_Analysis_Data()
 ps_range = SG.Get_Power_Spectrum_Range( kmax=0.01 )
 sim_ids = SG.sim_ids
 
-z_min = 2.0
+z_min = 2.5
 z_max = 5.0 
 comparable_data = Get_Comparable_Power_Spectrum(  ps_data_dir, z_min, z_max, data_sets, ps_range )
 comparable_grid = Get_Comparable_Power_Spectrum_from_Grid( comparable_data['separate'], SG )
@@ -71,7 +71,8 @@ else:
   # nIter = 100000
   nBurn = nIter / 5
   nThin = 1
-  model, params_mcmc = mcmc_model_3D( comparable_data, comparable_grid, field, 'mean', SG )
+  # model, params_mcmc = mcmc_model_3D( comparable_data, comparable_grid, field, 'mean', SG )
+  model, params_mcmc = mcmc_model_4D( comparable_data, comparable_grid, field, 'mean', SG )
   MDL = pymc.MCMC( model )  
   MDL.sample( iter=nIter, burn=nBurn, thin=nThin )
   stats = MDL.stats()
@@ -90,7 +91,8 @@ else:
     samples[p_id]['name'] = param['name']
     samples[p_id]['trace'] = param['sampler'].trace() 
   
-  labels = { 'scale_He':r'$\beta_{\mathrm{He}}$', 'scale_H':r'$\beta_{\mathrm{H}}$', 'deltaZ_He':r'$\Delta z_{\mathrm{He}}$'    }
+  # labels = { 'scale_He':r'$\beta_{\mathrm{He}}$', 'scale_H':r'$\beta_{\mathrm{H}}$', 'deltaZ_He':r'$\Delta z_{\mathrm{He}}$'    }
+  labels = { 'scale_He':r'$\beta_{\mathrm{He}}$', 'scale_H':r'$\beta_{\mathrm{H}}$', 'deltaZ_He':r'$\Delta z_{\mathrm{He}}$', 'deltaZ_H':r'$\Delta z_{\mathrm{H}}$'    }
   Plot_Corner( samples, labels, output_dir  )
 
 

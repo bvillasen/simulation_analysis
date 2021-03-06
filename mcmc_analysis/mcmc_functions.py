@@ -5,7 +5,7 @@ import pymc
 import pickle
 import matplotlib.pyplot as plt
 from tools import *
-from mcmc_data_functions import Interpolate_Comparable_1D, Interpolate_MultiDim, Interpolate_3D
+from mcmc_data_functions import Interpolate_Comparable_1D, Interpolate_4D, Interpolate_3D
 
 
 def mcmc_model_4D( comparable_data, comparable_grid, field, sub_field, SG):
@@ -30,7 +30,7 @@ def mcmc_model_4D( comparable_data, comparable_grid, field, sub_field, SG):
     params_mcmc[param_id]['name'] = param_name
   @pymc.deterministic( plot=False )
   def mcmc_model_4D( comparable_grid=comparable_grid, SG=SG, p0=params_mcmc[0]['sampler'], p1=params_mcmc[1]['sampler'], p2=params_mcmc[2]['sampler'], p3=params_mcmc[3]['sampler']   ):
-    mean_interp = Interpolate_MultiDim( p0, p1, p2, p3, comparable_grid, field, sub_field, SG ) 
+    mean_interp = Interpolate_4D( p0, p1, p2, p3, comparable_grid, field, sub_field, SG ) 
     return mean_interp
   densObsrv = pymc.Normal(field, mu=mcmc_model_4D, tau=1./(comparable_data[field]['sigma']**2), value=comparable_data[field]['mean'], observed=True)
   return locals(), params_mcmc

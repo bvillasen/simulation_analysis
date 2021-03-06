@@ -199,7 +199,7 @@ def Sample_Power_Spectrum( n_samples, params, data_grid, SG, sampling='gaussian'
           p_max = params[p_id]['max']
           p_rand.append( np.random.rand() * ( p_max - p_min) + p_min )
       if n_param == 3: ps_interp = Interpolate_3D(  p_rand[0], p_rand[1], p_rand[2], ps_data, 'P(k)', 'mean', SG, clip_params=True ) 
-      if n_param == 4: ps_interp = Interpolate_3D(  p_rand[0], p_rand[1], p_rand[2], p_rand[3], ps_data, 'P(k)', 'mean', SG, clip_params=True ) 
+      if n_param == 4: ps_interp = Interpolate_4D(  p_rand[0], p_rand[1], p_rand[2], p_rand[3], ps_data, 'P(k)', 'mean', SG, clip_params=True ) 
       samples.append( ps_interp )
     samples = np.array( samples ).T
     ps_mean = np.array([ ps_vals.mean() for ps_vals in samples ])
@@ -435,8 +435,8 @@ def Interpolate_4D( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, c
     value_interp = delta*value_r + (1-delta)*value_l 
     return value_interp
   
-  value_l = Interpolate_MultiDim( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_l, clip_params=clip_params )
-  value_r = Interpolate_MultiDim( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_r, clip_params=clip_params )
+  value_l = Interpolate_4D( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_l, clip_params=clip_params )
+  value_r = Interpolate_4D( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_r, clip_params=clip_params )
   value_interp = delta*value_r + (1-delta)*value_l
   return value_interp
 
