@@ -657,6 +657,7 @@ class Simulation_Grid:
     create_directory( reduced_dir )
     reduced_dir = reduced_dir + 'analysis_files/'
     print( f'Destiny Dir: {reduced_dir}' )
+    create_directory( reduced_dir )
     
     input_files = [f for f in listdir(analysis_dir) if (isfile(join(analysis_dir, f)) and ( f.find('_analysis') > 0) ) ]
     n_files = len( input_files )
