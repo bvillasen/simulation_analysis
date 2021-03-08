@@ -172,6 +172,8 @@ class Simulation_Grid:
     simulation = self.Grid[sim_id]
     name = simulation['key']
     sim_dir = root_dir + name + '/'
+    reduced_dir = root_dir + 'reduced_files/'
+    if os.path.isdir( reduced_dir  ): sim_dir = reduced_dir + name + '/'
     return sim_dir
 
   def Create_Directories_for_Simulation( self, sim_id ):
@@ -652,8 +654,9 @@ class Simulation_Grid:
     sim_name = self.Grid[sim_id]['key']
     reduced_dir = reduced_dir + f'/{sim_name}/'
     print( f'Origin  Dir: {analysis_dir}' )
-    print( f'Destiny Dir: {reduced_dir}' )
     create_directory( reduced_dir )
+    reduced_dir = reduced_dir + 'analysis_files/'
+    print( f'Destiny Dir: {reduced_dir}' )
     
     input_files = [f for f in listdir(analysis_dir) if (isfile(join(analysis_dir, f)) and ( f.find('_analysis') > 0) ) ]
     n_files = len( input_files )
