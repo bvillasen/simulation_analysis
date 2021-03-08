@@ -628,6 +628,7 @@ class Simulation_Grid:
   def Get_Queue_Staus( self ):
     if system == 'Lux': command = [ 'squeue', '--user=brvillas' ]
     if system == 'Summit': command = [ 'bjobs' ]
+    if system == 'Shamrock': return ''
     queue = str( subprocess.check_output( command ) )
     queue = queue.split('\\n')
     return queue
@@ -649,11 +650,51 @@ class Simulation_Grid:
     sim_dir = self.Get_Simulation_Directory( sim_id )
     analysis_dir = sim_dir + 'analysis_files/'
     sim_name = self.Grid[sim_id]['key']
-    reduced_dir = reduced_dir + f'/{sim_name}'
+    reduced_dir = reduced_dir + f'/{sim_name}/'
     print( f'Origin  Dir: {analysis_dir}' )
     print( f'Destiny Dir: {reduced_dir}' )
+    create_directory( reduced_dir )
+    
+    input_files = [f for f in listdir(analysis_dir) if (isfile(join(analysis_dir, f)) and ( f.find('_analysis') > 0) ) ]
+    n_files = len( input_files )
+    
+    for i in range(n_files):
+      file_name = f'{i}_analysis.h5'
+      in_file  = h5.File( analysis_dir + file_name, 'r' )
+      out_file = h5.File( reduced_dir  + file_name, 'w' )
+      
+      for key in in_file.attrs:
+        out_file.attrs[key] = in_file.attrs[key]
         
-        
+      file_keys = in_file.keys()
+      for key in file_keys:
+        if key == 'lya_statistics': continue
+        in_group  = in_file[key]
+        out_group = out_file.create_group( key )
+        header = in_group.attrs
+        for h_key in header.keys():
+          out_group.attrs[h_key] = header[h_key]
+        for d_key in in_group.keys():
+          out_group.create_dataset( d_key, data=in_group[d_key][...] )
+      
+      key = 'lya_statistics'  
+      lya_data = in_file[key]
+      out_group = out_file.create_group( key )
+      for h_key in lya_data.attrs.keys():
+        out_group.attrs[h_key] = lya_data.attrs[h_key]
+      group_keys = lya_data.keys()
+      for group_key in group_keys:
+        if 'skewers' in group_key:  continue
+        group_data = lya_data[group_key]
+        group = out_group.create_group( group_key )
+        for d_key in group_data.keys():
+          group.create_dataset( d_key, data=group_data[d_key][...] )
+          
+      
+      in_file.close()
+      out_file.close()
+      print( f'Saved File: {reduced_dir + file_name}' )
+      
         
   def Reduce_Grid_Analysis_Files( self, reduced_dir='reduced_files' ):
     root_dir = self.root_dir
@@ -661,7 +702,9 @@ class Simulation_Grid:
     print( f'Copying into: {reduced_dir}' )
     create_directory( reduced_dir )
     
-    self.Reduce_Simulation_Analysis_Files( 0, reduced_dir )
+    sim_ids = self.sim_ids
+    for sim_id in sim_ids:
+      self.Reduce_Simulation_Analysis_Files( sim_id, reduced_dir )
     
 
 
