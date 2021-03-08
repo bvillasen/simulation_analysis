@@ -651,7 +651,7 @@ class Simulation_Grid:
     root_dir = self.root_dir
     sim_name = self.Grid[sim_id]['key']
     # sim_dir = self.Get_Simulation_Directory( sim_id )
-    sim_dir = root_dir + sim_name
+    sim_dir = root_dir + sim_name + '/'
     analysis_dir = sim_dir + 'analysis_files/'
     reduced_dir = reduced_dir + f'/{sim_name}/'
     print( f'Origin  Dir: {analysis_dir}' )
