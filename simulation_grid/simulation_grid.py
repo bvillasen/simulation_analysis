@@ -643,9 +643,19 @@ class Simulation_Grid:
         queue_line = line
         break
     return sim_in_queue, queue_line
+    
+  def Reduce_Simulation_Analysis_Files( self, sim_id ):
+    root_dir = self.root_dir
+    sim_dir = self.Get_Simulation_Directory( sim_id )
+    analysis_dir = sim_dir + 'analysis_files/'
         
-
-  
+        
+        
+  def Reduce_Grid_Analysis_Files( self, reduced_dir='reduced_files' ):
+    root_dir = self.root_dir
+    reduced_dir = root_dir + reduced_dir
+    printf( f'Copying into: {reduced_dir}' )
+    
     
 
 
