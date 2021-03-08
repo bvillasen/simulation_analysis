@@ -654,7 +654,7 @@ class Simulation_Grid:
   def Reduce_Grid_Analysis_Files( self, reduced_dir='reduced_files' ):
     root_dir = self.root_dir
     reduced_dir = root_dir + reduced_dir
-    printf( f'Copying into: {reduced_dir}' )
+    print( f'Copying into: {reduced_dir}' )
     
     
 
