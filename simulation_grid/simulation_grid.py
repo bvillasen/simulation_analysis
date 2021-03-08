@@ -649,9 +649,10 @@ class Simulation_Grid:
     
   def Reduce_Simulation_Analysis_Files( self, sim_id, reduced_dir ):
     root_dir = self.root_dir
-    sim_dir = self.Get_Simulation_Directory( sim_id )
-    analysis_dir = sim_dir + 'analysis_files/'
     sim_name = self.Grid[sim_id]['key']
+    # sim_dir = self.Get_Simulation_Directory( sim_id )
+    sim_dir = root_dir + sim_name
+    analysis_dir = sim_dir + 'analysis_files/'
     reduced_dir = reduced_dir + f'/{sim_name}/'
     print( f'Origin  Dir: {analysis_dir}' )
     create_directory( reduced_dir )
