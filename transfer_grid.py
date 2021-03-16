@@ -21,8 +21,8 @@ dst_params = Get_Grid_Parameter_Values( dst_dir )
 
 param_names = dst_params[0]['parameters'].keys()
 n_params = len( param_names )
-n_dst_sims = len( src_params )
-n_src_sims = len( dst_params )
+n_src_sims = len( src_params )
+n_dst_sims = len( sdt_params )
 dst_array = np.zeros([ n_dst_sims, n_params ])
 src_array = np.zeros([ n_src_sims, n_params ]) 
 
@@ -31,6 +31,12 @@ for sim_id in range( n_src_sims ):
   sim_params = src_params[sim_id]['parameters']
   for param_id, param_name in enumerate(param_names):
     src_array[sim_id, param_id] = sim_params[param_name]
+    
+
+for sim_id in range( n_dst_sims ):
+  sim_params = dst_params[sim_id]['parameters']
+  for param_id, param_name in enumerate(param_names):
+    dst_array[sim_id, param_id] = sim_params[param_name]
     
 
 
