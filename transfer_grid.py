@@ -12,8 +12,8 @@ dst_dir = data_dir + '1024_P19m_np4_nsim320/'
 
 copy_reduced_files = True
 if copy_reduced_files:
-  src_reduced: src_dir + 'reduced_files/'
-  dst_reduced: dst_dir + 'reduced_files/'
+  src_reduced = src_dir + 'reduced_files/'
+  dst_reduced = dst_dir + 'reduced_files/'
   create_directory( dst_reduced )
 
 
