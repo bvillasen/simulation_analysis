@@ -18,6 +18,6 @@ sim_dirs.sort()
 # for sim_dir in sim_dirs:
 sim_dir = sim_dirs[0]
 params_file = sim_dir + '/uvb_params.txt'
-file = ( params_file, 'r' )
+file = open( params_file, 'r' )
 lines = file.read()
 
