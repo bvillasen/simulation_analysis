@@ -19,5 +19,7 @@ sim_dirs.sort()
 sim_dir = grid_dir + sim_dirs[0]
 params_file = sim_dir + '/uvb_params.txt'
 file = open( params_file, 'r' )
-lines = file.read()
+lines = file.readlines()
+for line in lines:
+  print line
 
