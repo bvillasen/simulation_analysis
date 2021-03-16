@@ -13,7 +13,7 @@ data_dir = '/gpfs/alpine/csc434/scratch/bvilasen/cosmo_sims/sim_grid/'
 src_dir = data_dir + '1024_P19m_np4_nsim256/' 
 dst_dir = data_dir + '1024_P19m_np4_nsim320/'
 
-copy_reduced_files = True
+copy_reduced_files = False
 if copy_reduced_files:
   src_reduced = src_dir + 'reduced_files/'
   dst_reduced = dst_dir + 'reduced_files/'
