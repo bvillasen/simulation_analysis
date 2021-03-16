@@ -23,7 +23,7 @@ Link_Simulation_dirctories( src_params, dst_params )
 files_to_copy = ['run_output.log']
 
 n_copied, n_skipped = 0, 0
-n_dst_sims = len( dst_params ):
+n_dst_sims = len( dst_params )
 
 for sim_id in range( n_dst_sims ):
   dst_sim = dst_params[sim_id]
