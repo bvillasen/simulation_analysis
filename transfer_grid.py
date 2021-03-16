@@ -44,4 +44,6 @@ for sim_id in range( n_dst_sims ):
 
 
 
+print( f'Successfully Transfered Grid:   n_copied:{n_copied}    n_skipped:{n_skipped}')
+
 
