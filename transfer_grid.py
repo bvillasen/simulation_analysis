@@ -43,26 +43,26 @@ for sim_id in range( n_dst_sims ):
       if dst_sim['parameters'][param_name] != src_sim['parameters'][param_name]:
         print( "ERROR: Parameters dont match {dst_sim['parameters']}, {src_sim['parameters']}") 
         failed = True
-    if not failed:
-      print( f"Copying: {src_sim['parameters']} ->  {dst_sim['parameters']}  ")
+    if failed: break
+    
+    print( f"\nCopying: {src_sim['parameters']} ->  {dst_sim['parameters']}  ")
+    src_dir_short = src_dir[src_dir.find('sim_grid')+9:]+'/'
+    dst_dir_short = dst_dir[dst_dir.find('sim_grid')+9:]+'/' 
+    for file in files_to_copy:
+      print( f' Copied  {src_dir_short+file} -> {dst_dir_short+file} ' )
+    
+    if copy_reduced_files:
+      src_red_dir = src_reduced + src_sim['name']
+      dst_red_dir = dst_reduced + dst_sim['name']
+      src_red_short = src_red_dir[src_red_dir.find('sim_grid')+9:]+'/'
+      dst_red_short = dst_red_dir[dst_red_dir.find('sim_grid')+9:]+'/' 
       
-      src_dir_short = src_dir[src_dir.find('sim_grid')+9:]+'/'
-      dst_dir_short = dst_dir[dst_dir.find('sim_grid')+9:]+'/' 
-      for file in files_to_copy:
-        print( f' Copied  {src_dir_short+file} -> {dst_dir_short+file} ' )
+      print( f' Copied  {src_red_short} -> {dst_red_short} ' )
+    
       
-      if copy_reduced_files:
-        src_red_dir = src_reduced + src_sim['name']
-        dst_red_dir = dst_reduced + dst_sim['name']
-        src_red_short = src_red_dir[src_red_dir.find('sim_grid')+9:]+'/'
-        dst_red_short = dst_red_dir[dst_red_dir.find('sim_grid')+9:]+'/' 
-        
-        print( f' Copied  {src_red_short+file} -> {dst_red_short+file} ' )
-      
-        
-      
-      
-      n_copied += 1
+    
+    
+    n_copied += 1
   else:
     n_skipped += 1
 
