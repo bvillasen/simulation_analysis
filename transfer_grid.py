@@ -21,5 +21,5 @@ params_file = sim_dir + '/uvb_params.txt'
 file = open( params_file, 'r' )
 lines = file.readlines()
 for line in lines:
-  print line
+  print(line)
 
