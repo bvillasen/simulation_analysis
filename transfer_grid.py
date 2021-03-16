@@ -10,7 +10,11 @@ data_dir = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
 src_dir = data_dir + '1024_P19m_np4_nsim256/' 
 dst_dir = data_dir + '1024_P19m_np4_nsim320/'
 
-
+copy_reduced_files = True
+if copy_reduced_files:
+  src_reduced: src_dir + 'reduced_files/'
+  dst_reduced: dst_dir + 'reduced_files/'
+  create_directory( dst_reduced )
 
 
 
@@ -20,7 +24,9 @@ Link_Simulation_dirctories( src_params, dst_params )
 
 
 
-files_to_copy = ['run_output.log']
+files_to_copy = ['run_output.log', 'param.txt', 'uvb_params.txt']
+
+
 
 n_copied, n_skipped = 0, 0
 n_dst_sims = len( dst_params )
@@ -44,6 +50,15 @@ for sim_id in range( n_dst_sims ):
       dst_dir_short = dst_dir[dst_dir.find('sim_grid')+9:]+'/' 
       for file in files_to_copy:
         print( f' Copied  {src_dir_short+file} -> {dst_dir_short+file} ' )
+      
+      if copy_reduced_files:
+        src_red_dir = src_reduced + src_sim['name']
+        dst_red_dir = dst_reduced + dst_sim['name']
+        src_red_short = src_red_dir[src_red_dir.find('sim_grid')+9:]+'/'
+        dst_red_short = dst_red_dir[dst_red_dir.find('sim_grid')+9:]+'/' 
+        
+        print( f' Copied  {src_red_short+file} -> {dst_red_short+file} ' )
+      
         
       
       

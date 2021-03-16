@@ -41,6 +41,7 @@ def Get_Grid_Parameter_Values( grid_dir ):
   grid_params = {}  
   for sim_id, sim_dir in enumerate(sim_dirs):
     grid_params[sim_id] = {}
+    grid_params[sim_id]['name'] = sim_dir
     sim_dir = grid_dir + sim_dir
     grid_params[sim_id]['dir'] = sim_dir
     params_file = sim_dir + '/uvb_params.txt'
