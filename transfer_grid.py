@@ -1,6 +1,6 @@
 import sys, os
 import numpy
-from shutil import copyfile
+from shutil import copyfile, copytree
 sys.path.append('tools')
 from tools import *
 #Append analysis directories to path
@@ -59,7 +59,7 @@ for sim_id in range( n_dst_sims ):
       dst_red_dir = dst_reduced + dst_sim['name']
       src_red_short = src_red_dir[src_red_dir.find('sim_grid')+9:]+'/'
       dst_red_short = dst_red_dir[dst_red_dir.find('sim_grid')+9:]+'/' 
-      copyfile(src_red_dir, dst_red_dir )
+      copytree(src_red_dir, dst_red_dir )
       print( f' Copied  {src_red_short} -> {dst_red_short} ' )
     
       
