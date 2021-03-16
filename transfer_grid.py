@@ -22,7 +22,7 @@ dst_params = Get_Grid_Parameter_Values( dst_dir )
 param_names = dst_params[0]['parameters'].keys()
 n_params = len( param_names )
 n_src_sims = len( src_params )
-n_dst_sims = len( sdt_params )
+n_dst_sims = len( dst_params )
 dst_array = np.zeros([ n_dst_sims, n_params ])
 src_array = np.zeros([ n_src_sims, n_params ]) 
 
