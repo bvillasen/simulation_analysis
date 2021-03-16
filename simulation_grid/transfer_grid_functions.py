@@ -4,6 +4,34 @@ from os.path import isfile, join, isdir
 
 
 
+def Link_Simulation_dirctories( src_params, dst_params ):
+  param_names = dst_params[0]['parameters'].keys()
+  n_params = len( param_names )
+  n_src_sims = len( src_params )
+  n_dst_sims = len( dst_params )
+  dst_array = np.zeros([ n_dst_sims, n_params ])
+  src_array = np.zeros([ n_src_sims, n_params ]) 
+
+  for sim_id in range( n_src_sims ):
+    sim_params = src_params[sim_id]['parameters']
+    for param_id, param_name in enumerate(param_names):
+      src_array[sim_id, param_id] = sim_params[param_name]
+      
+  for sim_id in range( n_dst_sims ):
+    sim_params = dst_params[sim_id]['parameters']
+    for param_id, param_name in enumerate(param_names):
+      dst_array[sim_id, param_id] = sim_params[param_name]
+      
+  for sim_id in range( n_dst_sims ):
+    dst_param_vals = dst_array[sim_id]
+    diff = np.abs( src_array - dst_param_vals ).sum(axis=1)
+    indx_src = np.where(diff == 0)[0]
+    if len( indx_src ) == 0: src_sim_sir = None
+    if len( indx_src ) == 1: src_sim_sir = src_params[indx_src[0]]['dir']
+    dst_params[sim_id]['src_dir'] = src_sim_sir
+    
+
+
 
 def Get_Grid_Parameter_Values( grid_dir ):
   sim_dirs = [f for f in listdir(grid_dir) if (isdir(join(grid_dir, f)) and (f[0] == 'S' ) ) ]
