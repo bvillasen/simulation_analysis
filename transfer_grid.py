@@ -28,4 +28,5 @@ for sim_id, sim_dir in enumerate(sim_dirs):
     param_name, param_val = line.split('=') 
     params[param_name] = float( param_val )
   grid_params[sim_id]['parameters'] = params
+  file.close()
 
