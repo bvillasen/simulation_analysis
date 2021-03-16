@@ -12,4 +12,11 @@ dst_dir = data_dir + '1024_P19m_np4_nsim320/'
 
 
 grid_dir = src_dir
-sim_dirs = [f for f in listdir(grid_dir) if (isdir(join(grid_dir, f)) and (f[0] == 'S' ) ) ]
+sim_dirs = [f for f in listdir(grid_dir) if (isdir(join(grid_dir, f)) and (f[0] == 'S' ) ) ].sort()
+
+# for sim_dir in sim_dirs:
+sim_dir = sim_dirs[0]
+params_file = sim_dir + '/uvb_params.txt'
+file = ( params_file, 'r' )
+lines = file.read()
+
