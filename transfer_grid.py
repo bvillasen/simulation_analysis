@@ -19,7 +19,7 @@ dst_params = Get_Grid_Parameter_Values( dst_dir )
 
 
 
-param_names = dst_dir[0]['parameters'].keys()
+param_names = dst_params[0]['parameters'].keys()
 n_params = len( param_names )
 n_dst_sims = len( dst_dir )
 n_src_sims = len( src_dir )
