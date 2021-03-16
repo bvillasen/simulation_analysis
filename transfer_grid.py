@@ -39,4 +39,14 @@ for sim_id in range( n_dst_sims ):
     dst_array[sim_id, param_id] = sim_params[param_name]
     
 
+for sim_id in range( n_dst_sims ):
+  dst_param_vals = dst_array[sim_id]
+  diff = np.abs( src_array - dst_param_vals ).sum(axis=1)
+  indx_src = np.where(diff == 0)[0]
+  if len( indx_src ) == 0: src_sim_sir = None
+  if len( indx_src ) == 1: src_sim_sir = src_params[indx_src]['dir']
+  dst_params[sim_id]['src_dir'] = src_sim_sir
+  
+    
+
 
