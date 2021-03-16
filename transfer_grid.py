@@ -34,10 +34,10 @@ for sim_id in range( n_dst_sims ):
     failed = False 
     for param_name in dst_sim['parameters']:
       if dst_sim['parameters'][param_name] != src_sim['parameters'][param_name]:
-        print( 'ERROR: Parameters denot match {dst_sim['parameters']}, {src_sim['parameters']}') 
+        print( "ERROR: Parameters denot match {dst_sim['parameters']}, {src_sim['parameters']}") 
         failed = True
     if not failed:
-      print( f'Copying: {src_sim['parameters']} ->  {dst_sim['parameters']}  ')
+      print( f"Copying: {src_sim['parameters']} ->  {dst_sim['parameters']}  ")
       n_copied += 1
   else:
     n_skipped += 1
