@@ -27,9 +27,10 @@ def Link_Simulation_dirctories( src_params, dst_params ):
     dst_param_vals = dst_array[sim_id]
     diff = np.abs( src_array - dst_param_vals ).sum(axis=1)
     indx_src = np.where(diff == 0)[0]
-    if len( indx_src ) == 0: src_sim_sir = None
-    if len( indx_src ) == 1: src_sim_sir = src_params[indx_src[0]]['dir']
+    if len( indx_src ) == 0: src_sim_sir, src_id = None, None
+    if len( indx_src ) == 1: src_sim_sir, src_id = src_params[indx_src[0]]['dir'], src_id
     dst_params[sim_id]['src_dir'] = src_sim_sir
+    dst_params[sim_id]['src_id'] = src_sim_id
     
 
 
