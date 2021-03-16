@@ -6,6 +6,19 @@ import h5py as h5
 import time
 
 
+def Load_Pickle_Directory( input_name ):
+  import pickle
+  print( f'Loading File: {input_name}')
+  dir = pickle.load( open( input_name, 'rb' ) )
+  return dir
+  
+def Write_Pickle_Directory( dir, output_name ):
+  import pickle 
+  f = open( output_name, 'wb' )
+  pickle.dump( dir, f)
+  print ( f'Saved File: {output_name}' )
+
+
 def split_indices( indices, rank, n_procs, adjacent=False ):
   n_index_total = len(indices)
   n_proc_indices = (n_index_total-1) // n_procs + 1

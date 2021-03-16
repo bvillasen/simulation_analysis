@@ -5,7 +5,7 @@ import pymc
 import pickle
 import matplotlib.pyplot as plt
 from tools import *
-from mcmc_data_functions import Interpolate_Comparable_1D, Interpolate_4D, Interpolate_3D
+from mcmc_data_functions import Interpolate_1D, Interpolate_4D, Interpolate_3D
 
 
 def mcmc_model_4D( comparable_data, comparable_grid, field, sub_field, SG):
@@ -77,7 +77,7 @@ def mcmc_model_1D( param_to_fit, comparable_data, comparable_grid, field, SG):
   param_mcmc  = pymc.Uniform(param_name, param_min, param_max, value=param_mid )
   @pymc.deterministic( plot=False )
   def mcmc_model_1D( param_to_fit=param_to_fit, comparable_grid=comparable_grid, SG=SG, param_value=param_mcmc   ):
-    mean_interp = Interpolate_Comparable_1D( param_to_fit, param_value,  comparable_grid, field, SG ) 
+    mean_interp = Interpolate_1D( param_to_fit, param_value,  comparable_grid, field, SG ) 
     return mean_interp
   densObsrv = pymc.Normal('T0', mu=mcmc_model_1D, tau=1./(comparable_data[field]['sigma']**2), value=comparable_data[field]['mean'], observed=True)
   return locals()

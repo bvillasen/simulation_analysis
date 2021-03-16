@@ -2,6 +2,7 @@ import sys, os, time
 import numpy as np
 import h5py as h5
 import pymc
+import pickle
 import matplotlib.pyplot as plt
 analysis_dir = os.path.dirname(os.getcwd()) + '/'
 sys.path.append(analysis_dir + 'phase_diagram')
@@ -12,7 +13,218 @@ from data_thermal_history import data_thermal_history_Gaikwad_2020a, data_therma
 from data_optical_depth import *
 from load_tabulated_data import load_power_spectrum_table, load_tabulated_data_boera, load_tabulated_data_viel, load_data_boss
 from stats_functions import compute_distribution, get_highest_probability_interval
- 
+
+def Write_MCMC_Results( stats, MDL, params_mcmc,  stats_file, samples_file,  output_dir  ):
+  cwd = os.getcwd()
+  os.chdir( output_dir )
+
+  f = open( stats_file, 'wb' )
+  pickle.dump( stats, f)
+  print ( f'Saved File: {stats_file}' )
+  
+  samples = {} 
+  for p_id in params_mcmc.keys():
+    param = params_mcmc[p_id]
+    samples[p_id] = {}
+    samples[p_id]['name'] = param['name']
+    samples[p_id]['trace'] = param['sampler'].trace() 
+  
+  
+  f = open( samples_file, 'wb' )
+  pickle.dump( samples, f)
+  print ( f'Saved File: {samples_file}' )
+  os.chdir( cwd )
+  return samples
+
+def Get_Data_Grid_Composite( fields,  SG, z_vals=None ):
+  fields_list = fields.split('+')
+  data_grid_all = {}
+  for field in fields_list:
+    if field == 'T0':   data_grid_all[field] = Get_Data_Grid( [field], SG ) 
+    if field == 'tau':  data_grid_all[field] = Get_Data_Grid( [field], SG ) 
+    if field == 'P(k)': data_grid_all[field] = Get_Data_Grid_Power_spectrum( z_vals, SG )
+
+  data_grid = {}
+  sim_ids = SG.sim_ids
+  for sim_id in sim_ids:  
+    data_grid[sim_id] = {}
+    for field in fields_list:
+      if field == 'P(k)' or field == '': continue
+      z = data_grid_all[field][sim_id]['z']
+      mean = data_grid_all[field][sim_id][field]['mean']
+      data_grid[sim_id][field] = {'mean':mean, 'z':z }
+  if 'P(k)' in fields_list:  return data_grid, data_grid_all['P(k)']
+  else:                      return data_grid
+
+
+
+def Get_Data_Grid_Power_spectrum( z_vals, SG ):
+  data_grid = {}
+  for id_z, z_val in enumerate( z_vals ):
+    data_grid[id_z] = {}
+    data_grid[id_z]['z'] = z_val
+    sim_ids = SG.sim_ids
+    for sim_id in sim_ids:
+      sim_ps_data = SG.Grid[sim_id]['analysis']['power_spectrum']
+      sim_z_vals = sim_ps_data['z']
+      diff_z = np.abs( sim_z_vals - z_val )
+      diff_min = diff_z.min()
+      if diff_min > 0.05: print( f'Warning: Large Z difference: {diff_min}')
+      index = np.where( diff_z == diff_min )[0][0]
+      k_vals = sim_ps_data['k_vals'][index]
+      ps_vals = sim_ps_data['ps_mean'][index]
+      delta_ps = ps_vals * k_vals / np.pi
+      data_grid[id_z][sim_id] = { 'P(k)':{} } 
+      data_grid[id_z][sim_id]['P(k)']['mean'] = delta_ps
+      data_grid[id_z][sim_id]['P(k)']['k_vals'] = k_vals
+  return data_grid
+
+
+def Get_Data_Grid( fields, SG ):
+  sim_ids = SG.sim_ids
+  data_grid = {}
+  for sim_id in sim_ids:
+    data_grid[sim_id] = {}
+    data_grid[sim_id]['z'] = SG.Grid[sim_id]['analysis']['z']
+    for field in fields:
+      data_grid[sim_id][field] = {}
+      data_grid[sim_id][field]['mean'] = SG.Grid[sim_id]['analysis'][field]
+  return data_grid
+
+def Get_Comparable_Composite_from_Grid( fields, comparable_data, SG ):
+  fields_list = fields.split('+')
+
+  sim_ids = SG.sim_ids
+  comparable_grid_all = {}
+  for field in fields_list:
+    if field == 'T0':   comparable_grid_all[field] = Get_Comparable_T0_from_Grid(  comparable_data[field], SG )
+    if field == 'tau':  comparable_grid_all[field] = Get_Comparable_tau_from_Grid( comparable_data[field], SG )
+    if field == 'P(k)': comparable_grid_all[field] = Get_Comparable_Power_Spectrum_from_Grid( comparable_data[field]['separate'], SG )
+    
+  comparable_grid = {}
+  for sim_id in sim_ids:
+    comparable_grid[sim_id] = {}
+    mean_all = []
+    for field in fields_list:
+      if field == '': continue
+      comparable_grid[sim_id][field] = comparable_grid_all[field][sim_id]
+      mean_all.append( comparable_grid_all[field][sim_id]['mean'] )
+    comparable_grid[sim_id][fields] = {'mean': np.concatenate( mean_all ) }
+  return comparable_grid
+
+
+def Get_Comparable_Power_Spectrum_from_Grid( comparable_data, SG ):
+  
+  print( 'Generating Simulation P(k) comparable data:')
+  indices = comparable_data.keys()
+  comparable_grid = {}
+  sim_ids = SG.sim_ids
+  for sim_id in sim_ids:
+    comparable_grid[sim_id] = {}  
+    sim_data = SG.Grid[sim_id]['analysis']['power_spectrum']
+    sim_z_all = sim_data['z']
+    sim_k_vals_all = sim_data['k_vals']
+    sim_ps_all = sim_data['ps_mean']
+    
+    sim_delta_all = []
+    for index in indices:
+      data = comparable_data[index]
+      data_z = data['z']
+      data_kvals = data['k_vals']
+      data_delta_vals = data['delta_ps']
+      diff = np.abs( sim_z_all - data_z )
+      id_sim = np.where( diff == diff.min() )[0][0]
+      sim_z = sim_z_all[id_sim]
+      sim_kvals = sim_k_vals_all[id_sim]
+      sim_ps = sim_ps_all[id_sim]
+      sim_delta = sim_ps * sim_kvals / np.pi 
+      sim_delta_interp = np.interp( data_kvals, sim_kvals, sim_delta )
+      diff = ( sim_delta_interp - data_delta_vals ) / data_delta_vals
+      sim_delta_all.append( sim_delta_interp )
+      
+    comparable_grid[sim_id]['mean'] = np.concatenate( sim_delta_all )
+  n_points = len(  comparable_grid[0]['mean'] )
+  print ( f' N sim points: {n_points}' )
+  return comparable_grid  
+
+def Get_Comparable_T0_from_Grid( comparable_data, SG ):
+  return Get_Comparable_Field_from_Grid( 'T0', comparable_data, SG )
+
+def Get_Comparable_tau_from_Grid( comparable_data, SG ):
+  return Get_Comparable_Field_from_Grid( 'tau', comparable_data, SG )
+
+def Get_Comparable_Field_from_Grid( field, comparable_data, SG, interpolate=True ):
+  print( f' Loading Comparabe from Grid: {field}')
+  z_data = comparable_data['z']
+  sim_ids = SG.sim_ids
+  comparable_grid = {}
+  for sim_id in sim_ids:
+    comparable_grid[sim_id] = {}
+    sim_analysis = SG.Grid[sim_id]['analysis']
+    z_sim = sim_analysis['z']
+    if interpolate:
+      mean_sim = sim_analysis[field]
+      if z_sim[0] > z_sim[-1]:  
+        z_sim_sorted = z_sim[::-1]
+        mean_sim = mean_sim[::-1]
+      else: z_sim_sorted = z_sim
+      mean_interp = np.interp( z_data, z_sim_sorted, mean_sim )
+      comparable_grid[sim_id]['z'] = z_data
+      comparable_grid[sim_id]['mean'] = mean_interp    
+    else:  
+      indices = []
+      for z in z_data:
+        diff = np.abs( z_sim - z )
+        diff_min = diff.min()
+        if diff_min > 0.03:
+          print( f'Warning Z diff is large: diff:{diff_min}')
+        indx = np.where(diff == diff_min)[0]
+        indices.append( indx )
+      indices = np.array( indices )
+      comparable_grid[sim_id]['z'] = sim_analysis['z'][indices].flatten()
+      comparable_grid[sim_id]['mean'] = sim_analysis[field][indices].flatten()    
+  return comparable_grid
+  
+
+def Get_Comparable_Composite( fields, z_min, z_max, ps_extras=None, tau_extras=None ):
+  
+  if ps_extras is not None:
+    ps_data_dir = ps_extras['data_dir']
+    data_ps_sets = ps_extras['data_sets'] 
+    ps_range = ps_extras['range'] 
+
+  if tau_extras is not None:
+    factor_sigma_tau_becker  = tau_extras['factor_sigma_becker']
+    factor_sigma_tau_keating = tau_extras['factor_sigma_keating']
+    
+  fields_list = fields.split('+')
+  mean_all, sigma_all = [], []
+  comparable_all = {}
+  for field in fields_list:
+    append_comparable = False
+    if field == 'P(k)':
+      comparable_ps = Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_ps_sets, ps_range )
+      comparable_ps_all = comparable_ps['P(k)']
+      comparable_ps_separate = comparable_ps['separate']
+      comparable_all['P(k)'] = { 'all':comparable_ps_all, 'separate':comparable_ps_separate }
+      print('Added comparable P(k) separate')
+      mean_all.append( comparable_ps_all['mean'] )
+      sigma_all.append( comparable_ps_all['sigma'] )
+    if field == 'T0':  
+      comparable_field = Get_Comparable_T0_Gaikwad()
+      append_comparable = True
+    if field == 'tau': 
+      comparable_field = Get_Comparable_Tau( z_min, z_max, factor_sigma_tau_becker=factor_sigma_tau_becker, factor_sigma_tau_keating=factor_sigma_tau_keating )
+      append_comparable = True
+    if append_comparable:
+      comparable_all[field] = comparable_field
+      mean_all.append( comparable_field['mean'] )
+      sigma_all.append( comparable_field['sigma'] )
+  comparable_all[fields] = { 'mean':np.concatenate(mean_all), 'sigma':np.concatenate(sigma_all) }  
+  return comparable_all
+  
+
+
 def Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_sets, ps_range ):
   print( f'Loading P(k) Data:' )
   dir_boss = ps_data_dir + 'data_power_spectrum_boss/'
@@ -30,9 +242,7 @@ def Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_sets, ps_rang
 
   data_dir = { 'Boss':data_boss, 'Walther':data_walther, 'Boera':data_boera, 'Viel':data_viel }
 
-
   data_kvals, data_ps, data_ps_sigma, data_indices, data_z  = [], [], [], [], []
-
   sim_z, sim_kmin, sim_kmax = ps_range['z'], ps_range['k_min'], ps_range['k_max']
 
   ps_data = {}
@@ -49,7 +259,6 @@ def Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_sets, ps_rang
         diff = np.abs( sim_z - z )
         id_min = np.where( diff == diff.min() )[0][0]
         z_sim = sim_z[id_min]
-        # print( f'data_z: {z:.1f} sim_z: {z_sim:.1f}')
         kmin = sim_kmin[id_min]
         kmax = sim_kmax[id_min]
         k_vals = data['k_vals']
@@ -75,471 +284,22 @@ def Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_sets, ps_rang
   print( f' N data points: {n_data_points}' )
   return ps_data_out
 
-def Get_Comparable_Power_Spectrum_from_Grid( comparable_data, SG ):
-  
-  print( 'Generating Simulation P(k) comparable data:')
-  indices = comparable_data.keys()
-  
-  
-  comparable_grid = {}
-  sim_ids = SG.sim_ids
-  for sim_id in sim_ids:
-    comparable_grid[sim_id] = {}
-    comparable_grid[sim_id]['P(k)'] = {}
-    
-    
-    sim_data = SG.Grid[sim_id]['analysis']['power_spectrum']
-    sim_z_all = sim_data['z']
-    sim_k_vals_all = sim_data['k_vals']
-    sim_ps_all = sim_data['ps_mean']
-    
-    sim_delta_all = []
-    
-    for index in indices:
-      data = comparable_data[index]
-      data_z = data['z']
-      data_kvals = data['k_vals']
-      data_delta_vals = data['delta_ps']
-      diff = np.abs( sim_z_all - data_z )
-      id_sim = np.where( diff == diff.min() )[0][0]
-      sim_z = sim_z_all[id_sim]
-      sim_kvals = sim_k_vals_all[id_sim]
-      sim_ps = sim_ps_all[id_sim]
-      sim_delta = sim_ps * sim_kvals / np.pi 
-      sim_delta_interp = np.interp( data_kvals, sim_kvals, sim_delta )
-      diff = ( sim_delta_interp - data_delta_vals ) / data_delta_vals
-      sim_delta_all.append( sim_delta_interp )
-      
-    comparable_grid[sim_id]['P(k)']['mean'] = np.concatenate( sim_delta_all )
-  
-  n_points = len(  comparable_grid[0]['P(k)']['mean'] )
-  print ( f' N sim points: {n_points}' )
-  return comparable_grid  
-    
-    
 
 
-def Get_Chi2( observables, params, comparable_grid, comparable_data, SG ):
-  chi2_vals = {}
-  for field in observables:
-    obs_mean = Interpolate_3D(  params[0]['mean'], params[1]['mean'], params[2]['mean'], comparable_grid, field, 'mean', SG, clip_params=True ) 
-    data_z     = comparable_data[field]['z']
-    data_mean  = comparable_data[field]['mean']  
-    data_sigma = comparable_data[field]['sigma']
-    chi2 =  np.sum( ( ( obs_mean - data_mean ) / data_sigma )**2  )
-    chi2_vals[field] = chi2
-  return chi2_vals
+def Get_Comparable_T0_Gaikwad():
+  print( 'Loading T0 Data: ')
+  data_sets = [ data_thermal_history_Gaikwad_2020b, data_thermal_history_Gaikwad_2020a ]
+  z = np.concatenate( [ds['z'] for ds in data_sets ])
+  data_mean  = np.concatenate( [ds['T0'] for ds in data_sets ])
+  data_sigma = np.concatenate( [( ds['T0_sigma_plus'] + ds['T0_sigma_minus'] )*0.5  for ds in data_sets ] )
+  comparable = {}
+  comparable['z'] = z
+  comparable['mean'] = data_mean
+  comparable['sigma'] = data_sigma
+  print( f' N data points: {len(data_mean)} ' )
+  return comparable
 
-
-def Sample_Power_Spectrum_Multiple_Params( n_samples, params_all, data_grid, SG, sampling='gaussian', hpi_sum=0.7,  ):
-  print(f'\nSampling Power Spectrum')
-  ps_samples = {}
-  
-  n_param = len(params_all[0]['params'])
-  
-  n_z_ids = len( data_grid.keys() )
-
-  for id_z in range( n_z_ids ):
-    ps_data = data_grid[id_z]
-    ps_samples[id_z] = {}
-    ps_samples[id_z]['z'] = ps_data['z']
-
-    samples = []
-    for i in range( n_samples ):
-      p_rand = []
-      params_z = params_all[id_z]
-      for p_id in params_z['params'].keys():
-        if sampling == 'gaussian': p_rand.append( np.random.normal( params_z['params'][p_id]['mean'], params_z['params'][p_id]['sigma']  ) )
-      if n_param == 3: ps_interp = Interpolate_3D(  p_rand[0], p_rand[1], p_rand[2], ps_data, 'P(k)', 'mean', SG, clip_params=True ) 
-      if n_param == 4: ps_interp = Interpolate_3D(  p_rand[0], p_rand[1], p_rand[2], p_rand[3], ps_data, 'P(k)', 'mean', SG, clip_params=True ) 
-      samples.append( ps_interp )
-    samples = np.array( samples ).T
-    ps_mean = np.array([ ps_vals.mean() for ps_vals in samples ])
-    ps_sigma = [ ]
-    ps_lower, ps_higher = [], []
-    for i in range( len( samples ) ):
-      ps_sigma.append( np.sqrt(  ( (samples[i] - ps_mean[i])**2).mean()  ) )
-      values = samples[i]
-      n_bins = 100
-      distribution, bin_centers = compute_distribution( values, n_bins, log=True )
-      fill_sum = hpi_sum
-      v_l, v_r, v_max, sum = get_highest_probability_interval( bin_centers, distribution, fill_sum, log=True, n_interpolate=1000)
-      ps_lower.append( v_l )
-      ps_higher.append( v_r )
-    ps_sigma  = np.array( ps_sigma )
-    ps_lower  = np.array( ps_lower )
-    ps_higher = np.array( ps_higher )
-    ps_samples[id_z]['mean'] = ps_mean
-    ps_samples[id_z]['sigma'] = ps_sigma
-    ps_samples[id_z]['k_vals'] = ps_data[0]['P(k)']['k_vals']
-    ps_samples[id_z]['lower'] = ps_lower
-    ps_samples[id_z]['higher'] = ps_higher
-  return ps_samples
-
-
-def Sample_Power_Spectrum( n_samples, params, data_grid, SG, sampling='gaussian', hpi_sum=0.7 ):
-  print(f'\nSampling Power Spectrum')
-  ps_samples = {}
-  n_param = len( params.keys() )
-
-  n_z_ids = len( data_grid.keys() )
-
-  for id_z in range( n_z_ids ):
-    ps_data = data_grid[id_z]
-    ps_samples[id_z] = {}
-    ps_samples[id_z]['z'] = ps_data['z']
-
-    samples = []
-    for i in range( n_samples ):
-      p_rand = []
-      for p_id in params.keys():
-        if sampling == 'gaussian': p_rand.append( np.random.normal( params[p_id]['mean'], params[p_id]['sigma']  ) )
-        if sampling == 'uniform':
-          p_min = params[p_id]['min']
-          p_max = params[p_id]['max']
-          p_rand.append( np.random.rand() * ( p_max - p_min) + p_min )
-      if n_param == 3: ps_interp = Interpolate_3D(  p_rand[0], p_rand[1], p_rand[2], ps_data, 'P(k)', 'mean', SG, clip_params=True ) 
-      if n_param == 4: ps_interp = Interpolate_4D(  p_rand[0], p_rand[1], p_rand[2], p_rand[3], ps_data, 'P(k)', 'mean', SG, clip_params=True ) 
-      samples.append( ps_interp )
-    samples = np.array( samples ).T
-    ps_mean = np.array([ ps_vals.mean() for ps_vals in samples ])
-    ps_sigma = [ ]
-    ps_lower, ps_higher = [], []
-    for i in range( len( samples ) ):
-      ps_sigma.append( np.sqrt(  ( (samples[i] - ps_mean[i])**2).mean()  ) )
-      values = samples[i]
-      n_bins = 100
-      distribution, bin_centers = compute_distribution( values, n_bins, log=True )
-      fill_sum = hpi_sum
-      v_l, v_r, v_max, sum = get_highest_probability_interval( bin_centers, distribution, fill_sum, log=True, n_interpolate=1000)
-      ps_lower.append( v_l )
-      ps_higher.append( v_r )
-    ps_sigma  = np.array( ps_sigma )
-    ps_lower  = np.array( ps_lower )
-    ps_higher = np.array( ps_higher )
-    ps_samples[id_z]['mean'] = ps_mean
-    ps_samples[id_z]['sigma'] = ps_sigma
-    ps_samples[id_z]['k_vals'] = ps_data[0]['P(k)']['k_vals']
-    ps_samples[id_z]['lower'] = ps_lower
-    ps_samples[id_z]['higher'] = ps_higher
-  return ps_samples
-  
-
-def Sample_Observables( n_samples, observables, params, data_grid, SG  ):
-  print(f'\nSampling Observables: {observables}')
-  observables_samples = {}
-  n_param = len( params.keys() )
-  
-  for observable in observables:
-    observables_samples[observable] = {}
-    observables_samples[observable]['samples'] = []
-
-  for i in range(n_samples):
-    p_rand = []
-    for p_id in params.keys():
-      p_rand.append( np.random.normal( params[p_id]['mean'], params[p_id]['sigma']  ) )
-    for observable in observables:
-      # obs_interp = Interpolate_MultiDim(  p_rand[0], p_rand[1], p_rand[2], p_rand[3], data_grid, observable, 'mean', SG, clip_params=True ) 
-      if n_param == 3: obs_interp = Interpolate_3D(  p_rand[0], p_rand[1], p_rand[2], data_grid, observable, 'mean', SG, clip_params=True ) 
-      if n_param == 4: obs_interp = Interpolate_3D(  p_rand[0], p_rand[1], p_rand[2], p_rand[3], data_grid, observable, 'mean', SG, clip_params=True ) 
-      observables_samples[observable]['samples'].append( obs_interp )
-  for observable in observables:
-    obs_all = np.array(observables_samples[observable]['samples']).T
-    obs_mean = [ obs_vals.mean() for obs_vals in obs_all ]
-    obs_sigma = []
-    for i in range( len(obs_all) ):
-      obs_sigma.append( np.sqrt( (( obs_all[i] - obs_mean[i] )**2 ).mean() ) )
-    observables_samples[observable]['mean'] = np.array( obs_mean )
-    observables_samples[observable]['sigma'] = np.array( obs_sigma )   
-    observables_samples[observable]['z'] = data_grid[0]['z']   
-  
-  return observables_samples
-
-def Get_Data_Grid( fields, SG ):
-  sim_ids = SG.sim_ids
-  data_grid = {}
-  for sim_id in sim_ids:
-    data_grid[sim_id] = {}
-    data_grid[sim_id]['z'] = SG.Grid[sim_id]['analysis']['z']
-    for field in fields:
-      data_grid[sim_id][field] = {}
-      data_grid[sim_id][field]['mean'] = SG.Grid[sim_id]['analysis'][field]
-  return data_grid
-
-def Get_Data_Grid_Power_spectrum( z_vals, SG ):
-  data_grid = {}
-  for id_z, z_val in enumerate( z_vals ):
-    data_grid[id_z] = {}
-    data_grid[id_z]['z'] = z_val
-    sim_ids = SG.sim_ids
-    for sim_id in sim_ids:
-      sim_ps_data = SG.Grid[sim_id]['analysis']['power_spectrum']
-      sim_z_vals = sim_ps_data['z']
-      diff_z = np.abs( sim_z_vals - z_val )
-      diff_min = diff_z.min()
-      if diff_min > 0.05: print( f'Warning: Large Z difference: {diff_min}')
-      index = np.where( diff_z == diff_min )[0][0]
-      k_vals = sim_ps_data['k_vals'][index]
-      ps_vals = sim_ps_data['ps_mean'][index]
-      delta_ps = ps_vals * k_vals / np.pi
-      data_grid[id_z][sim_id] = { 'P(k)':{} } 
-      data_grid[id_z][sim_id]['P(k)']['mean'] = delta_ps
-      data_grid[id_z][sim_id]['P(k)']['k_vals'] = k_vals
-  return data_grid
-
-def are_floats_equal( a, b, epsilon=1e-10 ):
-  if np.abs( a - b ) < epsilon: return True
-  else: return False
-    
-  
-  
-def Find_Parameter_Value_Near_IDs( param_id, param_value, parameters, clip_params=False ):
-  param_name = parameters[param_id]['name']    
-  grid_param_values = np.array(parameters[param_id]['values'])
-  param_min = grid_param_values.min() 
-  param_max = grid_param_values.max()
-  n_param_values = len( grid_param_values )
-  # print( f' Param_id:{param_id}   value:{param_value}' )
-  if n_param_values == 1:
-    p_val_id_l,  p_val_id_r = 0, 0
-    return p_val_id_l, p_val_id_r  
-  if clip_params:
-    if param_value < param_min: param_value = param_min
-    if param_value > param_max: param_value = param_max
-  else:  
-    if param_value < param_min or param_value > param_max:
-      print( f'ERROR: Paramneter Value outside {param_name} Range: [ {param_min} , {param_max} ] value:{param_value}')
-      exit(-1)
-  if are_floats_equal( param_value, param_min ):
-    p_val_id_l,  p_val_id_r = 0, 1
-    return p_val_id_l, p_val_id_r
-  if are_floats_equal( param_value, param_max ):
-    p_val_id_l,  p_val_id_r = n_param_values-2, n_param_values-1
-    return p_val_id_l, p_val_id_r
-  p_val_id_l, p_val_id_r = 0, 0
-  diff_l, diff_r = -np.inf, np.inf
-  for v_id, p_val in enumerate(grid_param_values):
-    diff = p_val - param_value
-    if diff > 0 and diff < diff_r: p_val_id_r, diff_r = v_id, diff
-    if diff < 0 and diff > diff_l: p_val_id_l, diff_l = v_id, diff  
-  if p_val_id_l == p_val_id_r: print('ERROR: Same values for left and right')
-  return p_val_id_l, p_val_id_r
-        
-
-
-def Get_Parameter_Grid( param_values, parameters, clip_params=False ):
-  parameter_grid = {}
-  for p_id, p_val in enumerate(param_values):
-    parameter_grid[p_id] = {}
-    # print( f' Param_id:{p_id}   value:{p_val}' )
-    v_id_l, v_id_r = Find_Parameter_Value_Near_IDs( p_id, p_val, parameters, clip_params=clip_params )
-    parameter_grid[p_id]['v_id_l'] = v_id_l
-    parameter_grid[p_id]['v_id_r'] = v_id_r
-    parameter_grid[p_id]['v_l'] = parameters[p_id]['values'][v_id_l]
-    parameter_grid[p_id]['v_r'] = parameters[p_id]['values'][v_id_r]
-  return parameter_grid
-  
-
-
-def Get_Simulation_ID_From_Coordinates( sim_coords, SG ):
-  grid = SG.Grid
-  parameters = SG.parameters
-  param_ids = parameters.keys()
-  key = ''
-  for param_id in param_ids:
-    p_key = parameters[param_id]['key']
-    key += f'_{p_key}{sim_coords[param_id]}'
-  key = key[1:]
-  sim_id = SG.coords[key]
-  return sim_id
-
-
-def Get_Value_From_Simulation( sim_coords, data_to_interpolate, field, sub_field, SG ):
-  sim_id = Get_Simulation_ID_From_Coordinates( sim_coords, SG )
-  sim = SG.Grid[sim_id]
-  param_values = sim['parameter_values']
-  value = data_to_interpolate[sim_id][field][sub_field]
-  return value
- 
-
-
-def Interpolate_MultiDim( param_values, data_to_interpolate, field, sub_field, SG, clip_params=False, parameter_grid=None, param_id=None, sim_coords_before=None ):
-  n_param = len(param_values)
-  if param_id == None: param_id = n_param - 1
-  if sim_coords_before == None:  sim_coords_before = [ -1 for param_id in range(n_param)] 
-  print( f' n_param: {n_param}  Param_id:{param_id}   value:{param_values}' )
-  if parameter_grid == None: parameter_grid = Get_Parameter_Grid( param_values, SG.parameters, clip_params=clip_params )
-  
-  sim_coords_l = sim_coords_before.copy()
-  sim_coords_r = sim_coords_before.copy()
-  
-  v_id_l = parameter_grid[param_id]['v_id_l']
-  v_id_r = parameter_grid[param_id]['v_id_r']
-  p_val_l = parameter_grid[param_id]['v_l']
-  p_val_r = parameter_grid[param_id]['v_r']
-  sim_coords_l[param_id] = v_id_l
-  sim_coords_r[param_id] = v_id_r
-  p_val = param_values[param_id]
-  
-  if clip_params:
-    if p_val < p_val_l: p_val = p_val_l
-    if p_val > p_val_r: p_val = p_val_r
-  else:      
-    if p_val < p_val_l or p_val > p_val_r:
-      print( ' ERROR: Parameter outside left and right values')
-      exit()
-  if p_val_l == p_val_r: delta = 0.5
-  else: delta = ( p_val - p_val_l ) / ( p_val_r - p_val_l )  
-  if param_id == 0:
-    value_l = Get_Value_From_Simulation( sim_coords_l, data_to_interpolate, field, sub_field, SG )
-    value_r = Get_Value_From_Simulation( sim_coords_r, data_to_interpolate, field, sub_field, SG )
-    value_interp = delta*value_r + (1-delta)*value_l 
-    return value_interp
-  
-  value_l = Interpolate_MultiDim( param_values, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_l, clip_params=clip_params )
-  value_r = Interpolate_MultiDim( param_values, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_r, clip_params=clip_params )
-  value_interp = delta*value_r + (1-delta)*value_l
-  return value_interp
-
-
-def Interpolate_4D( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, clip_params=False, parameter_grid=None, param_id=None, sim_coords_before=None ):
-  param_values = np.array([ p0, p1, p2, p3 ])
-  n_param = len(param_values)
-  if param_id == None: param_id = n_param - 1
-  if sim_coords_before == None:  sim_coords_before = [ -1 for param_id in range(n_param)] 
-  if parameter_grid == None: parameter_grid = Get_Parameter_Grid( param_values, SG.parameters, clip_params=clip_params )
-  
-  sim_coords_l = sim_coords_before.copy()
-  sim_coords_r = sim_coords_before.copy()
-  
-  v_id_l = parameter_grid[param_id]['v_id_l']
-  v_id_r = parameter_grid[param_id]['v_id_r']
-  p_val_l = parameter_grid[param_id]['v_l']
-  p_val_r = parameter_grid[param_id]['v_r']
-  sim_coords_l[param_id] = v_id_l
-  sim_coords_r[param_id] = v_id_r
-  p_val = param_values[param_id]
-  
-  if clip_params:
-    if p_val < p_val_l: p_val = p_val_l
-    if p_val > p_val_r: p_val = p_val_r
-  else:      
-    if p_val < p_val_l or p_val > p_val_r:
-      print( ' ERROR: Parameter outside left and right values')
-      exit()
-  if p_val_l == p_val_r: delta = 0.5
-  else: delta = ( p_val - p_val_l ) / ( p_val_r - p_val_l )  
-  if param_id == 0:
-    value_l = Get_Value_From_Simulation( sim_coords_l, data_to_interpolate, field, sub_field, SG )
-    value_r = Get_Value_From_Simulation( sim_coords_r, data_to_interpolate, field, sub_field, SG )
-    value_interp = delta*value_r + (1-delta)*value_l 
-    return value_interp
-  
-  value_l = Interpolate_4D( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_l, clip_params=clip_params )
-  value_r = Interpolate_4D( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_r, clip_params=clip_params )
-  value_interp = delta*value_r + (1-delta)*value_l
-  return value_interp
-
-
-def Interpolate_3D( p0, p1, p2, data_to_interpolate, field, sub_field, SG, clip_params=False, parameter_grid=None, param_id=None, sim_coords_before=None ):
-  param_values = np.array([ p0, p1, p2 ])
-  n_param = len(param_values)
-  if param_id == None: param_id = n_param - 1
-  if sim_coords_before == None:  sim_coords_before = [ -1 for param_id in range(n_param)] 
-  if parameter_grid == None: parameter_grid = Get_Parameter_Grid( param_values, SG.parameters, clip_params=clip_params )
-  
-  sim_coords_l = sim_coords_before.copy()
-  sim_coords_r = sim_coords_before.copy()
-  
-  v_id_l = parameter_grid[param_id]['v_id_l']
-  v_id_r = parameter_grid[param_id]['v_id_r']
-  p_val_l = parameter_grid[param_id]['v_l']
-  p_val_r = parameter_grid[param_id]['v_r']
-  sim_coords_l[param_id] = v_id_l
-  sim_coords_r[param_id] = v_id_r
-  p_val = param_values[param_id]
-  
-  if clip_params:
-    if p_val < p_val_l: p_val = p_val_l
-    if p_val > p_val_r: p_val = p_val_r
-  else:      
-    if p_val < p_val_l or p_val > p_val_r:
-      print( ' ERROR: Parameter outside left and right values')
-      exit()
-  if p_val_l == p_val_r: delta = 0.5
-  else: delta = ( p_val - p_val_l ) / ( p_val_r - p_val_l )  
-  if param_id == 0:
-    value_l = Get_Value_From_Simulation( sim_coords_l, data_to_interpolate, field, sub_field, SG )
-    value_r = Get_Value_From_Simulation( sim_coords_r, data_to_interpolate, field, sub_field, SG )
-    value_interp = delta*value_r + (1-delta)*value_l 
-    return value_interp
-  
-  value_l = Interpolate_3D( p0, p1, p2, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_l, clip_params=clip_params )
-  value_r = Interpolate_3D( p0, p1, p2, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_r, clip_params=clip_params )
-  value_interp = delta*value_r + (1-delta)*value_l
-  return value_interp
-
-
-
-def Interpolate_Comparable_1D( param_id, param_value,  comparable_grid, field, SG ):
-  parameters = SG.parameters
-  param_name = parameters[param_id]['name']
-  param_vals = parameters[param_id]['values']
-  param_max = max(param_vals)
-  param_min = min(param_vals) 
-  if param_value < param_min or param_value > param_max:
-    print( f'ERROR: Parameter Value outside {param_name} Range: [ {param_min} , {param_max} ] ')
-    exit(-1)
-  #find closest simulations 
-  sim_ids = SG.sim_ids
-  sim_id_l, sim_id_r = 0, 0
-  diff_l, diff_r = -np.inf, np.inf
-  for sim_id in sim_ids:
-    sim_params = SG.Grid[sim_id]
-    sim_param_val = sim_params['parameters'][param_name]
-    diff = sim_param_val - param_value
-    if diff > 0 and diff < diff_r: sim_id_r, diff_r = sim_id, diff
-    if diff < 0 and diff > diff_l: sim_id_l, diff_l = sim_id, diff  
-  param_l = SG.Grid[sim_id_l]['parameters'][param_name]
-  param_r = SG.Grid[sim_id_r]['parameters'][param_name]    
-  delta = param_value - param_l 
-  mean_l = comparable_grid[sim_id_l][field]['mean']
-  mean_r = comparable_grid[sim_id_r][field]['mean'] 
-  mean = (mean_r - mean_l ) / ( param_r - param_l ) * delta  + mean_l 
-  return mean
-
-
-  
-def Interpolate_Observable_1D( param_id, observable, param_value,  SG, clip_values=True ):
-  parameters = SG.parameters
-  param_name = parameters[param_id]['name']
-  param_vals = parameters[param_id]['values']
-  param_max = max(param_vals)
-  param_min = min(param_vals) 
-  # if param_value < param_min or param_value > param_max:
-  #   print( f'ERROR: Paramneter Value outside {param_name} {param_value} Range: [ {param_min} , {param_max} ] ')
-  if clip_values:
-    if param_value < param_min: param_value = param_min
-    if param_value > param_max: param_value = param_max 
-  #find closest simulations 
-  sim_ids = SG.sim_ids
-  sim_id_l, sim_id_r = 0, 0
-  diff_l, diff_r = -np.inf, np.inf
-  for sim_id in sim_ids:
-    sim_params = SG.Grid[sim_id]
-    sim_param_val = sim_params['parameters'][param_name]
-    diff = sim_param_val - param_value
-    if diff > 0 and diff < diff_r: sim_id_r, diff_r = sim_id, diff
-    if diff < 0 and diff > diff_l: sim_id_l, diff_l = sim_id, diff  
-  param_l = SG.Grid[sim_id_l]['parameters'][param_name]
-  param_r = SG.Grid[sim_id_r]['parameters'][param_name]    
-  delta = param_value - param_l 
-  mean_l = SG.Grid[sim_id_l]['analysis'][observable]
-  mean_r = SG.Grid[sim_id_r]['analysis'][observable] 
-  mean = (mean_r - mean_l ) / ( param_r - param_l ) * delta  + mean_l 
-  return mean,  SG.Grid[sim_id_r]['analysis']['z'] 
-
-def Get_Comparable_Tau( factor_sigma_tau_becker=1, factor_sigma_tau_keating=1  ):
+def Get_Comparable_Tau( z_min, z_max, factor_sigma_tau_becker=1, factor_sigma_tau_keating=1  ):
   comparable_z, comparable_tau, comparable_sigma = [], [], []
 
   # Add data Becker 2013
@@ -582,86 +342,198 @@ def Get_Comparable_Tau( factor_sigma_tau_becker=1, factor_sigma_tau_keating=1  )
   comparable_tau.append(tau[indices])
   comparable_sigma.append(sigma[indices])
   
+  z     = np.concatenate( comparable_z )
+  mean  = np.concatenate( comparable_tau )
+  sigma = np.concatenate( comparable_sigma )
+  
+  indices = ( z >= z_min ) * ( z <= z_max )
   comparable = {}
-  comparable['z'] = np.concatenate( comparable_z )
-  comparable['mean'] = np.concatenate( comparable_tau )
-  comparable['sigma'] = np.concatenate( comparable_sigma )
-  return comparable
-
-def Get_Comparable_T0_Gaikwad():
-  data_sets = [ data_thermal_history_Gaikwad_2020b, data_thermal_history_Gaikwad_2020a ]
-  z = np.concatenate( [ds['z'] for ds in data_sets ])
-  data_mean  = np.concatenate( [ds['T0'] for ds in data_sets ])
-  data_sigma = np.concatenate( [( ds['T0_sigma_plus'] + ds['T0_sigma_minus'] )*0.5  for ds in data_sets ] )
-  comparable = {}
-  comparable['z'] = z
-  comparable['mean'] = data_mean
-  comparable['sigma'] = data_sigma
-  return comparable
-
-def Get_Comparable_Composite_T0_tau(  factor_sigma_tau_becker=1, factor_sigma_tau_keating=1 ):
-  comparable_T0 = Get_Comparable_T0_Gaikwad()
-  comparable_tau = Get_Comparable_Tau(  factor_sigma_tau_becker=factor_sigma_tau_becker, factor_sigma_tau_keating=factor_sigma_tau_keating )
-  comparable = {}
-  comparable['T0'] = comparable_T0
-  comparable['tau'] = comparable_tau
-  comparable['T0+tau'] = {}
-  for key in ['z', 'mean', 'sigma']:
-    comparable['T0+tau'][key] = np.concatenate( [ comparable_T0[key], comparable_tau[key] ])
+  comparable['z']     = z[indices]
+  comparable['mean']  = mean[indices]
+  comparable['sigma'] = sigma[indices]
   return comparable
 
 
-def Get_Comparable_Composite_T0_tau_from_Grid( comparable_data, SG ):
-  comparable_T0_data = comparable_data['T0']
-  comparable_tau_data = comparable_data['tau']
-  comparable_T0_grid = Get_Comparable_T0_from_Grid( comparable_T0_data, SG )
-  comparable_tau_grid = Get_Comparable_Tau_from_Grid( comparable_tau_data, SG )
-  comparable_grid = {}
-  sim_ids = SG.sim_ids
-  for sim_id in sim_ids:
-    comparable_grid[sim_id] = {}
-    comparable_grid[sim_id]['T0'] = comparable_T0_grid[sim_id]
-    comparable_grid[sim_id]['tau'] = comparable_tau_grid[sim_id]
-    comparable_grid[sim_id]['T0+tau'] = {}
-    for key in ['z', 'mean']:
-      comparable_grid[sim_id]['T0+tau'][key] = np.concatenate( [ comparable_T0_grid[sim_id][key], comparable_tau_grid[sim_id][key] ])
-  return comparable_grid
+def Interpolate_4D( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, clip_params=False, parameter_grid=None, param_id=None, sim_coords_before=None ):
+  param_values = np.array([ p0, p1, p2, p3 ])
+  n_param = len(param_values)
+  if param_id == None: param_id = n_param - 1
+  if sim_coords_before == None:  sim_coords_before = [ -1 for param_id in range(n_param)] 
+  if parameter_grid == None: parameter_grid = Get_Parameter_Grid( param_values, SG.parameters, clip_params=clip_params )
+  
+  sim_coords_l = sim_coords_before.copy()
+  sim_coords_r = sim_coords_before.copy()
+  
+  v_id_l = parameter_grid[param_id]['v_id_l']
+  v_id_r = parameter_grid[param_id]['v_id_r']
+  p_val_l = parameter_grid[param_id]['v_l']
+  p_val_r = parameter_grid[param_id]['v_r']
+  sim_coords_l[param_id] = v_id_l
+  sim_coords_r[param_id] = v_id_r
+  p_val = param_values[param_id]
+  
+  if clip_params:
+    if p_val < p_val_l: p_val = p_val_l
+    if p_val > p_val_r: p_val = p_val_r
+  else:      
+    if p_val < p_val_l or p_val > p_val_r:
+      print( ' ERROR: Parameter outside left and right values')
+      exit()
+  if p_val_l == p_val_r: delta = 0.5
+  else: delta = ( p_val - p_val_l ) / ( p_val_r - p_val_l )  
+  if param_id == 0:
+    value_l = Get_Value_From_Simulation( sim_coords_l, data_to_interpolate, field, sub_field, SG )
+    value_r = Get_Value_From_Simulation( sim_coords_r, data_to_interpolate, field, sub_field, SG )
+    value_interp = delta*value_r + (1-delta)*value_l 
+    return value_interp
+  
+  value_l = Interpolate_4D( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_l, clip_params=clip_params )
+  value_r = Interpolate_4D( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_r, clip_params=clip_params )
+  value_interp = delta*value_r + (1-delta)*value_l
+  return value_interp
 
-def Get_Comparable_Tau_from_Grid( comparable_data, SG ):
-  z_data = comparable_data['z']
-  sim_ids = SG.sim_ids
-  comparable_grid = {}
-  for sim_id in sim_ids:
-    comparable_grid[sim_id] = {}
-    sim_analysis = SG.Grid[sim_id]['analysis']
-    z_sim = sim_analysis['z']
-    indices = []
-    for z in z_data:
-      diff = np.abs( z_sim - z )
-      indx = np.where(diff == diff.min())[0]
-      indices.append( indx )
-    indices = np.array( indices )
-    comparable_grid[sim_id]['z'] = sim_analysis['z'][indices].flatten()
-    comparable_grid[sim_id]['mean'] = sim_analysis['tau'][indices].flatten()    
-  return comparable_grid
 
-def Get_Comparable_T0_from_Grid( comparable_data, SG ):
-  z_data = comparable_data['z']
+
+def Interpolate_3D( p0, p1, p2, data_to_interpolate, field, sub_field, SG, clip_params=False, parameter_grid=None, param_id=None, sim_coords_before=None ):
+  param_values = np.array([ p0, p1, p2 ])
+  n_param = len(param_values)
+  if param_id == None: param_id = n_param - 1
+  if sim_coords_before == None:  sim_coords_before = [ -1 for param_id in range(n_param)] 
+  if parameter_grid == None: parameter_grid = Get_Parameter_Grid( param_values, SG.parameters, clip_params=clip_params )
+  
+  sim_coords_l = sim_coords_before.copy()
+  sim_coords_r = sim_coords_before.copy()
+  
+  v_id_l = parameter_grid[param_id]['v_id_l']
+  v_id_r = parameter_grid[param_id]['v_id_r']
+  p_val_l = parameter_grid[param_id]['v_l']
+  p_val_r = parameter_grid[param_id]['v_r']
+  sim_coords_l[param_id] = v_id_l
+  sim_coords_r[param_id] = v_id_r
+  p_val = param_values[param_id]
+  
+  if clip_params:
+    if p_val < p_val_l: p_val = p_val_l
+    if p_val > p_val_r: p_val = p_val_r
+  else:      
+    if p_val < p_val_l or p_val > p_val_r:
+      print( ' ERROR: Parameter outside left and right values')
+      exit()
+  if p_val_l == p_val_r: delta = 0.5
+  else: delta = ( p_val - p_val_l ) / ( p_val_r - p_val_l )  
+  if param_id == 0:
+    value_l = Get_Value_From_Simulation( sim_coords_l, data_to_interpolate, field, sub_field, SG )
+    value_r = Get_Value_From_Simulation( sim_coords_r, data_to_interpolate, field, sub_field, SG )
+    value_interp = delta*value_r + (1-delta)*value_l 
+    return value_interp
+  
+  value_l = Interpolate_3D( p0, p1, p2, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_l, clip_params=clip_params )
+  value_r = Interpolate_3D( p0, p1, p2, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_r, clip_params=clip_params )
+  value_interp = delta*value_r + (1-delta)*value_l
+  return value_interp
+
+
+
+
+
+def Interpolate_1D( param_id, param_value,  comparable_grid, field, SG ):
+  parameters = SG.parameters
+  param_name = parameters[param_id]['name']
+  param_vals = parameters[param_id]['values']
+  param_max = max(param_vals)
+  param_min = min(param_vals) 
+  if param_value < param_min or param_value > param_max:
+    print( f'ERROR: Parameter Value outside {param_name} Range: [ {param_min} , {param_max} ] ')
+    exit(-1)
+  #find closest simulations 
   sim_ids = SG.sim_ids
-  comparable_grid = {}
+  sim_id_l, sim_id_r = 0, 0
+  diff_l, diff_r = -np.inf, np.inf
   for sim_id in sim_ids:
-    comparable_grid[sim_id] = {}
-    sim_analysis = SG.Grid[sim_id]['analysis']
-    z_sim = sim_analysis['z']
-    indices = []
-    for z in z_data:
-      diff = np.abs( z_sim - z )
-      indx = np.where(diff == diff.min())[0]
-      indices.append( indx )
-    indices = np.array( indices )
-    comparable_grid[sim_id]['z'] = sim_analysis['z'][indices].flatten()
-    comparable_grid[sim_id]['mean'] = sim_analysis['T0'][indices].flatten()    
-  return comparable_grid
+    sim_params = SG.Grid[sim_id]
+    sim_param_val = sim_params['parameters'][param_name]
+    diff = sim_param_val - param_value
+    if diff > 0 and diff < diff_r: sim_id_r, diff_r = sim_id, diff
+    if diff < 0 and diff > diff_l: sim_id_l, diff_l = sim_id, diff  
+  param_l = SG.Grid[sim_id_l]['parameters'][param_name]
+  param_r = SG.Grid[sim_id_r]['parameters'][param_name]    
+  delta = param_value - param_l 
+  mean_l = comparable_grid[sim_id_l][field]['mean']
+  mean_r = comparable_grid[sim_id_r][field]['mean'] 
+  mean = (mean_r - mean_l ) / ( param_r - param_l ) * delta  + mean_l 
+  return mean
+
+
+def are_floats_equal( a, b, epsilon=1e-10 ):
+  if np.abs( a - b ) < epsilon: return True
+  else: return False
+    
+  
+
+def Find_Parameter_Value_Near_IDs( param_id, param_value, parameters, clip_params=False ):
+  param_name = parameters[param_id]['name']    
+  grid_param_values = np.array(parameters[param_id]['values'])
+  param_min = grid_param_values.min() 
+  param_max = grid_param_values.max()
+  n_param_values = len( grid_param_values )
+  # print( f' Param_id:{param_id}   value:{param_value}' )
+  if n_param_values == 1:
+    p_val_id_l,  p_val_id_r = 0, 0
+    return p_val_id_l, p_val_id_r  
+  if clip_params:
+    if param_value < param_min: param_value = param_min
+    if param_value > param_max: param_value = param_max
+  else:  
+    if param_value < param_min or param_value > param_max:
+      print( f'ERROR: Paramneter Value outside {param_name} Range: [ {param_min} , {param_max} ] value:{param_value}')
+      exit(-1)
+  if are_floats_equal( param_value, param_min ):
+    p_val_id_l,  p_val_id_r = 0, 1
+    return p_val_id_l, p_val_id_r
+  if are_floats_equal( param_value, param_max ):
+    p_val_id_l,  p_val_id_r = n_param_values-2, n_param_values-1
+    return p_val_id_l, p_val_id_r
+  p_val_id_l, p_val_id_r = 0, 0
+  diff_l, diff_r = -np.inf, np.inf
+  for v_id, p_val in enumerate(grid_param_values):
+    diff = p_val - param_value
+    if diff > 0 and diff < diff_r: p_val_id_r, diff_r = v_id, diff
+    if diff < 0 and diff > diff_l: p_val_id_l, diff_l = v_id, diff  
+  if p_val_id_l == p_val_id_r: print('ERROR: Same values for left and right')
+  return p_val_id_l, p_val_id_r
+  
+  
+
+def Get_Parameter_Grid( param_values, parameters, clip_params=False ):
+  parameter_grid = {}
+  for p_id, p_val in enumerate(param_values):
+    parameter_grid[p_id] = {}
+    # print( f' Param_id:{p_id}   value:{p_val}' )
+    v_id_l, v_id_r = Find_Parameter_Value_Near_IDs( p_id, p_val, parameters, clip_params=clip_params )
+    parameter_grid[p_id]['v_id_l'] = v_id_l
+    parameter_grid[p_id]['v_id_r'] = v_id_r
+    parameter_grid[p_id]['v_l'] = parameters[p_id]['values'][v_id_l]
+    parameter_grid[p_id]['v_r'] = parameters[p_id]['values'][v_id_r]
+  return parameter_grid
   
 
 
+def Get_Simulation_ID_From_Coordinates( sim_coords, SG ):
+  grid = SG.Grid
+  parameters = SG.parameters
+  param_ids = parameters.keys()
+  key = ''
+  for param_id in param_ids:
+    p_key = parameters[param_id]['key']
+    key += f'_{p_key}{sim_coords[param_id]}'
+  key = key[1:]
+  sim_id = SG.coords[key]
+  return sim_id
+
+
+def Get_Value_From_Simulation( sim_coords, data_to_interpolate, field, sub_field, SG ):
+  sim_id = Get_Simulation_ID_From_Coordinates( sim_coords, SG )
+  sim = SG.Grid[sim_id]
+  param_values = sim['parameter_values']
+  value = data_to_interpolate[sim_id][field][sub_field]
+  return value

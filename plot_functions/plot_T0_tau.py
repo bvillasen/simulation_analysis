@@ -13,13 +13,12 @@ root_dir = os.path.dirname(os.getcwd()) + '/'
 subDirectories = [x[0] for x in os.walk(root_dir)]
 sys.path.extend(subDirectories)
 from tools import *
-from mcmc_data_functions import Get_Comparable_Composite_T0_tau
 
 
-def plot_T0_and_tau( output_dir, sim_data_sets=None, system=None ):
+def plot_T0_and_tau( comparable_data, output_dir, sim_data_sets=None, system=None ):
 
   # Load T0 and tau data
-  comparable_data = Get_Comparable_Composite_T0_tau()
+  # comparable_data = Get_Comparable_Composite_T0_tau()
 
   import matplotlib
   import matplotlib.font_manager

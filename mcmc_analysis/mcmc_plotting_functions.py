@@ -6,6 +6,195 @@ import pymc
 import palettable
 from  load_tabulated_data import *
 
+
+
+def Plot_T0_tau_Sampling( samples_fields, comparable_data, output_dir, system='Shamrock' ):
+   
+  import pylab
+  import matplotlib
+  import matplotlib.font_manager
+  matplotlib.rcParams['mathtext.fontset'] = 'cm'
+  matplotlib.rcParams['mathtext.rm'] = 'serif'
+
+  if system == 'Lux':      prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/brvillas/fonts', "Helvetica.ttf"), size=12)
+  if system == 'Shamrock': prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/bruno/fonts/Helvetica', "Helvetica.ttf"), size=12)
+
+  nrows = 1
+  ncols = 2
+
+  font_size = 18
+  label_size = 16
+  alpha = 0.5
+
+  c_pchw18 = pylab.cm.viridis(.7)
+  c_hm12 = pylab.cm.cool(.3)
+
+  c_boss = pylab.cm.viridis(.3)
+  c_walther = pylab.cm.viridis(.3)
+  c_viel = 'C1'
+  c_boera = pylab.cm.Purples(.7)
+
+  text_color  = 'black'
+  color_line = c_pchw18
+  color_data = c_boss
+
+  fig, ax_l = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,8*nrows))
+  
+  ax = ax_l[0]
+  obs_name = 'T0'
+  samples = samples_fields[obs_name]
+  z = samples['z']
+  mean = samples['mean']
+  high = samples['higher']
+  low = samples['lower']
+  if 'Highest_Likelihood' in samples:
+    print( 'Plotting Highest_Likelihood T0')
+    mean = samples['Highest_Likelihood']
+  ax.plot( z, mean, zorder=1 )
+  ax.fill_between( z, high, low, alpha=alpha, zorder=1 )  
+
+  data_set = comparable_data[obs_name]
+  data_z = data_set['z']
+  data_mean = data_set['mean'] 
+  data_error = data_set['sigma'] 
+  ax.errorbar( data_z, data_mean, yerr=data_error, fmt='none',  alpha=0.8, ecolor= color_data, zorder=2)
+  ax.scatter( data_z, data_mean, label='Gaikwad et al.', alpha=0.8, color= color_data, zorder=2) 
+
+  ax.tick_params(axis='both', which='major', direction='in', labelsize=label_size )
+  ax.tick_params(axis='both', which='minor', direction='in' )
+  ax.set_ylabel( r'$T_0   \,\,\, [\,\mathrm{K}\,]$', fontsize=font_size  )
+  ax.set_xlabel( r'$z$', fontsize=font_size )
+  leg = ax.legend(loc=1, frameon=False, fontsize=font_size, prop=prop)
+  ax.set_xlim( 1.8, 12 )
+  ax.set_ylim( 3000, 18000)
+
+  ax = ax_l[1]
+  obs_name = 'tau'
+  samples = samples_fields[obs_name]
+  z = samples['z']
+  mean = samples['mean']
+  high = samples['higher']
+  low = samples['lower']
+  if 'Highest_Likelihood' in samples:
+    print( 'Plotting Highest_Likelihood T0')
+    mean = samples['Highest_Likelihood']
+  ax.plot( z, mean, zorder=1 )
+  ax.fill_between( z, high, low, alpha=alpha, zorder=1 )  
+
+  data_set = comparable_data[obs_name]
+  data_z = data_set['z']
+  data_mean = data_set['mean'] 
+  data_error = data_set['sigma'] 
+  ax.errorbar( data_z, data_mean, yerr=data_error, fmt='none',  alpha=0.8, ecolor= color_data, zorder=2)
+  ax.scatter( data_z, data_mean, label='Gaikwad et al.', alpha=0.8, color= color_data, zorder=2) 
+
+  ax.tick_params(axis='both', which='major', direction='in', labelsize=label_size )
+  ax.tick_params(axis='both', which='minor', direction='in' )
+  ax.set_ylabel( r'$\tau_{eff}$', fontsize=font_size  )
+  ax.set_xlabel( r'$z$', fontsize=font_size )
+  leg = ax.legend(loc=2, frameon=False, fontsize=font_size, prop=prop)
+  ax.set_xlim( 2, 6 )
+  ax.set_ylim( 0.1, 8)
+  ax.set_yscale('log')
+  
+  
+  figure_name = output_dir + f'fig_T0_tau_sampling.png'
+  fig.savefig( figure_name, bbox_inches='tight', dpi=300 )
+  print( f'Saved Figure: {figure_name}' )
+
+
+def Plot_T0_Sampling( samples, comparable_data, output_dir, system='Shamrock' ):
+   
+  import pylab
+  import matplotlib
+  import matplotlib.font_manager
+  matplotlib.rcParams['mathtext.fontset'] = 'cm'
+  matplotlib.rcParams['mathtext.rm'] = 'serif'
+
+  if system == 'Lux':      prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/brvillas/fonts', "Helvetica.ttf"), size=12)
+  if system == 'Shamrock': prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/bruno/fonts/Helvetica', "Helvetica.ttf"), size=12)
+
+  nrows = 1
+  ncols = 1
+
+  font_size = 18
+  label_size = 16
+  alpha = 0.5
+
+  c_pchw18 = pylab.cm.viridis(.7)
+  c_hm12 = pylab.cm.cool(.3)
+
+  c_boss = pylab.cm.viridis(.3)
+  c_walther = pylab.cm.viridis(.3)
+  c_viel = 'C1'
+  c_boera = pylab.cm.Purples(.7)
+
+  text_color  = 'black'
+  color_line = c_pchw18
+  color_data = c_boss
+
+  fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,8*nrows))
+
+  obs_name = 'T0'
+  z = samples['z']
+  mean = samples['mean']
+  high = samples['higher']
+  low = samples['lower']
+  if 'Highest_Likelihood' in samples:
+    print( 'Plotting Highest_Likelihood T0')
+    mean = samples['Highest_Likelihood']
+  ax.plot( z, mean, zorder=1 )
+  ax.fill_between( z, high, low, alpha=alpha, zorder=1 )  
+
+  data_set = comparable_data[obs_name]
+  data_z = data_set['z']
+  data_mean = data_set['mean'] 
+  data_error = data_set['sigma'] 
+  ax.errorbar( data_z, data_mean, yerr=data_error, fmt='none',  alpha=0.8, ecolor= color_data, zorder=2)
+  ax.scatter( data_z, data_mean, label='Gaikwad et al.', alpha=0.8, color= color_data, zorder=2) 
+
+  ax.tick_params(axis='both', which='major', direction='in', labelsize=label_size )
+  ax.tick_params(axis='both', which='minor', direction='in' )
+  ax.set_ylabel( r'$T_0   \,\,\, [\,\mathrm{K}\,]$', fontsize=font_size  )
+  ax.set_xlabel( r'$z$', fontsize=font_size )
+  leg = ax.legend(loc=1, frameon=False, fontsize=font_size, prop=prop)
+  ax.set_xlim( 1.8, 12 )
+  ax.set_ylim( 3000, 18000)
+
+  figure_name = output_dir + f'fig_T0_sampling.png'
+  fig.savefig( figure_name, bbox_inches='tight', dpi=300 )
+  print( f'Saved Figure: {figure_name}' )
+
+
+
+
+
+def Plot_Comparable_Data( field, comparable_data, comparable_grid, output_dir  ):
+
+  nrows, ncols = 1, 1
+  fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(20*ncols,5*nrows))
+
+  data_mean = comparable_data[field]['mean']
+  data_sigma = comparable_data[field]['sigma']
+  n_points = len( data_mean )
+  x = np.arange( 0, n_points, 1)
+
+  ax.errorbar( x, data_mean, yerr=data_sigma, fmt='o', c='C0', label='Data', ms=1)
+
+  sim_ids = comparable_grid.keys()
+  for sim_id in sim_ids:
+    sim_mean = comparable_grid[sim_id][field]['mean']
+    ax.scatter(x, sim_mean, s=1 )
+
+
+  ax.set_yscale('log')
+  ax.legend( frameon=False )
+
+  figure_name = output_dir + 'data_for_fit.png'
+  fig.savefig( figure_name, bbox_inches='tight', dpi=500 )
+  print( f'Saved Figure: {figure_name}' )
+
+
 def Plot_Corner( samples, labels, output_dir  ):
   param_ids = samples.keys()
   n_param = len( param_ids )
@@ -27,7 +216,7 @@ def Plot_Corner( samples, labels, output_dir  ):
   n_bins_2D = 30
   hist_2D_colormap = palettable.cmocean.sequential.Ice_20_r.mpl_colormap
 
-  fig, ax_l = plt.subplots(nrows=n_param, ncols=n_param, figsize=(fig_size*n_param,fig_size*n_param))
+  fig, ax_l = plt.subplots(nrows=n_param, ncols=n_param, figsize=(fig_size*n_param,fig_size*n_param),  sharex=False,)
   fig.subplots_adjust( wspace=space, hspace=space )
 
   for j in range( n_param ):
@@ -92,13 +281,12 @@ def Plot_Corner( samples, labels, output_dir  ):
   print( f'Saved Figure: {figure_name}' )
 
 
+
+
 def Plot_MCMC_Stats( stats, MDL, params_mcmc,  stats_file, output_dir, plot_corner=True ):
   cwd = os.getcwd()
   os.chdir( output_dir )
-
-  f = open( stats_file, 'wb' )
-  pickle.dump( stats, f)
-  print ( f'Saved File: {stats_file}' )
+  
   pymc.Matplot.plot(MDL)  
 
   labels, samples = [], []
@@ -284,6 +472,7 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
   z_vals_small_scale  = [ 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 4.2, 4.6, 5.0, 5.4 ]
   z_vals_large_scale  = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.6 ]
   z_vals_middle_scale = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 4.2, 4.6 ]
+  z_vals_all_scale    = z_vals_large_scale
   z_high = [ 5.0, 5.4 ]
 
 
@@ -291,11 +480,12 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
   n_samples = len( ps_samples )
   z_samples = np.array([ ps_samples[i]['z'] for i in range(n_samples) ])
 
-  if scales == 'large': z_vals = z_vals_large_scale
-  elif scales == 'small': z_vals = z_vals_small_scale
+  if scales == 'large':    z_vals = z_vals_large_scale
+  elif scales == 'small':  z_vals = z_vals_small_scale
   elif scales == 'middle': z_vals = z_vals_middle_scale
+  elif scales == 'all':    z_vals = z_vals_all_scale
   else: 
-    print( "ERROR: Scales = large,  small of middle ")
+    print( "ERROR: Scales = large,  small, middle or all ")
     # return
 
 
@@ -323,8 +513,8 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
   text_color  = 'black'
   color_line = c_pchw18
 
-  if scales == 'middle':
-    c_walther = 'C3'
+  if scales == 'middle' or scales == 'all':
+    c_walther = c_pchw18
 
   alpha_bar = 0.4
 
@@ -341,22 +531,27 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
 
     if scales == 'middle': flags[indx_i,  indx_j] = 1
 
-
-    diff = np.abs( z_samples - current_z )
-    diff_min = diff.min()
-    if diff_min < 0.05:
-      index = np.where( diff == diff_min )[0][0]
-      k_vals = ps_samples[index]['k_vals']
-      delta_mean = ps_samples[index]['mean']
-      delta_sigma = ps_samples[index]['sigma'] 
-      delta_higher = ps_samples[index]['higher']
-      delta_lower = ps_samples[index]['lower']
-      delta_p = delta_mean + delta_sigma
-      delta_m = delta_mean - delta_sigma 
-
-      ax.plot( k_vals, delta_mean, linewidth=3, color=color_line, zorder=1   )
-      # ax.fill_between( k_vals, delta_p, delta_m, facecolor=color_line, alpha=alpha_bar, zorder=1   )
-      ax.fill_between( k_vals, delta_higher, delta_lower, facecolor=color_line, alpha=alpha_bar, zorder=1   )
+    if ps_samples != []:
+      diff = np.abs( z_samples - current_z )
+      diff_min = diff.min()
+      if diff_min < 0.05:
+        index = np.where( diff == diff_min )[0][0]
+        k_vals = ps_samples[index]['k_vals']
+        delta_mean = ps_samples[index]['mean']
+        delta_sigma = ps_samples[index]['sigma'] 
+        delta_higher = ps_samples[index]['higher']
+        delta_lower = ps_samples[index]['lower']
+        delta_p = delta_mean + delta_sigma
+        delta_m = delta_mean - delta_sigma 
+        
+        if 'Highest_Likelihood' in ps_samples[index]:
+          print( 'Plotting Highest_Likelihood PS')
+          delta_mean = ps_samples[index]['Highest_Likelihood']
+        else:
+          print( 'Plotting mean of distribution (Not Highest_Likelihood)')
+        ax.plot( k_vals, delta_mean, linewidth=3, color=color_line, zorder=1   )
+        # ax.fill_between( k_vals, delta_p, delta_m, facecolor=color_line, alpha=alpha_bar, zorder=1   )
+        ax.fill_between( k_vals, delta_higher, delta_lower, facecolor=color_line, alpha=alpha_bar, zorder=1   )
 
     #       # ax.plot( k, delta, c=color_line, linewidth=3, label=sim_data['plot_label']  )
     # 
@@ -364,7 +559,7 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
     ax.text(0.85, 0.95, r'$z={0:.1f}$'.format(current_z), horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size, color=text_color) 
 
 
-    if scales == 'large' or scales == 'middle':
+    if scales == 'large' or scales == 'middle' or scales == 'all':
 
       # Add Boss data
       z_diff = np.abs( data_z_boss - current_z )
@@ -379,7 +574,7 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
         label_boss = 'eBOSS (2019)'
         d_boss = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boss, label=label_boss, zorder=2)
 
-    if scales == 'small' or scales == 'middle':
+    if scales == 'small' or scales == 'middle' or scales == 'all':
 
       # Add Walther data
       z_diff = np.abs( data_z_w - current_z )
@@ -444,11 +639,11 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
 
 
 
-
-    x_min, x_max = 4e-3, 2.5e-1
-    if indx_i == 0: y_min, y_max = 1e-3, 9e-2
-    if indx_i == 1: y_min, y_max = 5e-3, 2e-1
-    if indx_i == 2: y_min, y_max = 5e-2, 3
+    if scales == 'small':
+      x_min, x_max = 4e-3, 2.5e-1
+      if indx_i == 0: y_min, y_max = 1e-3, 9e-2
+      if indx_i == 1: y_min, y_max = 5e-3, 2e-1
+      if indx_i == 2: y_min, y_max = 5e-2, 3
 
     if scales == 'large':
       x_min, x_max = 2e-3, 2.3e-2
@@ -460,7 +655,12 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
       x_min, x_max = 5e-3, 1e-1
       if indx_i == 0: y_min, y_max = 4e-3, 9e-2
       if indx_i == 1: y_min, y_max = 1e-2, 5e-1
-
+      
+    if scales == 'all':
+      x_min, x_max = 1e-3, 1e0
+      if indx_i == 0: y_min, y_max = 8e-5, 9e-2
+      if indx_i == 1: y_min, y_max = 8e-5, 2e-1
+      if indx_i == 2: y_min, y_max = 5e-4, 6e-1
 
 
     ax.set_xlim( x_min, x_max )
