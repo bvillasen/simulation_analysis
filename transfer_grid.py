@@ -30,7 +30,7 @@ src_array = np.zeros([ n_src_sims, n_params ])
 for sim_id in range( n_src_sims ):
   sim_params = src_params[sim_id]['parameters']
   for param_id, param_name in enumerate(param_names):
-    src_params[sim_id, param_id] = sim_params[param_name]
+    src_array[sim_id, param_id] = sim_params[param_name]
     
 
 
