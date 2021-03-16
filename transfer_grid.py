@@ -43,7 +43,7 @@ for sim_id in range( n_dst_sims ):
       src_dir_short = src_dir[src_dir.find('sim_grid')+9:]
       dst_dir_short = src_dir[dst_dir.find('sim_grid')+9:] 
       for file in files_to_copy:
-        print( f'Copied  {src_dir_short+file} -> {dst_dir_short+file} )
+        print( f'Copied  {src_dir_short+file} -> {dst_dir_short+file} ' )
         
       
       
