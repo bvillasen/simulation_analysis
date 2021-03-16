@@ -28,16 +28,25 @@ n_dst_sims = len( dst_params )
 for sim_id in range( n_dst_sims ):
   dst_sim = dst_params[sim_id]
   dst_dir = dst_sim['dir']
-  if dst_sim['src_dir']:
+  src_dir = dst_sim['src_dir']
+  if src_dir:
     src_id = dst_sim['src_id']
     src_sim  = src_params[src_id]
     failed = False 
     for param_name in dst_sim['parameters']:
       if dst_sim['parameters'][param_name] != src_sim['parameters'][param_name]:
-        print( "ERROR: Parameters denot match {dst_sim['parameters']}, {src_sim['parameters']}") 
+        print( "ERROR: Parameters dont match {dst_sim['parameters']}, {src_sim['parameters']}") 
         failed = True
     if not failed:
       print( f"Copying: {src_sim['parameters']} ->  {dst_sim['parameters']}  ")
+      
+      src_dir_short = src_dir[src_dir.find('sim_grid')+9:]
+      dst_dir_short = src_dir[dst_dir.find('sim_grid')+9:] 
+      for file in files_to_copy:
+        print( f'Copied  {src_dir_short+file} -> {dst_dir_short+file} )
+        
+      
+      
       n_copied += 1
   else:
     n_skipped += 1
