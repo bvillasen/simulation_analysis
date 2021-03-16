@@ -40,10 +40,10 @@ for sim_id in range( n_dst_sims ):
     if not failed:
       print( f"Copying: {src_sim['parameters']} ->  {dst_sim['parameters']}  ")
       
-      src_dir_short = src_dir[src_dir.find('sim_grid')+9:]
-      dst_dir_short = src_dir[dst_dir.find('sim_grid')+9:] 
+      src_dir_short = src_dir[src_dir.find('sim_grid')+9:]+'/'
+      dst_dir_short = dst_dir[dst_dir.find('sim_grid')+9:]+'/' 
       for file in files_to_copy:
-        print( f'Copied  {src_dir_short+file} -> {dst_dir_short+file} ' )
+        print( f' Copied  {src_dir_short+file} -> {dst_dir_short+file} ' )
         
       
       
