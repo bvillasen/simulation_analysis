@@ -14,5 +14,23 @@ dst_dir = data_dir + '1024_P19m_np4_nsim320/'
 
 
 
-src_paramns = Get_Grid_Parameter_Values( src_dir )
-dst_paramns = Get_Grid_Parameter_Values( dst_dir )
+src_params = Get_Grid_Parameter_Values( src_dir )
+dst_params = Get_Grid_Parameter_Values( dst_dir )
+
+
+
+param_names = dst_dir[0]['parameters'].keys()
+n_params = len( param_names )
+n_dst_sims = len( dst_dir )
+n_src_sims = len( src_dir )
+dst_array = np.zeros([ n_dst_sims, n_params ])
+src_array = np.zeros([ n_src_sims, n_params ]) 
+
+
+for sim_id in range( n_src_sims ):
+  sim_params = src_params[sim_id]['parameters']
+  for param_id, param_name in enumerate(param_names):
+    src_params[sim_id, param_id] = sim_params[param_name]
+    
+
+
