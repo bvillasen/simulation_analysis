@@ -18,7 +18,7 @@ sim_dirs.sort()
 grid_params = {}  
 for sim_id, sim_dir in enumerate(sim_dirs):
   grid_params[sim_id] = {}
-  sim_dir = grid_dir + sim_dirs[0]
+  sim_dir = grid_dir + sim_dir
   grid_params[sim_id]['dir'] = sim_dir
   params_file = sim_dir + '/uvb_params.txt'
   file = open( params_file, 'r' )
