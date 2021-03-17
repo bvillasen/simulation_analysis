@@ -13,13 +13,15 @@ def load_data_boss( data_filename ):
     indices = np.where(z_vals_all==z)[0]
     data_z =  table[indices]
     k_vals = data_z[:,1]
-    delta_power = data_z[:,2]
-    delta_power_error = data_z[:,3]
+    power = data_z[:,2]
+    power_error = data_z[:,3]
     data_out[i] = {}
     data_out[i]['z'] = z
     data_out[i]['k_vals'] = k_vals
-    data_out[i]['delta_power'] = delta_power * k_vals / np.pi 
-    data_out[i]['delta_power_error'] = delta_power_error * k_vals / np.pi 
+    data_out[i]['delta_power'] = power * k_vals / np.pi 
+    data_out[i]['delta_power_error'] = power_error * k_vals / np.pi 
+    data_out[i]['power_spectrum'] = power  
+    data_out[i]['sigma_power_spectrum'] = power_error  
   return data_out
   
 def load_tabulated_data_boera( dir_data_boera ):
@@ -56,11 +58,15 @@ def load_power_spectrum_table( data_filename ):
     k_vals = data_z[:,1]
     delta_power = data_z[:,2]
     delta_power_error = data_z[:,3]
+    power_spectrum       = delta_power       / k_vals * np.pi
+    sigma_power_spectrum = delta_power_error / k_vals * np.pi
     data_out[i] = {}
     data_out[i]['z'] = z
     data_out[i]['k_vals'] = k_vals
     data_out[i]['delta_power'] = delta_power
     data_out[i]['delta_power_error'] = delta_power_error
+    data_out[i]['power_spectrum']       = power_spectrum
+    data_out[i]['sigma_power_spectrum'] = sigma_power_spectrum
   return data_out
 
 
