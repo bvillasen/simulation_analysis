@@ -321,7 +321,7 @@ class Simulation_Grid:
     run_file = cwd + '/phase_diagram/fit_phase_diagram_mpi.py'
     parameters = sim_dir + 'analysis_files/'
     n_per_node = n_mpi // n_nodes + 1
-    command = f'mpirun -n {n_mpi} --map-by ppr:{n_mpi}:node --oversubscribe python {run_file} {parameters}'
+    command = f'mpirun -n {n_mpi} --map-by ppr:{n_per_node}:node --oversubscribe python {run_file} {parameters}'
     print( f' Submitting: {command}' )
     os.system( command )
     
