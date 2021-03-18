@@ -311,7 +311,7 @@ class Simulation_Grid:
       self.Fit_Simulation_Phase_Diagram( sim_id )
 
 
-  def Fit_Simulation_Phase_Diagram_MPI( self, sim_id, n_mpi=30  ):
+  def Fit_Simulation_Phase_Diagram_MPI( self, sim_id, n_mpi=30,  n_nodes=1  ):
     print( f' Fitting Simulation: {sim_id}')
     sim_dir = self.Get_Simulation_Directory( sim_id )
     input_dir = sim_dir + 'analysis_files/'
@@ -320,14 +320,15 @@ class Simulation_Grid:
     cwd = os.getcwd()
     run_file = cwd + '/phase_diagram/fit_phase_diagram_mpi.py'
     parameters = sim_dir + 'analysis_files/'
+    n_per_node = n_mpi // n_nodes + 1
     command = f'mpirun -n {n_mpi} --map-by ppr:{n_mpi}:node --oversubscribe python {run_file} {parameters}'
     print( f' Submitting: {command}' )
     os.system( command )
     
-  def Fit_Grid_Phase_Diagram_MPI( self, n_mpi=30 ):
+  def Fit_Grid_Phase_Diagram_MPI( self, n_mpi=30, n_nodes=1 ):
     print("Fitting Phase Diagram:")
     for sim_id in self.Grid.keys():
-      self.Fit_Simulation_Phase_Diagram_MPI( sim_id, n_mpi=n_mpi )
+      self.Fit_Simulation_Phase_Diagram_MPI( sim_id, n_mpi=n_mpi, n_nodes=n_nodes )
       
   def Load_Simulation_Analysis_Data( self, sim_id, load_fit=False  ):
     str = f' Loading Simulation Analysis: {sim_id}' 
