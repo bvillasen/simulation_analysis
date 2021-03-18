@@ -665,6 +665,11 @@ class Simulation_Grid:
     
     for i in range(n_files):
       file_name = f'{i}_analysis.h5'
+      # Continue if reduced file already exists:
+      file_path = Path(reduced_dir + file_name)
+      if file_path.is_file():
+        print( f'Skipping File: {reduced_dir  + file_name}' )
+        continue
       in_file  = h5.File( analysis_dir + file_name, 'r' )
       out_file = h5.File( reduced_dir  + file_name, 'w' )
       
