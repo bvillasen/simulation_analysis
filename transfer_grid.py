@@ -9,7 +9,8 @@ from transfer_grid_functions import *
 
 
 # data_dir = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
-data_dir = '/gpfs/alpine/csc434/scratch/bvilasen/cosmo_sims/sim_grid/'
+# data_dir = '/gpfs/alpine/csc434/scratch/bvilasen/cosmo_sims/sim_grid/'
+data_dir = '/raid/bruno/data/cosmo_sims/sim_grid/'
 src_dir = data_dir + '1024_P19m_np4_nsim256/' 
 dst_dir = data_dir + '1024_P19m_np4_nsim320/'
 
@@ -21,13 +22,16 @@ if copy_reduced_files:
 
 
 
+  # params_default = {'deltaZ_H':0.0, 'deltaZ_He':0.2 }
 src_params = Get_Grid_Parameter_Values( src_dir )
 dst_params = Get_Grid_Parameter_Values( dst_dir )
 Link_Simulation_dirctories( src_params, dst_params )
 
 
 
-files_to_copy = ['run_output.log', 'param.txt', 'uvb_params.txt']
+
+files_to_copy = []
+# files_to_copy = ['run_output.log', 'param.txt', 'uvb_params.txt']
 
 
 

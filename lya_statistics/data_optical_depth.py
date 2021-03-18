@@ -115,6 +115,13 @@ data_optical_depth_Becker_2013 = {
 }
 
 
+def Compute_analytical_TauEff_Becker( z ):
+  z_0   = 3.5 
+  tau_0 = 0.751
+  C     = -0.132
+  beta  = 2.9
+  tau = tau_0 * ( (1 + z) / (1+ z_0) )**beta + C  
+  return tau
 
 
 data_bosman = np.array([[5.0, 0.135, 0.012 ],

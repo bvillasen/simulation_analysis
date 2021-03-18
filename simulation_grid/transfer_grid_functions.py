@@ -35,7 +35,7 @@ def Link_Simulation_dirctories( src_params, dst_params ):
 
 
 
-def Get_Grid_Parameter_Values( grid_dir ):
+def Get_Grid_Parameter_Values( grid_dir, params_default=None ):
   sim_dirs = [f for f in listdir(grid_dir) if (isdir(join(grid_dir, f)) and (f[0] == 'S' ) ) ]
   sim_dirs.sort()
   grid_params = {}  
