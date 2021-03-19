@@ -26,12 +26,30 @@ out_file_name = f'snapshot_{n_snapshot:03}.h5'
 out_file = h5.File( out_file_name, 'w' )
 
 
-#Load Gas data
-fields = [ 'density' ]
-data_gas = load_snapshot_data_distributed( 'hydro', fields, n_snapshot, input_dir, box_size, grid_size,  precision, show_progess=True, proc_grid=proc_grid, print_fields=True )
-current_z = data_gas['Current_z']  #redshift
-density_gas = data_gas['density']  # h^2 Msun / kpc^3
+fiels_to_load = [ 'density', 'HI_density', 'temperature']
+for field in fields_to_load:
+  #Load Gas data
+  fields = [ field ]
+  data_gas = load_snapshot_data_distributed( 'hydro', fields, n_snapshot, input_dir, box_size, grid_size,  precision, show_progess=True, proc_grid=proc_grid, print_fields=True )
+  current_z = data_gas['Current_z']  #redshift
+  field_gas = data_gas[field]  # h^2 Msun / kpc^3
 
+  if field = 'density': field = 'gas_density'
+  out_file.create_dataset( field, data=field_gas )
+  print( f'Saved Field: {field}' )
+
+
+
+fiels_to_load = [ 'density']
+for field in fields_to_load:
+  #Load DM data
+  fields = [ field ]
+  data_dm = load_snapshot_data_distributed( 'particles', fields, n_snapshot, input_dir, box_size, grid_size,  precision, show_progess=True, proc_grid=proc_grid, print_fields=True )
+  field_dm = data_dm[field]  # h^2 Msun / kpc^3
+
+  if field = 'density': field = 'dm_density'
+  out_file.create_dataset( field, data=field_dm )
+  print( f'Saved Field: {field}' )
 
 
 
