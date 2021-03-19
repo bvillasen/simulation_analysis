@@ -28,7 +28,7 @@ out_file = h5.File( out_file_name, 'w' )
 
 #Load Gas data
 fields = [ 'density' ]
-data_gas = load_snapshot_data_distributed( 'particles', fields, n_snapshot, input_dir, box_size, grid_size,  precision, show_progess=True, proc_grid=proc_grid, print_fields=True )
+data_gas = load_snapshot_data_distributed( 'hydro', fields, n_snapshot, input_dir, box_size, grid_size,  precision, show_progess=True, proc_grid=proc_grid, print_fields=True )
 current_z = data_gas['Current_z']  #redshift
 density_gas = data_gas['density']  # h^2 Msun / kpc^3
 
