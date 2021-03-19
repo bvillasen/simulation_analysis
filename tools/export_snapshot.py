@@ -22,7 +22,7 @@ proc_grid = [ 8, 8, 8 ]
 n_snapshot = 169
 
 
-out_file_name = f'snapshot_{n_snapshot:03}.h5'
+out_file_name = output_dir + f'snapshot_{n_snapshot:03}.h5'
 out_file = h5.File( out_file_name, 'w' )
 
 
@@ -40,7 +40,7 @@ for field in fields_to_load:
 
 
 
-fiels_to_load = [ 'density']
+fields_to_load = [ 'density']
 for field in fields_to_load:
   #Load DM data
   fields = [ field ]
@@ -52,10 +52,9 @@ for field in fields_to_load:
   print( f'Saved Field: {field}' )
 
 
-
 out_file.attrs['current_z'] = current_z
-
 out_file.close()
+print( f'Saved File: {out_file}')
 
 #Load DM data
 # fields = [ 'density', 'pos_x', 'pos_y', 'pos_z', 'particle_IDs' ]
