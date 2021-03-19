@@ -34,7 +34,7 @@ for field in fields_to_load:
   current_z = data_gas['Current_z']  #redshift
   field_gas = data_gas[field]  # h^2 Msun / kpc^3
 
-  if field = 'density': field = 'gas_density'
+  if field == 'density': field = 'gas_density'
   out_file.create_dataset( field, data=field_gas )
   print( f'Saved Field: {field}' )
 
@@ -47,7 +47,7 @@ for field in fields_to_load:
   data_dm = load_snapshot_data_distributed( 'particles', fields, n_snapshot, input_dir, box_size, grid_size,  precision, show_progess=True, proc_grid=proc_grid, print_fields=True )
   field_dm = data_dm[field]  # h^2 Msun / kpc^3
 
-  if field = 'density': field = 'dm_density'
+  if field == 'density': field = 'dm_density'
   out_file.create_dataset( field, data=field_dm )
   print( f'Saved Field: {field}' )
 
