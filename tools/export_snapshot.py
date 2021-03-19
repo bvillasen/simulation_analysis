@@ -58,7 +58,7 @@ out_file_name = output_dir + f'snapshot_{n_snapshot:03}.h5'
 
 
 
-file = File( out_file_name, 'r' )
+file = h5.File( out_file_name, 'r' )
 print( f'Loading: {file} ' )
 
 for key in file.keys():
