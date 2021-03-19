@@ -17,12 +17,13 @@ Lbox = 50000.0    #kpc/h
 n_cells = 2048
 box_size = [ Lbox, Lbox, Lbox ]
 grid_size = [ n_cells, n_cells, n_cells ] #Size of the simulation grid
+proc_grid = [ 8, 8, 8 ]
 
 n_snapshot = 169
 
 #Load Gas data
 fields = [ 'density' ]
-data_gas = load_snapshot_data_distributed( 'hydro', fields, n_snapshot, input_dir, box_size, grid_size,  precision, show_progess=True )
+data_gas = load_snapshot_data_distributed( 'hydro', fields, n_snapshot, input_dir, box_size, grid_size,  precision, show_progess=True, proc_grid=proc_grid )
 current_z = data_gas['Current_z']  #redshift
 density_gas = data_gas['density']  # h^2 Msun / kpc^3
 
