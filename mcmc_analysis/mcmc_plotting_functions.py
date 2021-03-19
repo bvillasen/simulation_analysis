@@ -4,7 +4,125 @@ import pickle
 import matplotlib.pyplot as plt
 import pymc 
 import palettable
-from  load_tabulated_data import *
+from load_tabulated_data import *
+from data_optical_depth import *
+from data_optical_depth_HeII import data_tau_HeII
+
+
+
+def Plot_tau_HeII_Sampling( samples_fields, output_dir, system='Shamrock', label='' ):
+   
+  import pylab
+  import matplotlib
+  import matplotlib.font_manager
+  matplotlib.rcParams['mathtext.fontset'] = 'cm'
+  matplotlib.rcParams['mathtext.rm'] = 'serif'
+
+  if system == 'Lux':      prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/brvillas/fonts', "Helvetica.ttf"), size=12)
+  if system == 'Shamrock': prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/bruno/fonts/Helvetica', "Helvetica.ttf"), size=12)
+
+  nrows = 1
+  ncols = 2
+
+  font_size = 18
+  label_size = 16
+  alpha = 0.5
+
+  c_pchw18 = pylab.cm.viridis(.7)
+  c_hm12 = pylab.cm.cool(.3)
+
+  c_boss = pylab.cm.viridis(.3)
+  c_walther = pylab.cm.viridis(.3)
+  c_viel = 'C1'
+  c_boera = pylab.cm.Purples(.7)
+
+  text_color  = 'black'
+  color_line = c_pchw18
+  color_becker = c_boss
+  color_bosman = c_viel
+  
+  
+  fig, ax_l = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,8*nrows))
+
+
+  ax = ax_l[0]
+  obs_name = 'tau'
+  samples = samples_fields[obs_name]
+  z = samples['z']
+  mean = samples['mean']
+  high = samples['higher']
+  low = samples['lower']
+  if 'Highest_Likelihood' in samples:
+    print( 'Plotting Highest_Likelihood T0')
+    mean = samples['Highest_Likelihood']
+  ax.plot( z, mean, color=color_line, zorder=1, label=label )
+  ax.fill_between( z, high, low, color=color_line, alpha=alpha, zorder=1 )  
+  
+
+  data_set = data_optical_depth_Bosman_2018
+  data_name = data_set['name']
+  data_z = data_set['z']
+  data_tau = data_set['tau'] 
+  data_tau_sigma = data_set['tau_sigma'] 
+  ax.errorbar( data_z, data_tau, yerr=data_tau_sigma, fmt='none',  alpha=0.8, ecolor= color_bosman, zorder=2)
+  ax.scatter( data_z, data_tau, label=data_name, alpha=0.8, color= color_bosman, zorder=2) 
+
+  
+  data_set = data_optical_depth_Becker_2013
+  data_name = data_set['name']
+  data_z = data_set['z']
+  z_analytical = np.linspace(2,5, 50)
+  data_analytical = np.array([ Compute_analytical_TauEff_Becker(z) for z in z_analytical])
+  data_tau = data_set['tau'] 
+  data_tau_sigma = data_set['tau_sigma'] 
+  ax.errorbar( data_z, data_tau, yerr=data_tau_sigma, fmt='none',  alpha=0.8, ecolor= color_becker, zorder=3)
+  ax.scatter( data_z, data_tau, label=data_name, alpha=0.8, color= color_becker, zorder=3) 
+  ax.plot( z_analytical, data_analytical, '--', c=color_becker, zorder=4, label=data_name +  ' analytical fit')
+
+  ax.tick_params(axis='both', which='major', direction='in', labelsize=label_size )
+  ax.tick_params(axis='both', which='minor', direction='in' )
+  ax.set_ylabel( r'$\tau_{eff} \,\, \mathrm{HI}$', fontsize=font_size  )
+  ax.set_xlabel( r'$z$', fontsize=font_size )
+  leg = ax.legend(loc=2, frameon=False, fontsize=font_size, prop=prop)
+  ax.set_xlim( 2, 6 )
+  ax.set_ylim( 0.1, 8)
+  ax.set_yscale('log')
+  
+
+  ax = ax_l[1]
+  obs_name = 'tau_HeII'
+  samples = samples_fields[obs_name]
+  z = samples['z']
+  mean = samples['mean']
+  high = samples['higher']
+  low = samples['lower']
+  if 'Highest_Likelihood' in samples:
+    print( 'Plotting Highest_Likelihood T0')
+    mean = samples['Highest_Likelihood']
+  ax.plot( z, mean, color=color_line, zorder=1, label=label )
+  ax.fill_between( z, high, low, color=color_line, alpha=alpha, zorder=1 )  
+  
+
+  data_set = data_tau_HeII
+  data_name = data_set['name']
+  data_z = data_set['z']
+  data_tau = data_set['tau'] 
+  ax.scatter( data_z, data_tau, label=data_name, alpha=0.8, color= color_becker, zorder=2) 
+
+  ax.tick_params(axis='both', which='major', direction='in', labelsize=label_size )
+  ax.tick_params(axis='both', which='minor', direction='in' )
+  ax.set_ylabel( r'$\tau_{eff} \,\, \mathrm{HeII}$', fontsize=font_size  )
+  ax.set_xlabel( r'$z$', fontsize=font_size )
+  leg = ax.legend(loc=2, frameon=False, fontsize=font_size, prop=prop)
+  ax.set_xlim( 2, 3.2 )
+  ax.set_ylim( 0., 8)
+  # ax.set_yscale('log')
+
+
+  
+  figure_name = output_dir + f'fig_tau_HeII_sampling.png'
+  fig.savefig( figure_name, bbox_inches='tight', dpi=300 )
+  print( f'Saved Figure: {figure_name}' )
 
 
 
@@ -103,7 +221,7 @@ def Plot_T0_tau_Sampling( samples_fields, comparable_data, output_dir, system='S
   print( f'Saved Figure: {figure_name}' )
 
 
-def Plot_T0_Sampling( samples, comparable_data, output_dir, system='Shamrock' ):
+def Plot_T0_Sampling( samples, comparable_data, output_dir, system='Shamrock', label='' ):
    
   import pylab
   import matplotlib
@@ -143,8 +261,8 @@ def Plot_T0_Sampling( samples, comparable_data, output_dir, system='Shamrock' ):
   if 'Highest_Likelihood' in samples:
     print( 'Plotting Highest_Likelihood T0')
     mean = samples['Highest_Likelihood']
-  ax.plot( z, mean, zorder=1 )
-  ax.fill_between( z, high, low, alpha=alpha, zorder=1 )  
+  ax.plot( z, mean, color=color_line, zorder=1, label=label )
+  ax.fill_between( z, high, low, color=color_line, alpha=alpha, zorder=1 )  
 
   data_set = comparable_data[obs_name]
   data_z = data_set['z']
@@ -169,7 +287,7 @@ def Plot_T0_Sampling( samples, comparable_data, output_dir, system='Shamrock' ):
 
 
 
-def Plot_Comparable_Data( field, comparable_data, comparable_grid, output_dir  ):
+def Plot_Comparable_Data( field, comparable_data, comparable_grid, output_dir, log_ps=False  ):
 
   nrows, ncols = 1, 1
   fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(20*ncols,5*nrows))
@@ -187,7 +305,8 @@ def Plot_Comparable_Data( field, comparable_data, comparable_grid, output_dir  )
     ax.scatter(x, sim_mean, s=1 )
 
 
-  ax.set_yscale('log')
+  if not log_ps: ax.set_yscale('log')
+  ax.set_ylim( -5, -1)
   ax.legend( frameon=False )
 
   figure_name = output_dir + 'data_for_fit.png'
@@ -201,7 +320,7 @@ def Plot_Corner( samples, labels, output_dir  ):
   color = 'C0'
   data_color = 'C9'
   font_size = 16
-  label_size = 20
+  label_size = 24
   alpha = 0.6
   fig_size = 5
   space = 0.05
@@ -215,6 +334,10 @@ def Plot_Corner( samples, labels, output_dir  ):
 
   n_bins_2D = 30
   hist_2D_colormap = palettable.cmocean.sequential.Ice_20_r.mpl_colormap
+  
+  import matplotlib
+  matplotlib.rcParams['mathtext.fontset'] = 'cm'
+  matplotlib.rcParams['mathtext.rm'] = 'serif'
 
   fig, ax_l = plt.subplots(nrows=n_param, ncols=n_param, figsize=(fig_size*n_param,fig_size*n_param),  sharex=False,)
   fig.subplots_adjust( wspace=space, hspace=space )
@@ -420,7 +543,7 @@ def Plot_Observables( observables_samples, comparable_data, params, SG, plot_typ
 
 
 
-def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='small', system=None, name='' ):
+def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='small', system=None, name='', label='' ):
 
   import matplotlib
   import pylab
@@ -549,7 +672,7 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
           delta_mean = ps_samples[index]['Highest_Likelihood']
         else:
           print( 'Plotting mean of distribution (Not Highest_Likelihood)')
-        ax.plot( k_vals, delta_mean, linewidth=3, color=color_line, zorder=1   )
+        ax.plot( k_vals, delta_mean, linewidth=3, color=color_line, zorder=1, label=label   )
         # ax.fill_between( k_vals, delta_p, delta_m, facecolor=color_line, alpha=alpha_bar, zorder=1   )
         ax.fill_between( k_vals, delta_higher, delta_lower, facecolor=color_line, alpha=alpha_bar, zorder=1   )
 

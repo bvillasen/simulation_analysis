@@ -36,13 +36,14 @@ def Write_MCMC_Results( stats, MDL, params_mcmc,  stats_file, samples_file,  out
   os.chdir( cwd )
   return samples
 
-def Get_Data_Grid_Composite( fields,  SG, z_vals=None ):
-  fields_list = fields.split('+')
+def Get_Data_Grid_Composite( fields_list,  SG, z_vals=None ):
+  # fields_list = fields.split('+')
   data_grid_all = {}
   for field in fields_list:
     if field == 'T0':   data_grid_all[field] = Get_Data_Grid( [field], SG ) 
     if field == 'tau':  data_grid_all[field] = Get_Data_Grid( [field], SG ) 
     if field == 'P(k)': data_grid_all[field] = Get_Data_Grid_Power_spectrum( z_vals, SG )
+    if field == 'tau_HeII':  data_grid_all[field] = Get_Data_Grid( [field], SG ) 
 
   data_grid = {}
   sim_ids = SG.sim_ids
@@ -91,7 +92,7 @@ def Get_Data_Grid( fields, SG ):
       data_grid[sim_id][field]['mean'] = SG.Grid[sim_id]['analysis'][field]
   return data_grid
 
-def Get_Comparable_Composite_from_Grid( fields, comparable_data, SG ):
+def Get_Comparable_Composite_from_Grid( fields, comparable_data, SG, log_ps=False ):
   fields_list = fields.split('+')
 
   sim_ids = SG.sim_ids
@@ -99,7 +100,7 @@ def Get_Comparable_Composite_from_Grid( fields, comparable_data, SG ):
   for field in fields_list:
     if field == 'T0':   comparable_grid_all[field] = Get_Comparable_T0_from_Grid(  comparable_data[field], SG )
     if field == 'tau':  comparable_grid_all[field] = Get_Comparable_tau_from_Grid( comparable_data[field], SG )
-    if field == 'P(k)': comparable_grid_all[field] = Get_Comparable_Power_Spectrum_from_Grid( comparable_data[field]['separate'], SG )
+    if field == 'P(k)': comparable_grid_all[field] = Get_Comparable_Power_Spectrum_from_Grid( comparable_data[field]['separate'], SG, log_ps=log_ps )
     
   comparable_grid = {}
   for sim_id in sim_ids:
@@ -113,7 +114,7 @@ def Get_Comparable_Composite_from_Grid( fields, comparable_data, SG ):
   return comparable_grid
 
 
-def Get_Comparable_Power_Spectrum_from_Grid( comparable_data, SG ):
+def Get_Comparable_Power_Spectrum_from_Grid( comparable_data, SG, log_ps=False ):
   
   print( 'Generating Simulation P(k) comparable data:')
   indices = comparable_data.keys()
@@ -137,7 +138,8 @@ def Get_Comparable_Power_Spectrum_from_Grid( comparable_data, SG ):
       sim_z = sim_z_all[id_sim]
       sim_kvals = sim_k_vals_all[id_sim]
       sim_ps = sim_ps_all[id_sim]
-      sim_delta = sim_ps * sim_kvals / np.pi 
+      sim_delta = sim_ps * sim_kvals / np.pi
+      if log_ps: sim_delta = np.log( sim_delta ) 
       sim_delta_interp = np.interp( data_kvals, sim_kvals, sim_delta )
       diff = ( sim_delta_interp - data_delta_vals ) / data_delta_vals
       sim_delta_all.append( sim_delta_interp )
@@ -186,7 +188,7 @@ def Get_Comparable_Field_from_Grid( field, comparable_data, SG, interpolate=True
   return comparable_grid
   
 
-def Get_Comparable_Composite( fields, z_min, z_max, ps_extras=None, tau_extras=None ):
+def Get_Comparable_Composite( fields, z_min, z_max, ps_extras=None, tau_extras=None, log_ps=False ):
   
   if ps_extras is not None:
     ps_data_dir = ps_extras['data_dir']
@@ -203,7 +205,7 @@ def Get_Comparable_Composite( fields, z_min, z_max, ps_extras=None, tau_extras=N
   for field in fields_list:
     append_comparable = False
     if field == 'P(k)':
-      comparable_ps = Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_ps_sets, ps_range )
+      comparable_ps = Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_ps_sets, ps_range, log_ps=log_ps )
       comparable_ps_all = comparable_ps['P(k)']
       comparable_ps_separate = comparable_ps['separate']
       comparable_all['P(k)'] = { 'all':comparable_ps_all, 'separate':comparable_ps_separate }
@@ -225,7 +227,7 @@ def Get_Comparable_Composite( fields, z_min, z_max, ps_extras=None, tau_extras=N
   
 
 
-def Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_sets, ps_range ):
+def Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_sets, ps_range, log_ps=False ):
   print( f'Loading P(k) Data:' )
   dir_boss = ps_data_dir + 'data_power_spectrum_boss/'
   data_filename = dir_boss + 'data_table.py'
@@ -243,6 +245,7 @@ def Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_sets, ps_rang
   data_dir = { 'Boss':data_boss, 'Walther':data_walther, 'Boera':data_boera, 'Viel':data_viel }
 
   data_kvals, data_ps, data_ps_sigma, data_indices, data_z  = [], [], [], [], []
+  log_data_ps, log_data_ps_sigma = [], []
   sim_z, sim_kmin, sim_kmax = ps_range['z'], ps_range['k_min'], ps_range['k_max']
 
   ps_data = {}
@@ -266,19 +269,29 @@ def Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_sets, ps_rang
         k_vals = k_vals[k_indices]
         delta_ps = data['delta_power'][k_indices]
         delta_ps_sigma = data['delta_power_error'][k_indices]
+        log_delta_ps = np.log( delta_ps )
+        log_delta_ps_sigma = 1/delta_ps * delta_ps_sigma
         ps_data[data_id] = {'z':z, 'k_vals':k_vals, 'delta_ps':delta_ps, 'delta_ps_sigma':delta_ps_sigma }
         data_z.append( z )
         data_kvals.append( k_vals )
         data_ps.append( delta_ps )
         data_ps_sigma.append( delta_ps_sigma )
+        log_data_ps.append( log_delta_ps )
+        log_data_ps_sigma.append( log_delta_ps_sigma )
         data_id += 1
   k_vals_all         = np.concatenate( data_kvals )
   delta_ps_all       = np.concatenate( data_ps )
   delta_ps_sigma_all = np.concatenate( data_ps_sigma )
+  log_delta_ps_all       = np.concatenate( log_data_ps )
+  log_delta_ps_sigma_all = np.concatenate( log_data_ps_sigma )
   ps_data_out = {'P(k)':{}, 'separate':ps_data }
   ps_data_out['P(k)']['k_vals'] = k_vals_all
-  ps_data_out['P(k)']['mean']   = delta_ps_all
-  ps_data_out['P(k)']['sigma']  = delta_ps_sigma_all
+  if log_ps:
+    ps_data_out['P(k)']['mean']   = log_delta_ps_all
+    ps_data_out['P(k)']['sigma']  = log_delta_ps_sigma_all
+  else:
+    ps_data_out['P(k)']['mean']   = delta_ps_all
+    ps_data_out['P(k)']['sigma']  = delta_ps_sigma_all
 
   n_data_points = len( k_vals_all )
   print( f' N data points: {n_data_points}' )
