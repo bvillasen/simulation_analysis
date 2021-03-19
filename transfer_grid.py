@@ -14,7 +14,7 @@ data_dir = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
 src_dir = data_dir + '1024_P19m_np4_nsim320/' 
 dst_dir = data_dir + '1024_P19m_np4_nsim400/'
 
-copy_reduced_files = False
+copy_reduced_files = True
 if copy_reduced_files:
   src_reduced = src_dir + 'reduced_files/'
   dst_reduced = dst_dir + 'reduced_files/'
