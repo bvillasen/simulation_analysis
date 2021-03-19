@@ -26,7 +26,7 @@ out_file_name = f'snapshot_{n_snapshot:03}.h5'
 out_file = h5.File( out_file_name, 'w' )
 
 
-fiels_to_load = [ 'density', 'HI_density', 'temperature']
+fields_to_load = [ 'density', 'HI_density', 'temperature']
 for field in fields_to_load:
   #Load Gas data
   fields = [ field ]
