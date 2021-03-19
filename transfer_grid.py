@@ -30,8 +30,8 @@ Link_Simulation_dirctories( src_params, dst_params )
 
 
 
-files_to_copy = []
-# files_to_copy = ['run_output.log', 'param.txt', 'uvb_params.txt']
+# files_to_copy = []
+files_to_copy = ['run_output.log', 'param.txt', 'uvb_params.txt']
 
 
 
