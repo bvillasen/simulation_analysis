@@ -70,7 +70,7 @@ for sim_id in range( n_dst_sims ):
     for dir in directories_to_copy:
       dst_dir_content = os.listdir(dst_dir + '/' + dir)
       if len(dst_dir_content) == 0:
-        print( f' Deleting Empty: {os.rmdir( dst_dir + '/' + dir )}')
+        print( f' Deleting Empty: {dst_dir + '/' + dir }')
         # os.rmdir( dst_dir + '/' + dir )
          
       copytree(src_dir + '/' + dir, dst_dir + '/' + dir )
