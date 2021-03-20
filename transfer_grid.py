@@ -31,8 +31,10 @@ Link_Simulation_dirctories( src_params, dst_params )
 
 
 
-# files_to_copy = ['run_output.log', 'param.txt', 'uvb_params.txt']
 files_to_copy = []
+files_to_copy = ['run_output.log', 'param.txt', 'uvb_params.txt']
+directories_to_copy = [ 'analysis_files' ]
+
 
 copy_simulation_directory = True
 
@@ -56,18 +58,18 @@ for sim_id in range( n_dst_sims ):
     if failed: break
     
     print( f"\nCopying: {src_sim['parameters']} ->  {dst_sim['parameters']}  ")
-    
-    if copy_simulation_directory:
-      print( src_dir )
-      print( dst_grid_dir )
       
       
-    else:
-      src_dir_short = src_dir[src_dir.find('sim_grid')+9:]+'/'
-      dst_dir_short = dst_dir[dst_dir.find('sim_grid')+9:]+'/' 
-      for file in files_to_copy:
-        copyfile(src_dir + '/' + file, dst_dir + '/' + file )
-        print( f' Copied  {src_dir_short+file} -> {dst_dir_short+file} ' )
+    src_dir_short = src_dir[src_dir.find('sim_grid')+9:]+'/'
+    dst_dir_short = dst_dir[dst_dir.find('sim_grid')+9:]+'/' 
+    for file in files_to_copy:
+      copyfile(src_dir + '/' + file, dst_dir + '/' + file )
+      print( f' Copied  {src_dir_short+file} -> {dst_dir_short+file} ' )
+      
+      
+    for dir in directories_to_copy:
+      # copytree(src_dir + '/' + dir, dst_dir + '/' + dir )
+      print( f' Copied  {src_dir_short+dir} -> {dst_dir_short+dir} ' )
     
     if copy_reduced_files:
       src_red_dir = src_reduced + src_sim['name']
