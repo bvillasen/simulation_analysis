@@ -16,8 +16,8 @@ from mcmc_plotting_functions import *
 from mcmc_sampling_functions import *
 
 # data_sets = [ 'Boss', 'Walther', 'Boera', 'Viel' ]
-# data_ps_sets = [ 'Boss' ]
-data_ps_sets = [ 'Walther' ]
+data_ps_sets = [ 'Boss' ]
+# data_ps_sets = [ 'Walther' ]
 # data_ps_sets = [ 'Boera' ]
 # data_ps_sets = [ 'Boss', 'Walther' ]
 # data_ps_sets = [ 'Walther', 'Boera' ]
@@ -31,11 +31,12 @@ for data_set in data_ps_sets:
   name += data_set + '_'
 name = name[:-1] 
 
-# field = 'P(k)+T0+tau'
-field = 'P(k)+T0'
+# field = 'P(k)+T0'
+# field = 'P(k)+'
+field = 'P(k)+tau_HeII'
 
-fit_log_power_spectrum =  True
-# fit_log_power_spectrum =  False
+# fit_log_power_spectrum =  True
+fit_log_power_spectrum =  False
 if fit_log_power_spectrum: name += '_log'
 
 ps_data_dir = 'lya_statistics/data/'
@@ -103,7 +104,7 @@ else:
 
 # Make Corner plot from posteriors 
 labels = { 'scale_He':r'$\beta_{\mathrm{He}}$', 'scale_H':r'$\beta_{\mathrm{H}}$', 'deltaZ_He':r'$\Delta z_{\mathrm{He}}$', 'deltaZ_H':r'$\Delta z_{\mathrm{H}}$'    }
-Plot_Corner( param_samples, labels, output_dir  )
+Plot_Corner( param_samples, labels, output_dir, n_bins_1D=40, n_bins_2D=40  )
 
 
 # Get the Highest_Likelihood parameter values 
@@ -144,6 +145,6 @@ if 'Boss'    in data_ps_sets: Plot_Power_Spectrum_Sampling( samples_ps, ps_data_
 if 'Walther' in data_ps_sets: Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='small', system=system, label=label )
 Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='all', system=system, label=label )
 
-Plot_T0_Sampling( samples_fields['T0'], comparable_data, output_dir, system=system, label=label )
+Plot_T0_Sampling( samples_fields['T0'], output_dir, system=system, label=label )
 
 Plot_tau_HeII_Sampling( samples_fields, output_dir, system=system, label=label )

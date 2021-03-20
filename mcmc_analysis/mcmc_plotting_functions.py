@@ -6,8 +6,8 @@ import pymc
 import palettable
 from load_tabulated_data import *
 from data_optical_depth import *
-from data_optical_depth_HeII import data_tau_HeII
-
+from data_optical_depth_HeII import data_tau_HeII_Worserc_2019
+from data_thermal_history import *
 
 
 def Plot_tau_HeII_Sampling( samples_fields, output_dir, system='Shamrock', label='' ):
@@ -103,11 +103,16 @@ def Plot_tau_HeII_Sampling( samples_fields, output_dir, system='Shamrock', label
   ax.fill_between( z, high, low, color=color_line, alpha=alpha, zorder=1 )  
   
 
-  data_set = data_tau_HeII
+  data_set = data_tau_HeII_Worserc_2019
   data_name = data_set['name']
   data_z = data_set['z']
   data_tau = data_set['tau'] 
+  data_tau_sigma = data_set['tau_sigma'] 
+  tau_p = data_set['tau_sigma_p']
+  tau_m = data_set['tau_sigma_m']
+  tau_error = [ data_tau - tau_m , tau_p - data_tau  ]
   ax.scatter( data_z, data_tau, label=data_name, alpha=0.8, color= color_becker, zorder=2) 
+  ax.errorbar( data_z, data_tau, yerr=tau_error, fmt='none',  alpha=0.8, ecolor= color_becker, zorder=2)
 
   ax.tick_params(axis='both', which='major', direction='in', labelsize=label_size )
   ax.tick_params(axis='both', which='minor', direction='in' )
@@ -221,7 +226,7 @@ def Plot_T0_tau_Sampling( samples_fields, comparable_data, output_dir, system='S
   print( f'Saved Figure: {figure_name}' )
 
 
-def Plot_T0_Sampling( samples, comparable_data, output_dir, system='Shamrock', label='' ):
+def Plot_T0_Sampling( samples, output_dir, system='Shamrock', label='' ):
    
   import pylab
   import matplotlib
@@ -264,12 +269,21 @@ def Plot_T0_Sampling( samples, comparable_data, output_dir, system='Shamrock', l
   ax.plot( z, mean, color=color_line, zorder=1, label=label )
   ax.fill_between( z, high, low, color=color_line, alpha=alpha, zorder=1 )  
 
-  data_set = comparable_data[obs_name]
+  data_set = data_thermal_history_Gaikwad_2020a
   data_z = data_set['z']
-  data_mean = data_set['mean'] 
-  data_error = data_set['sigma'] 
-  ax.errorbar( data_z, data_mean, yerr=data_error, fmt='none',  alpha=0.8, ecolor= color_data, zorder=2)
-  ax.scatter( data_z, data_mean, label='Gaikwad et al.', alpha=0.8, color= color_data, zorder=2) 
+  data_mean = data_set['T0'] 
+  data_error = 0.5 * ( data_set['T0_sigma_plus'] + data_set['T0_sigma_minus'] )
+  name = data_set['name']   
+  ax.errorbar( data_z, data_mean, yerr=data_error, fmt='none',  alpha=0.8, ecolor= c_viel, zorder=2)
+  ax.scatter( data_z, data_mean, label=name, alpha=0.8, color= c_viel, zorder=2) 
+  
+  data_set = data_thermal_history_Gaikwad_2020b
+  data_z = data_set['z']
+  data_mean = data_set['T0'] 
+  data_error = 0.5 * ( data_set['T0_sigma_plus'] + data_set['T0_sigma_minus'] )
+  name = data_set['name']   
+  ax.errorbar( data_z, data_mean, yerr=data_error, fmt='none',  alpha=0.8, ecolor= c_boss, zorder=2)
+  ax.scatter( data_z, data_mean, label=name, alpha=0.8, color= c_boss, zorder=2) 
 
   ax.tick_params(axis='both', which='major', direction='in', labelsize=label_size )
   ax.tick_params(axis='both', which='minor', direction='in' )
@@ -305,8 +319,10 @@ def Plot_Comparable_Data( field, comparable_data, comparable_grid, output_dir, l
     ax.scatter(x, sim_mean, s=1 )
 
 
-  if not log_ps: ax.set_yscale('log')
-  ax.set_ylim( -5, -1)
+  if not log_ps: 
+    ax.set_yscale('log')
+  else:
+    ax.set_ylim( -5, -1)
   ax.legend( frameon=False )
 
   figure_name = output_dir + 'data_for_fit.png'
@@ -314,7 +330,7 @@ def Plot_Comparable_Data( field, comparable_data, comparable_grid, output_dir, l
   print( f'Saved Figure: {figure_name}' )
 
 
-def Plot_Corner( samples, labels, output_dir  ):
+def Plot_Corner( samples, labels, output_dir, n_bins_1D=20, n_bins_2D=30,  lower_mask_factor=50  ):
   param_ids = samples.keys()
   n_param = len( param_ids )
   color = 'C0'
@@ -328,18 +344,22 @@ def Plot_Corner( samples, labels, output_dir  ):
   tick_length = 7
   tick_width = 2
   border_width = 2.0
-  n_bins_1D = 20
   hist_1D_line_width = 2
   hist_1D_line_color = 'C0'
-
-  n_bins_2D = 30
   hist_2D_colormap = palettable.cmocean.sequential.Ice_20_r.mpl_colormap
+  
+  color_map_0 = palettable.cmocean.sequential.Ice_20_r
+  color_map_1 = palettable.cmocean.sequential.Amp_20
+  color_map_2 = palettable.cmocean.sequential.Tempo_20
+  color_map_3 = palettable.cmocean.sequential.Dense_20
+  color_map_4 = palettable.cmocean.sequential.Algae_20
+  color_map_list = [ color_map_0, color_map_1, color_map_2, color_map_3, color_map_4 ]
   
   import matplotlib
   matplotlib.rcParams['mathtext.fontset'] = 'cm'
   matplotlib.rcParams['mathtext.rm'] = 'serif'
 
-  fig, ax_l = plt.subplots(nrows=n_param, ncols=n_param, figsize=(fig_size*n_param,fig_size*n_param),  sharex=False,)
+  fig, ax_l = plt.subplots(nrows=n_param, ncols=n_param, figsize=(fig_size*n_param,fig_size*n_param),  sharex='col' )
   fig.subplots_adjust( wspace=space, hspace=space )
 
   for j in range( n_param ):
@@ -375,27 +395,38 @@ def Plot_Corner( samples, labels, output_dir  ):
 
       if i == j: plot_type = '1D'
       if i < j:  plot_type = '2D'
+      
+      colormap = color_map_list[0]
+      hist_2D_colormap = colormap.mpl_colormap
+      contour_colormap = colormap.mpl_colors
 
-
+      n_colors = len( contour_colormap )
+      line_color = contour_colormap[n_colors//2]
+      contour_colors = [contour_colormap[n_colors//2], contour_colormap[-1]]
+      
       if plot_type == '1D':
         name  = samples[j]['name']
         trace = samples[j]['trace']
         hist, bin_edges = np.histogram( trace, bins=n_bins_1D ) 
         bin_centers = ( bin_edges[:-1] + bin_edges[1:] ) / 2.
         bin_width = bin_centers[0] - bin_centers[1]  
-        ax.step( bin_centers, hist, where='mid', color=hist_1D_line_color, linewidth=hist_1D_line_width  )
+        ax.step( bin_centers, hist, where='mid',  color=line_color, linewidth=hist_1D_line_width  )
 
       if plot_type == '2D':
         trace_y = samples[j]['trace']
         trace_x = samples[i]['trace']
         hist, x_edges, y_edges = np.histogram2d( trace_x, trace_y, bins=[n_bins_2D, n_bins_2D] )
         hist = hist.astype( np.float ) 
-        hist = hist.T / hist.sum()
+        # hist = hist.T / hist.sum()
+        hist = hist.T 
         hist_mean = hist.mean()
         hist_sigma = np.sqrt( ((hist-hist_mean)**2).mean() )
         extent = [ trace_x.min(), trace_x.max(), trace_y.min(), trace_y.max() ]
-        ax.imshow( hist[::-1], cmap=hist_2D_colormap, extent=extent, aspect='auto' )
-        ax.contour( hist, [hist_sigma, 2* hist_sigma], extent=extent )
+        hist_2D = hist
+        lower = hist_2D.max() / lower_mask_factor
+        hist_2D_masked = np.ma.masked_where( hist_2D < lower, hist_2D )
+        ax.imshow( hist_2D_masked[::-1], cmap=hist_2D_colormap, extent=extent, aspect='auto' )
+        ax.contour( hist, [hist_sigma, 2* hist_sigma], extent=extent, colors= contour_colors, linewidths=2 )
 
       [sp.set_linewidth(border_width) for sp in ax.spines.values()]
 

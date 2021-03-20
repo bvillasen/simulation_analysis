@@ -11,6 +11,7 @@ sys.path.append(analysis_dir + 'tools')
 from tools import *
 from data_thermal_history import data_thermal_history_Gaikwad_2020a, data_thermal_history_Gaikwad_2020b
 from data_optical_depth import *
+from data_optical_depth_HeII import data_tau_HeII_Worserc_2019
 from load_tabulated_data import load_power_spectrum_table, load_tabulated_data_boera, load_tabulated_data_viel, load_data_boss
 from stats_functions import compute_distribution, get_highest_probability_interval
 
@@ -101,6 +102,7 @@ def Get_Comparable_Composite_from_Grid( fields, comparable_data, SG, log_ps=Fals
     if field == 'T0':   comparable_grid_all[field] = Get_Comparable_T0_from_Grid(  comparable_data[field], SG )
     if field == 'tau':  comparable_grid_all[field] = Get_Comparable_tau_from_Grid( comparable_data[field], SG )
     if field == 'P(k)': comparable_grid_all[field] = Get_Comparable_Power_Spectrum_from_Grid( comparable_data[field]['separate'], SG, log_ps=log_ps )
+    if field == 'tau_HeII':  comparable_grid_all[field] = Get_Comparable_tau_HeII_from_Grid( comparable_data[field], SG )
     
   comparable_grid = {}
   for sim_id in sim_ids:
@@ -154,6 +156,9 @@ def Get_Comparable_T0_from_Grid( comparable_data, SG ):
 
 def Get_Comparable_tau_from_Grid( comparable_data, SG ):
   return Get_Comparable_Field_from_Grid( 'tau', comparable_data, SG )
+  
+def Get_Comparable_tau_HeII_from_Grid( comparable_data, SG ):
+  return Get_Comparable_Field_from_Grid( 'tau_HeII', comparable_data, SG )
 
 def Get_Comparable_Field_from_Grid( field, comparable_data, SG, interpolate=True ):
   print( f' Loading Comparabe from Grid: {field}')
@@ -217,6 +222,9 @@ def Get_Comparable_Composite( fields, z_min, z_max, ps_extras=None, tau_extras=N
       append_comparable = True
     if field == 'tau': 
       comparable_field = Get_Comparable_Tau( z_min, z_max, factor_sigma_tau_becker=factor_sigma_tau_becker, factor_sigma_tau_keating=factor_sigma_tau_keating )
+      append_comparable = True
+    if field == 'tau_HeII': 
+      comparable_field = Get_Comparable_Tau_HeII( )
       append_comparable = True
     if append_comparable:
       comparable_all[field] = comparable_field
@@ -312,6 +320,19 @@ def Get_Comparable_T0_Gaikwad():
   print( f' N data points: {len(data_mean)} ' )
   return comparable
 
+def Get_Comparable_Tau_HeII( ):
+  comparable_z, comparable_tau, comparable_sigma = [], [], []
+  data_set = data_tau_HeII_Worserc_2019
+  z   = data_set['z']
+  tau = data_set['tau']
+  sigma = data_set['tau_sigma'] 
+  comparable = {}
+  comparable['z']     = z
+  comparable['mean']  = tau
+  comparable['sigma'] = sigma
+  return comparable
+
+  
 def Get_Comparable_Tau( z_min, z_max, factor_sigma_tau_becker=1, factor_sigma_tau_keating=1  ):
   comparable_z, comparable_tau, comparable_sigma = [], [], []
 
