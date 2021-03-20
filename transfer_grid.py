@@ -72,11 +72,9 @@ for sim_id in range( n_dst_sims ):
       dst_dir_content = os.listdir(dst_indir)
       if len(dst_dir_content) == 0:
         print( f' Deleting Empty: {dst_indir}')
-        # os.rmdir( dst_dir + '/' + dir )
-         
+        os.rmdir( dst_dir + '/' + dir )
       copytree(src_dir + '/' + dir, dst_indir )
       print( f' Copied  {src_dir_short+dir} -> {dst_dir_short+dir} ' )
-    
     break
     if copy_reduced_files:
       src_red_dir = src_reduced + src_sim['name']
