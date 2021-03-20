@@ -75,7 +75,7 @@ for sim_id in range( n_dst_sims ):
         os.rmdir( dst_dir + '/' + dir )
       copytree(src_dir + '/' + dir, dst_indir )
       print( f' Copied  {src_dir_short+dir} -> {dst_dir_short+dir} ' )
-    break
+
     if copy_reduced_files:
       src_red_dir = src_reduced + src_sim['name']
       dst_red_dir = dst_reduced + dst_sim['name']
