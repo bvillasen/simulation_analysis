@@ -68,7 +68,7 @@ for sim_id in range( n_dst_sims ):
       
       
     for dir in directories_to_copy:
-      # copytree(src_dir + '/' + dir, dst_dir + '/' + dir )
+      copytree(src_dir + '/' + dir, dst_dir + '/' + dir )
       print( f' Copied  {src_dir_short+dir} -> {dst_dir_short+dir} ' )
     
     if copy_reduced_files:
