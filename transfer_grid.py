@@ -11,8 +11,8 @@ from transfer_grid_functions import *
 data_dir = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
 # data_dir = '/gpfs/alpine/csc434/scratch/bvilasen/cosmo_sims/sim_grid/'
 # data_dir = '/raid/bruno/data/cosmo_sims/sim_grid/'
-src_dir = data_dir + '1024_P19m_np4_nsim320/' 
-dst_dir = data_dir + '1024_P19m_np4_nsim400/'
+src_grid_dir = data_dir + '1024_P19m_np4_nsim320/' 
+dst_grid_dir = data_dir + '1024_P19m_np4_nsim400/'
 
 
 copy_reduced_files = False
@@ -24,15 +24,15 @@ if copy_reduced_files:
 
 
   # params_default = {'deltaZ_H':0.0, 'deltaZ_He':0.2 }
-src_params = Get_Grid_Parameter_Values( src_dir )
-dst_params = Get_Grid_Parameter_Values( dst_dir )
+src_params = Get_Grid_Parameter_Values( src_grid_dir )
+dst_params = Get_Grid_Parameter_Values( dst_grid_dir )
 Link_Simulation_dirctories( src_params, dst_params )
 
 
 
 
-# files_to_copy = []
-files_to_copy = ['run_output.log', 'param.txt', 'uvb_params.txt']
+# files_to_copy = ['run_output.log', 'param.txt', 'uvb_params.txt']
+files_to_copy = []
 
 copy_simulation_directory = True
 
@@ -56,11 +56,18 @@ for sim_id in range( n_dst_sims ):
     if failed: break
     
     print( f"\nCopying: {src_sim['parameters']} ->  {dst_sim['parameters']}  ")
-    src_dir_short = src_dir[src_dir.find('sim_grid')+9:]+'/'
-    dst_dir_short = dst_dir[dst_dir.find('sim_grid')+9:]+'/' 
-    for file in files_to_copy:
-      copyfile(src_dir + '/' + file, dst_dir + '/' + file )
-      print( f' Copied  {src_dir_short+file} -> {dst_dir_short+file} ' )
+    
+    if copy_simulation_directory:
+      print( src_dir )
+      print( dst_grid_dir )
+      
+      
+    else:
+      src_dir_short = src_dir[src_dir.find('sim_grid')+9:]+'/'
+      dst_dir_short = dst_dir[dst_dir.find('sim_grid')+9:]+'/' 
+      for file in files_to_copy:
+        copyfile(src_dir + '/' + file, dst_dir + '/' + file )
+        print( f' Copied  {src_dir_short+file} -> {dst_dir_short+file} ' )
     
     if copy_reduced_files:
       src_red_dir = src_reduced + src_sim['name']
@@ -69,9 +76,6 @@ for sim_id in range( n_dst_sims ):
       dst_red_short = dst_red_dir[dst_red_dir.find('sim_grid')+9:]+'/' 
       copytree(src_red_dir, dst_red_dir )
       print( f' Copied  {src_red_short} -> {dst_red_short} ' )
-    
-      
-    
     
     n_copied += 1
   else:
