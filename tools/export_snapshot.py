@@ -61,9 +61,11 @@ out_file_name = output_dir + f'snapshot_{n_snapshot:03}.h5'
 file = h5.File( out_file_name, 'r' )
 print( f'Loading: {out_file_name} ' )
 
-for key in file.keys():
-  field = file[key][...]
-  min  = field.min()
-  max  = field.max()
-  mean = field.mean()
-  print( f'{key}  min:{min}  max:{max}  mean:{mean}')
+key = 'gas_density'
+
+# for key in file.keys():
+field = file[key][...]
+min  = field.min()
+max  = field.max()
+mean = field.mean()
+print( f'{key}  min:{min}  max:{max}  mean:{mean}')

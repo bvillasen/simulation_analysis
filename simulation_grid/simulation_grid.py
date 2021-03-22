@@ -11,7 +11,7 @@ from submit_job_scripts import Create_Submit_Job_Script_Lux, Create_Submit_Job_S
 from generate_grackle_uvb_file import Generate_Modified_Rates_File
 from load_data import load_analysis_data
 from phase_diagram_functions import fit_thermal_parameters_mcmc, get_density_tyemperature_values_to_fit
-from simulation_parameters import system
+from simulation_parameters import system, load_reduced_files
 
 
 def Combine_List_Pair( a, b ):
@@ -173,7 +173,7 @@ class Simulation_Grid:
     name = simulation['key']
     sim_dir = root_dir + name + '/'
     reduced_dir = root_dir + 'reduced_files/'
-    if os.path.isdir( reduced_dir  ): sim_dir = reduced_dir + name + '/'
+    if load_reduced_files: sim_dir = reduced_dir + name + '/'
     return sim_dir
 
   def Create_Directories_for_Simulation( self, sim_id ):
@@ -330,7 +330,7 @@ class Simulation_Grid:
     for sim_id in self.Grid.keys():
       self.Fit_Simulation_Phase_Diagram_MPI( sim_id, n_mpi=n_mpi, n_nodes=n_nodes )
       
-  def Load_Simulation_Analysis_Data( self, sim_id, load_fit=False  ):
+  def Load_Simulation_Analysis_Data( self, sim_id, load_fit=True  ):
     str = f' Loading Simulation Analysis: {sim_id}' 
     print_line_flush( str )
     
@@ -359,10 +359,11 @@ class Simulation_Grid:
     
     for n_file in indices:
       n_file = int(n_file)
-      data = load_analysis_data( n_file, input_dir, phase_diagram=False, lya_statistics=True, load_skewer=False, load_fit=True )
+      data = load_analysis_data( n_file, input_dir, phase_diagram=False, lya_statistics=True, load_skewer=False, load_fit=load_fit )
       z = data['cosmology']['current_z']
-      T0 = data['phase_diagram']['fit']['T0']
-      gamma = data['phase_diagram']['fit']['gamma']
+      if load_fit:
+        T0 =    data['phase_diagram']['fit']['T0']
+        gamma = data['phase_diagram']['fit']['gamma']
       F_mean = data['lya_statistics']['Flux_mean']
       tau = data['lya_statistics']['tau']
       tau_HeII = data['lya_statistics']['tau_HeII']
@@ -378,14 +379,16 @@ class Simulation_Grid:
       sim_data['ps_kvals'].append( k_vals )
       sim_data['ps_mean'].append( ps_mean )
       sim_data['z'].append(z)
-      sim_data['T0'].append(T0)
-      sim_data['gamma'].append(gamma)
+      if load_fit:
+        sim_data['T0'].append(T0)
+        sim_data['gamma'].append(gamma)
       sim_data['F_mean'].append(F_mean)
       sim_data['tau'].append(tau)
       sim_data['tau_HeII'].append(tau_HeII)
     sim_data['z'] = np.array( sim_data['z'] )
-    sim_data['T0'] = np.array( sim_data['T0'] )
-    sim_data['gamma'] = np.array( sim_data['gamma'] )
+    if load_fit:
+      sim_data['T0'] = np.array( sim_data['T0'] )
+      sim_data['gamma'] = np.array( sim_data['gamma'] )
     sim_data['F_mean'] = np.array( sim_data['F_mean'] )
     sim_data['tau'] = np.array( sim_data['tau'] )
     sim_data['tau_HeII'] = np.array( sim_data['tau_HeII'] )  
@@ -411,7 +414,7 @@ class Simulation_Grid:
     
     for n_file in indices:
       n_file = int(n_file)
-      data = load_analysis_data( n_file, input_dir, phase_diagram=False, lya_statistics=True, load_skewer=False, load_fit=True )
+      data = load_analysis_data( n_file, input_dir, phase_diagram=False, lya_statistics=True, load_skewer=False, load_fit=False )
       z = data['cosmology']['current_z']
       k_vals  = data['lya_statistics']['power_spectrum']['k_vals']
       ps_mean = data['lya_statistics']['power_spectrum']['ps_mean']
@@ -426,7 +429,7 @@ class Simulation_Grid:
     self.Grid[sim_id]['analysis']['power_spectrum'] = data_ps
   
 
-  def Load_Grid_Analysis_Data( self, sim_ids=None, load_fit=False  ):
+  def Load_Grid_Analysis_Data( self, sim_ids=None, load_fit=True  ):
     if sim_ids == None:  sim_ids = self.Grid.keys()
     
     for sim_id in sim_ids:

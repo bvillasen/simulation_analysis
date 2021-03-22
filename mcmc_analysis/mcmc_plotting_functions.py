@@ -147,7 +147,7 @@ def Plot_T0_tau_Sampling( samples_fields, comparable_data, output_dir, system='S
 
   font_size = 18
   label_size = 16
-  alpha = 0.5
+  alpha = 0.4
 
   c_pchw18 = pylab.cm.viridis(.7)
   c_hm12 = pylab.cm.cool(.3)
@@ -226,8 +226,9 @@ def Plot_T0_tau_Sampling( samples_fields, comparable_data, output_dir, system='S
   print( f'Saved Figure: {figure_name}' )
 
 
-def Plot_T0_Sampling( samples, output_dir, system='Shamrock', label='' ):
+def Plot_T0_Sampling( samples, output_dir, system='Shamrock', label='', plot_splines=False ):
    
+  from scipy import interpolate as interp 
   import pylab
   import matplotlib
   import matplotlib.font_manager
@@ -239,10 +240,16 @@ def Plot_T0_Sampling( samples, output_dir, system='Shamrock', label='' ):
 
   nrows = 1
   ncols = 1
+  
+  
+  
+  tick_size_major, tick_size_minor = 6, 4
+  tick_label_size_major, tick_label_size_minor = 14, 12
+  tick_width_major, tick_width_minor = 1.5, 1
 
   font_size = 18
   label_size = 16
-  alpha = 0.5
+  alpha = 0.4
 
   c_pchw18 = pylab.cm.viridis(.7)
   c_hm12 = pylab.cm.cool(.3)
@@ -266,32 +273,49 @@ def Plot_T0_Sampling( samples, output_dir, system='Shamrock', label='' ):
   if 'Highest_Likelihood' in samples:
     print( 'Plotting Highest_Likelihood T0')
     mean = samples['Highest_Likelihood']
-  ax.plot( z, mean, color=color_line, zorder=1, label=label )
-  ax.fill_between( z, high, low, color=color_line, alpha=alpha, zorder=1 )  
+  
+  if plot_splines:
+    print( '  Plotting Splines interpolation')
+    n_samples_intgerp = 10000
+    sort_indices = np.argsort( z )
+    z = z[sort_indices]
+    mean = mean[sort_indices]
+    high = high[sort_indices]
+    low  = low[sort_indices]
+    z_interp = np.linspace( z[0], z[-1], n_samples_intgerp )  
+    f_mean = interp.interp1d( z, mean, kind='cubic' )
+    f_high = interp.interp1d( z, high, kind='cubic' )
+    f_low  = interp.interp1d( z, low,  kind='cubic' )
+    ax.plot( z_interp, f_mean(z_interp)/1e4, color=color_line, zorder=1, label=label )
+    ax.fill_between( z_interp, f_high(z_interp)/1e4, f_low(z_interp)/1e4, color=color_line, alpha=alpha, zorder=1 )  
+
+  else:
+    ax.plot( z, mean/1e4, color=color_line, zorder=1, label=label )
+    ax.fill_between( z, high/1e4, low/1e4, color=color_line, alpha=alpha, zorder=1 )  
 
   data_set = data_thermal_history_Gaikwad_2020a
   data_z = data_set['z']
   data_mean = data_set['T0'] 
   data_error = 0.5 * ( data_set['T0_sigma_plus'] + data_set['T0_sigma_minus'] )
   name = data_set['name']   
-  ax.errorbar( data_z, data_mean, yerr=data_error, fmt='none',  alpha=0.8, ecolor= c_viel, zorder=2)
-  ax.scatter( data_z, data_mean, label=name, alpha=0.8, color= c_viel, zorder=2) 
+  ax.errorbar( data_z, data_mean/1e4, yerr=data_error/1e4, fmt='none',  alpha=0.8, ecolor= c_viel, zorder=2)
+  ax.scatter( data_z, data_mean/1e4, label=name, alpha=0.8, color= c_viel, zorder=2) 
   
   data_set = data_thermal_history_Gaikwad_2020b
   data_z = data_set['z']
   data_mean = data_set['T0'] 
   data_error = 0.5 * ( data_set['T0_sigma_plus'] + data_set['T0_sigma_minus'] )
   name = data_set['name']   
-  ax.errorbar( data_z, data_mean, yerr=data_error, fmt='none',  alpha=0.8, ecolor= c_boss, zorder=2)
-  ax.scatter( data_z, data_mean, label=name, alpha=0.8, color= c_boss, zorder=2) 
+  ax.errorbar( data_z, data_mean/1e4, yerr=data_error/1e4, fmt='none',  alpha=0.8, ecolor= c_boss, zorder=2)
+  ax.scatter( data_z, data_mean/1e4, label=name, alpha=0.8, color= c_boss, zorder=2) 
 
-  ax.tick_params(axis='both', which='major', direction='in', labelsize=label_size )
-  ax.tick_params(axis='both', which='minor', direction='in' )
-  ax.set_ylabel( r'$T_0   \,\,\, [\,\mathrm{K}\,]$', fontsize=font_size  )
+  ax.tick_params(axis='both', which='major', direction='in', labelsize=tick_label_size_major, size=tick_size_major, width=tick_width_major  )
+  ax.tick_params(axis='both', which='minor', direction='in', labelsize=tick_label_size_minor, size=tick_size_minor, width=tick_width_minor  )
+  ax.set_ylabel( r'$T_0   \,\,\,\, [10^4 \,\,\,\mathrm{K}\,]$', fontsize=font_size  )
   ax.set_xlabel( r'$z$', fontsize=font_size )
   leg = ax.legend(loc=1, frameon=False, fontsize=font_size, prop=prop)
-  ax.set_xlim( 1.8, 12 )
-  ax.set_ylim( 3000, 18000)
+  ax.set_xlim( 1.8, 8 )
+  ax.set_ylim( 6000/1e4, 18000/1e4)
 
   figure_name = output_dir + f'fig_T0_sampling.png'
   fig.savefig( figure_name, bbox_inches='tight', dpi=300 )
@@ -336,11 +360,14 @@ def Plot_Corner( samples, labels, output_dir, n_bins_1D=20, n_bins_2D=30,  lower
   color = 'C0'
   data_color = 'C9'
   font_size = 16
-  label_size = 24
+  label_size = 26
   alpha = 0.6
   fig_size = 5
   space = 0.05
-  tick_label_size = 13
+  
+  n_tricks = 6
+  
+  tick_label_size = 14
   tick_length = 7
   tick_width = 2
   border_width = 2.0
@@ -355,6 +382,7 @@ def Plot_Corner( samples, labels, output_dir, n_bins_1D=20, n_bins_2D=30,  lower
   color_map_4 = palettable.cmocean.sequential.Algae_20
   color_map_list = [ color_map_0, color_map_1, color_map_2, color_map_3, color_map_4 ]
   
+  from scipy import interpolate as interp 
   import matplotlib
   matplotlib.rcParams['mathtext.fontset'] = 'cm'
   matplotlib.rcParams['mathtext.rm'] = 'serif'
@@ -410,7 +438,11 @@ def Plot_Corner( samples, labels, output_dir, n_bins_1D=20, n_bins_2D=30,  lower
         hist, bin_edges = np.histogram( trace, bins=n_bins_1D ) 
         bin_centers = ( bin_edges[:-1] + bin_edges[1:] ) / 2.
         bin_width = bin_centers[0] - bin_centers[1]  
-        ax.step( bin_centers, hist, where='mid',  color=line_color, linewidth=hist_1D_line_width  )
+        bin_centers_interp = np.linspace( bin_centers[0], bin_centers[-1], 10000 )
+        f_interp  = interp.interp1d( bin_centers, hist,  kind='cubic' )
+        ax.plot( bin_centers_interp, f_interp(bin_centers_interp),   color=line_color, linewidth=hist_1D_line_width  )
+        # ax.plot( bin_centers, hist,   color=line_color, linewidth=hist_1D_line_width  )
+        # ax.step( bin_centers, hist, where='mid',  color=line_color, linewidth=hist_1D_line_width  )
 
       if plot_type == '2D':
         trace_y = samples[j]['trace']
@@ -425,10 +457,13 @@ def Plot_Corner( samples, labels, output_dir, n_bins_1D=20, n_bins_2D=30,  lower
         hist_2D = hist
         lower = hist_2D.max() / lower_mask_factor
         hist_2D_masked = np.ma.masked_where( hist_2D < lower, hist_2D )
-        ax.imshow( hist_2D_masked[::-1], cmap=hist_2D_colormap, extent=extent, aspect='auto' )
+        ax.imshow( hist_2D_masked[::-1], cmap=hist_2D_colormap, extent=extent, aspect='auto', interpolation='bilinear' )
         ax.contour( hist, [hist_sigma, 2* hist_sigma], extent=extent, colors= contour_colors, linewidths=2 )
 
       [sp.set_linewidth(border_width) for sp in ax.spines.values()]
+      
+      ax.xaxis.set_major_locator(plt.MaxNLocator(n_tricks))
+      ax.yaxis.set_major_locator(plt.MaxNLocator(n_tricks))
 
   figure_name = output_dir + 'corner.png'
   fig.savefig( figure_name, bbox_inches='tight', dpi=300 )
