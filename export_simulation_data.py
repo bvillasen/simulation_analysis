@@ -87,60 +87,60 @@ print( f'Saved File: {file_name} ')
 
 
 
+
+
+ps_data_dir = 'lya_statistics/data/'
+output_ps_data_dir = output_data_dir + 'power_spectrum'
+
+z_vals = [ 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.4, 4.6, 5.0  ]
+
+dir_boss = ps_data_dir + 'data_power_spectrum_boss/'
+data_filename = dir_boss + 'data_table.py'
+data_boss = load_data_boss( data_filename )
+
+data_filename = ps_data_dir + 'data_power_spectrum_walther_2019/data_table.txt'
+data_walther = load_power_spectrum_table( data_filename )
+
+# dir_data_boera = ps_data_dir + 'data_power_spectrum_boera_2019/'
+# data_boera = load_tabulated_data_boera( dir_data_boera )
+# data_z_b = data_boera['z_vals']
 # 
-# 
-# ps_data_dir = 'lya_statistics/data/'
-# output_ps_data_dir = output_data_dir + 'power_spectrum'
-# 
-# z_vals = [ 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.4, 4.6, 5.0  ]
-# 
-# dir_boss = ps_data_dir + 'data_power_spectrum_boss/'
-# data_filename = dir_boss + 'data_table.py'
-# data_boss = load_data_boss( data_filename )
-# 
-# data_filename = ps_data_dir + 'data_power_spectrum_walther_2019/data_table.txt'
-# data_walther = load_power_spectrum_table( data_filename )
-# 
-# # dir_data_boera = ps_data_dir + 'data_power_spectrum_boera_2019/'
-# # data_boera = load_tabulated_data_boera( dir_data_boera )
-# # data_z_b = data_boera['z_vals']
-# # 
-# # data_dir_viel = ps_data_dir + 'data_power_spectrum_viel_2013/'
-# # data_viel = load_tabulated_data_viel( data_dir_viel)
-# # data_z_v = data_viel['z_vals']
-# 
-# 
-# 
-# 
-# data_power_spectrum_all = { 'Boss':data_boss, 'Walther':data_walther }
-# 
-# 
-# 
-# for data_name in data_power_spectrum_all:
-# 
-#   print( f'Exporting data power spectrum: {data_name}')
-#   out_dir = f'{output_ps_data_dir}_{data_name}/' 
-#   create_directory( out_dir )
-#   data_ps = data_power_spectrum_all[data_name]
-# 
-#   data_z = data_ps['z_vals']
-# 
-#   for z in z_vals:
-#     z_diff = np.abs( data_z - z )
-#     z_diff_min = z_diff.min()
-#     index = np.where( z_diff == z_diff_min )[0]
-#     if len( index ) > 1: print("# WARNING:  more than one redshift index " )
-#     if z_diff_min > 0.05: 
-#       print( f' Skipping this redshift: {z}')
-#       continue
-#     index = index[0]
-#     k_vals = data_ps[index]['k_vals']
-#     power_spectrum = data_ps[index]['power_spectrum']
-#     sigma_power_spectrum = data_ps[index]['sigma_power_spectrum']
-#     data_out = np.array([ k_vals, power_spectrum, sigma_power_spectrum ])
-#     file_name =  out_dir + f'data_z={z:.1f}.txt'
-#     header = f'Row_0 = k values [ s/km ]     Row_1 = P(k)     Row_2 = sigma_P(k)   \nn_rows, n_cols = {data_out.shape[0]}, {data_out.shape[1]}'
-#     np.savetxt( file_name, data_out, header=header )
-#     print( f'Saved File: {file_name} ')
-# 
-# 
+# data_dir_viel = ps_data_dir + 'data_power_spectrum_viel_2013/'
+# data_viel = load_tabulated_data_viel( data_dir_viel)
+# data_z_v = data_viel['z_vals']
+
+
+
+
+data_power_spectrum_all = { 'Boss':data_boss, 'Walther':data_walther }
+
+
+
+for data_name in data_power_spectrum_all:
+
+  print( f'Exporting data power spectrum: {data_name}')
+  out_dir = f'{output_ps_data_dir}_{data_name}/' 
+  create_directory( out_dir )
+  data_ps = data_power_spectrum_all[data_name]
+
+  data_z = data_ps['z_vals']
+
+  for z in z_vals:
+    z_diff = np.abs( data_z - z )
+    z_diff_min = z_diff.min()
+    index = np.where( z_diff == z_diff_min )[0]
+    if len( index ) > 1: print("# WARNING:  more than one redshift index " )
+    if z_diff_min > 0.05: 
+      print( f' Skipping this redshift: {z}')
+      continue
+    index = index[0]
+    k_vals = data_ps[index]['k_vals']
+    power_spectrum = data_ps[index]['power_spectrum']
+    sigma_power_spectrum = data_ps[index]['sigma_power_spectrum']
+    data_out = np.array([ k_vals, power_spectrum, sigma_power_spectrum ])
+    file_name =  out_dir + f'data_z={z:.1f}.txt'
+    header = f'Row_0 = k values [ s/km ]     Row_1 = P(k)     Row_2 = sigma_P(k)   \nn_rows, n_cols = {data_out.shape[0]}, {data_out.shape[1]}'
+    np.savetxt( file_name, data_out, header=header )
+    print( f'Saved File: {file_name} ')
+
+
