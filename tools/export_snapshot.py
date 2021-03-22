@@ -63,15 +63,15 @@ print( f'Loading: {out_file_name} ' )
 
 key = 'gas_density'
 print( f'Loading key: {key}' )
-# for key in file.keys():
-field = file[key][...]
-min  = field.min()
-max  = field.max()
-mean = field.mean()
-print( f'{key}  min:{min}  max:{max}  mean:{mean}')
+for key in file.keys():
+  field = file[key][...]
+  min  = field.min()
+  max  = field.max()
+  mean = field.mean()
+  print( f'{key}  min:{min}  max:{max}  mean:{mean}')
 
 
-log_field = np.log10(field)
-out_file_name = output_dir + f'{n_snapshot}.{key}_2048x2048x2048_float.raw'
-log_field.astype('float32').tofile(out_file_name)
-print( f'Saved File: {out_file_name}')
+  log_field = np.log10(field)
+  out_file_name = output_dir + f'{n_snapshot}.{key}_2048x2048x2048_float.raw'
+  log_field.astype('float32').tofile(out_file_name)
+  print( f'Saved File: {out_file_name}')
