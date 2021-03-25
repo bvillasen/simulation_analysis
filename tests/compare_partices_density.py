@@ -17,6 +17,7 @@ matplotlib.rcParams['mathtext.rm'] = 'serif'
 
 # data_dir = '/data/groups/comp-astro/bruno/'
 data_dir = '/raid/bruno/data/'
+# input_dir_cpu = data_dir + 'cosmo_sims/256_dm_50Mpc/output_files_cpu/'
 input_dir_cpu = data_dir + 'cosmo_sims/256_dm_50Mpc/output_files_cpu/'
 input_dir_gpu = data_dir + 'cosmo_sims/256_dm_50Mpc/output_files_gpu/'
 output_dir = data_dir + 'cosmo_sims/256_dm_50Mpc/figures/'
@@ -54,7 +55,7 @@ for n_snapshot in range(n_snaps):
 
   diff = np.abs( dens_gpu - dens_cpu ) / dens_cpu
   
-  diff_all.append( diff.mean() )
+  diff_all.append( diff.max() )
   
   z_all.append(z)
   
@@ -69,10 +70,10 @@ ax.plot( z_all, diff_all )
 ax.set_yscale('log')
 
 ax.set_xlabel( r'$z$' )
-ax.set_ylabel( r'mean $\Delta \rho / \rho$' )
+ax.set_ylabel( r'max $\Delta \rho / \rho$' )
 
 
-fileName = output_dir + 'delta_rho_mean.png'
+fileName = output_dir + 'delta_rho_max.png'
 fig.savefig( fileName, bbox_inches='tight', dpi=300)
 print('Saved Image: ', fileName)
 

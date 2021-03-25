@@ -12,6 +12,7 @@ from data_thermal_history import *
 
 def Plot_tau_HeII_Sampling( samples_fields, output_dir, system='Shamrock', label='' ):
    
+  from scipy import interpolate as interp 
   import pylab
   import matplotlib
   import matplotlib.font_manager
@@ -99,8 +100,21 @@ def Plot_tau_HeII_Sampling( samples_fields, output_dir, system='Shamrock', label
   if 'Highest_Likelihood' in samples:
     print( 'Plotting Highest_Likelihood T0')
     mean = samples['Highest_Likelihood']
-  ax.plot( z, mean, color=color_line, zorder=1, label=label )
-  ax.fill_between( z, high, low, color=color_line, alpha=alpha, zorder=1 )  
+  # ax.plot( z, mean, color=color_line, zorder=1, label=label )
+  # ax.fill_between( z, high, low, color=color_line, alpha=alpha, zorder=1 )  
+  sort_indices = np.argsort( z )
+  z = z[sort_indices]
+  mean = mean[sort_indices]
+  high = high[sort_indices]
+  low  = low[sort_indices]
+  n_samples_intgerp = 10000
+  z_interp = np.linspace( z[0], z[-1], n_samples_intgerp )  
+  f_mean = interp.interp1d( z, mean, kind='cubic' )
+  f_high = interp.interp1d( z, high, kind='cubic' )
+  f_low  = interp.interp1d( z, low,  kind='cubic' )
+  ax.plot( z_interp, f_mean(z_interp), color=color_line, zorder=1, label=label )
+  ax.fill_between( z_interp, f_high(z_interp), f_low(z_interp), color=color_line, alpha=alpha, zorder=1 )  
+
   
 
   data_set = data_tau_HeII_Worserc_2019

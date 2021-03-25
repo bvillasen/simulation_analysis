@@ -16,7 +16,8 @@ data_worsec = np.array([ [ 2.30, 2.54, 1.27, 0.10, 0.06, 1.20, 1.51 ],
                         
 z_0, z_1, tau_median, tau_sigma_p, tau_sigma_m, tau_percentile_16, tau_percentile_84 = data_worsec 
 z_bin_center = 0.5 * ( z_0 + z_1 )
-tau_sigma = 0.5 * ( tau_sigma_p + tau_sigma_m )
+# tau_sigma = 0.5 * ( tau_sigma_p + tau_sigma_m )
+tau_sigma = 0.5 * ( tau_percentile_84 - tau_percentile_16   )
 data_tau_HeII_Worserc_2019 = {}
 data_tau_HeII_Worserc_2019['name'] = 'Worseck et al. 2019'
 data_tau_HeII_Worserc_2019['z'] = z_bin_center
