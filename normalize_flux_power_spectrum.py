@@ -67,14 +67,12 @@ for sim_id in sim_ids_proc:
   for n_file in available_indices:
 
     output_file_name = output_dir + f'flux_ps_{n_file}.h5'
-    
-    
-    
-    outfile = h5.File( output_file_name, 'w' )
-    file_exists = check_if_file_exists( outfile )
+    file_exists = check_if_file_exists( output_file_name )
     if file_exists:
       print ( f'Skipping File: {out_file} ' )
       continue
+    
+    outfile = h5.File( output_file_name, 'w' )
 
     file_name = analysis_dir + f'{n_file}_analysis.h5'
     print( f'Loading File: {file_name}' )
