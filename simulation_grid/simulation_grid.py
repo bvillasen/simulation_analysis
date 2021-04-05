@@ -399,7 +399,7 @@ class Simulation_Grid:
     # sim_data['power_spectrum'] = data_ps
     self.Grid[sim_id]['analysis'] = sim_data
     
-  def Load_Simulation_Power_Spectum_Data( self, sim_id, indices  ):
+  def Load_Simulation_Power_Spectum_Data( self, sim_id, indices, load_normalized_ps=False  ):
     
     sim_dir = self.Get_Simulation_Directory( sim_id )
     input_dir = sim_dir + 'analysis_files/'
@@ -429,13 +429,13 @@ class Simulation_Grid:
     self.Grid[sim_id]['analysis']['power_spectrum'] = data_ps
   
 
-  def Load_Grid_Analysis_Data( self, sim_ids=None, load_fit=True  ):
+  def Load_Grid_Analysis_Data( self, sim_ids=None, load_fit=True, load_normalized_ps=False  ):
     if sim_ids == None:  sim_ids = self.Grid.keys()
     
     for sim_id in sim_ids:
       self.Load_Simulation_Analysis_Data( sim_id, load_fit=load_fit  )
       
-    indices = self.Grid[sim_ids[0]]['analysis']['ps_available_indices']
+    indices = self.Grid[0]['analysis']['ps_available_indices']
     available_indices = []
     for n in indices:
       available = True
@@ -444,7 +444,7 @@ class Simulation_Grid:
       if available: available_indices.append( n )
     
     for sim_id in sim_ids:
-      self.Load_Simulation_Power_Spectum_Data( sim_id, available_indices )
+      self.Load_Simulation_Power_Spectum_Data( sim_id, available_indices, load_normalized_ps=load_normalized_ps )
     
     print('\n')
   

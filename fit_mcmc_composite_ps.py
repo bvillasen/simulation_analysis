@@ -32,8 +32,8 @@ for data_set in data_ps_sets:
 name = name[:-1] 
 
 # field = 'P(k)+T0'
-field = 'P(k)+'
-# field = 'P(k)+tau_HeII'
+# field = 'P(k)+'
+field = 'P(k)+tau_HeII'
 
 # fit_log_power_spectrum =  True
 fit_log_power_spectrum =  False
