@@ -5,6 +5,10 @@ import numpy as np
 import h5py as h5
 import time
 
+def check_if_file_exists( file_name ):
+  return os.path.isfile( file_name )
+  
+
 
 def Load_Pickle_Directory( input_name ):
   import pickle

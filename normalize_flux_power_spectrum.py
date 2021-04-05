@@ -67,8 +67,14 @@ for sim_id in sim_ids_proc:
   for n_file in available_indices:
 
     output_file_name = output_dir + f'flux_ps_{n_file}.h5'
+    
+    
+    
     outfile = h5.File( output_file_name, 'w' )
-
+    file_exists = check_if_file_exists( outfile )
+    if file_exists:
+      print ( f'Skipping File: {out_file} ' )
+      continue
 
     file_name = analysis_dir + f'{n_file}_analysis.h5'
     print( f'Loading File: {file_name}' )
@@ -168,7 +174,7 @@ for sim_id in sim_ids_proc:
     outfile.create_dataset( 'k_vals', data=k_vals )
 
     print( f'Saved File: {output_file_name}' )
-    comm.Barrier()
+    # comm.Barrier()
     
     
 
