@@ -435,7 +435,7 @@ class Simulation_Grid:
     for sim_id in sim_ids:
       self.Load_Simulation_Analysis_Data( sim_id, load_fit=load_fit  )
       
-    indices = self.Grid[0]['analysis']['ps_available_indices']
+    indices = self.Grid[sim_ids[0]]['analysis']['ps_available_indices']
     available_indices = []
     for n in indices:
       available = True
