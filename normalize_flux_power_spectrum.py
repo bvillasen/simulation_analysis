@@ -168,6 +168,9 @@ for sim_id in sim_ids_proc:
     outfile.create_dataset( 'k_vals', data=k_vals )
 
     print( f'Saved File: {output_file_name}' )
+    comm.Barrier()
+    
+    
 
 
 
