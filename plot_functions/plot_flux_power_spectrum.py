@@ -137,7 +137,7 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
           k = sim_data['ps_kvals'][index]
           ps = sim_data['ps_mean'][index]
           delta = ps * k / np.pi 
-          ax.plot( k, delta, linewidth=3, label=sim_data['plot_label']  )
+          ax.plot( k, delta, linewidth=3, label=sim_data['plot_label'], zorder=1  )
           # ax.plot( k, delta, c=color_line, linewidth=3, label=sim_data['plot_label']  )
           
 
@@ -157,7 +157,7 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
         data_delta_power = data_boss[data_index]['delta_power']
         data_delta_power_error = data_boss[data_index]['delta_power_error']
         label_boss = 'eBOSS (2019)'
-        d_boss = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boss, label=label_boss)
+        d_boss = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boss, label=label_boss, zorder=2)
 
     if scales == 'small' or scales == 'middle':
       
@@ -172,7 +172,7 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
         data_delta_power = data_walther[data_index]['delta_power']
         data_delta_power_error = data_walther[data_index]['delta_power_error']
         label_walther ='Walther et al. (2018)' 
-        d_walther = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_walther, label=label_walther)
+        d_walther = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_walther, label=label_walther, zorder=2)
 
 
       # Add Boera data
@@ -186,7 +186,7 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
         data_delta_power = data_boera[data_index]['delta_power']
         data_delta_power_error = data_boera[data_index]['delta_power_error']
         label_boera ='Boera et al. (2019)'
-        d_boera = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boera, label=label_boera )
+        d_boera = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boera, label=label_boera, zorder=2 )
 
 
       # Add Viel data
@@ -200,7 +200,7 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
         data_delta_power = data_viel[data_index]['delta_power']
         data_delta_power_error = data_viel[data_index]['delta_power_error']
         label_viel = 'Viel et al. (2013)'
-        d_viel = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_viel, label=label_viel )
+        d_viel = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_viel, label=label_viel, zorder=2 )
 
 
     legend_loc = 3

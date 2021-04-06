@@ -427,15 +427,32 @@ class Simulation_Grid:
     data_kmin, data_kmax = np.array( data_kmin ), np.array( data_kmax )
     data_ps = { 'z':z_vals, 'k_min':data_kmin, 'k_max':data_kmax, 'k_vals':data_kvals, 'ps_mean':data_ps_mean }
     self.Grid[sim_id]['analysis']['power_spectrum'] = data_ps
+    
+    if load_normalized_ps:
+      root_dir = self.root_dir
+      sim_name = self.Grid[sim_id]['key']
+      ps_dir = root_dir + f'flux_power_spectrum_files/{sim_name}/'
+      
+      indx = indices[0]
+      file_name = ps_dir + f'flux_ps_{indx}.h5'
+      file = h5.File( file_name, 'r' )
+      print( file.attrs.keys() )
+      print( file.keys() )
+      
+      
+      
   
 
   def Load_Grid_Analysis_Data( self, sim_ids=None, load_fit=True, load_normalized_ps=False  ):
-    if sim_ids == None:  sim_ids = self.Grid.keys()
+    if sim_ids == None:  
+      sim_ids = self.Grid.keys()
+      indx_0 = list( sim_ids )[0]
+    else: indx_0 = 0
     
     for sim_id in sim_ids:
       self.Load_Simulation_Analysis_Data( sim_id, load_fit=load_fit  )
-      
-    indices = self.Grid[sim_ids[0]]['analysis']['ps_available_indices']
+       
+    indices = self.Grid[indx_0]['analysis']['ps_available_indices']
     available_indices = []
     for n in indices:
       available = True

@@ -623,7 +623,7 @@ def Plot_Observables( observables_samples, comparable_data, params, SG, plot_typ
 
 
 
-def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='small', system=None, name='', label='' ):
+def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='small', system=None, name='', label='', plot_type='samples' ):
 
   import matplotlib
   import pylab
@@ -680,8 +680,6 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
 
 
 
-  n_samples = len( ps_samples )
-  z_samples = np.array([ ps_samples[i]['z'] for i in range(n_samples) ])
 
   if scales == 'large':    z_vals = z_vals_large_scale
   elif scales == 'small':  z_vals = z_vals_small_scale
@@ -734,31 +732,52 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
 
     if scales == 'middle': flags[indx_i,  indx_j] = 1
 
-    if ps_samples != []:
-      diff = np.abs( z_samples - current_z )
-      diff_min = diff.min()
-      if diff_min < 0.05:
-        index = np.where( diff == diff_min )[0][0]
-        k_vals = ps_samples[index]['k_vals']
-        delta_mean = ps_samples[index]['mean']
-        delta_sigma = ps_samples[index]['sigma'] 
-        delta_higher = ps_samples[index]['higher']
-        delta_lower = ps_samples[index]['lower']
-        delta_p = delta_mean + delta_sigma
-        delta_m = delta_mean - delta_sigma 
-        
-        if 'Highest_Likelihood' in ps_samples[index]:
-          print( 'Plotting Highest_Likelihood PS')
-          delta_mean = ps_samples[index]['Highest_Likelihood']
-        else:
-          print( 'Plotting mean of distribution (Not Highest_Likelihood)')
-        ax.plot( k_vals, delta_mean, linewidth=3, color=color_line, zorder=1, label=label   )
-        # ax.fill_between( k_vals, delta_p, delta_m, facecolor=color_line, alpha=alpha_bar, zorder=1   )
-        ax.fill_between( k_vals, delta_higher, delta_lower, facecolor=color_line, alpha=alpha_bar, zorder=1   )
+    
+    if plot_type == 'multiple_lines':
+      
+      n_samples = len( ps_samples )
+      for ps_index in range( n_samples ):
+        ps_samples_local = ps_samples[ps_index]
+        label = ps_samples_local['label']
+        n_z_indices = len(ps_samples_local) - 1
+        # print( f'N z Indices: {n_z_indices}')
+        z_samples = np.array([ ps_samples_local[i]['z'] for i in range(n_z_indices) ])
+        diff = np.abs( z_samples - current_z )
+        diff_min = diff.min()
+        if diff_min < 0.05:
+          index = np.where( diff == diff_min )[0][0]
+          k_vals = ps_samples_local[index]['k_vals']
+          delta_mean = ps_samples_local[index]['mean']
+          ax.plot( k_vals, delta_mean, linewidth=2,  zorder=1, label=label   )
+          
+      
+    if plot_type == 'samples':
+      n_samples = len( ps_samples )
+      z_samples = np.array([ ps_samples[i]['z'] for i in range(n_samples) ])
+      if ps_samples != []:
+        diff = np.abs( z_samples - current_z )
+        diff_min = diff.min()
+        if diff_min < 0.05:
+          index = np.where( diff == diff_min )[0][0]
+          k_vals = ps_samples[index]['k_vals']
+          delta_mean = ps_samples[index]['mean']
+          delta_sigma = ps_samples[index]['sigma'] 
+          delta_higher = ps_samples[index]['higher']
+          delta_lower = ps_samples[index]['lower']
+          delta_p = delta_mean + delta_sigma
+          delta_m = delta_mean - delta_sigma 
+          
+          if 'Highest_Likelihood' in ps_samples[index]:
+            print( 'Plotting Highest_Likelihood PS')
+            delta_mean = ps_samples[index]['Highest_Likelihood']
+          else:
+            print( 'Plotting mean of distribution (Not Highest_Likelihood)')
+          ax.plot( k_vals, delta_mean, linewidth=3, color=color_line, zorder=1, label=label   )
+          # ax.fill_between( k_vals, delta_p, delta_m, facecolor=color_line, alpha=alpha_bar, zorder=1   )
+          ax.fill_between( k_vals, delta_higher, delta_lower, facecolor=color_line, alpha=alpha_bar, zorder=1   )
 
-    #       # ax.plot( k, delta, c=color_line, linewidth=3, label=sim_data['plot_label']  )
-    # 
-
+  
+  
     ax.text(0.85, 0.95, r'$z={0:.1f}$'.format(current_z), horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size, color=text_color) 
 
 
@@ -892,7 +911,7 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
           ax = ax_l[i][j].axis('off')
 
 
-  fileName = output_dir + f'flux_ps_sampling_{scales}'
+  fileName = output_dir + f'flux_ps_{plot_type}_{scales}'
   if name != '': fileName += f'_{name}'
   fileName += '.png'
   # fileName += '.pdf'

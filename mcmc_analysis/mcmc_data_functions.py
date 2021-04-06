@@ -15,6 +15,7 @@ from data_optical_depth_HeII import data_tau_HeII_Worserc_2019
 from load_tabulated_data import load_power_spectrum_table, load_tabulated_data_boera, load_tabulated_data_viel, load_data_boss
 from stats_functions import compute_distribution, get_highest_probability_interval
 
+
 def Write_MCMC_Results( stats, MDL, params_mcmc,  stats_file, samples_file,  output_dir  ):
   cwd = os.getcwd()
   os.chdir( output_dir )
@@ -386,6 +387,22 @@ def Get_Comparable_Tau( z_min, z_max, factor_sigma_tau_becker=1, factor_sigma_ta
   comparable['mean']  = mean[indices]
   comparable['sigma'] = sigma[indices]
   return comparable
+  
+
+def Interpolate_Power_Spectrum( p_vals, data_grid, SG ):
+  ps_output = {}
+  n_param = len( p_vals )
+  n_z_ids = len( data_grid.keys() )
+  for id_z in range( n_z_ids ):
+    ps_data = data_grid[id_z]
+    ps_output[id_z] = {}
+    ps_output[id_z]['z'] = ps_data['z']
+    ps_output[id_z]['k_vals'] = ps_data[id_z]['P(k)']['k_vals']
+
+    if n_param == 3: ps_interp = Interpolate_3D(  p_vals[0], p_vals[1], p_vals[2], ps_data, 'P(k)', 'mean', SG, clip_params=True ) 
+    if n_param == 4: ps_interp = Interpolate_4D(  p_vals[0], p_vals[1], p_vals[2], p_vals[3], ps_data, 'P(k)', 'mean', SG, clip_params=True ) 
+    ps_output[id_z]['mean'] = ps_interp
+  return ps_output
 
 
 def Interpolate_4D( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, clip_params=False, parameter_grid=None, param_id=None, sim_coords_before=None ):

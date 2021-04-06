@@ -18,10 +18,10 @@ output_dir = root_dir + 'figures/'
 create_directory( output_dir )
 
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
-sim_ids = SG.sim_ids
+# sim_ids = SG.sim_ids
 # SG.Load_Grid_Analysis_Data( sim_ids=sim_ids, load_fit=True )
 
-SG.Load_Grid_Analysis_Data( sim_ids=[0], load_fit=True )
+SG.Load_Grid_Analysis_Data( sim_ids=[0], load_fit=True, load_normalized_ps=True )
 
 # 
 # field = 'T0+tau'
@@ -44,8 +44,9 @@ SG.Load_Grid_Analysis_Data( sim_ids=[0], load_fit=True )
 #   label = ''
 #   sim_data['plot_label'] = label
 #   sim_data_sets.append(sim_data)
-# # 
-# # plot_power_spectrum_grid( ps_data_dir, output_dir, scales='small', sim_data_sets=sim_data_sets, system=system )
+# 
+# 
+# plot_power_spectrum_grid( ps_data_dir, output_dir, scales='small', sim_data_sets=sim_data_sets, system=system )
 # # plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_sets=sim_data_sets, system=system )
 # # plot_power_spectrum_grid( ps_data_dir, output_dir, scales='middle', sim_data_sets=sim_data_sets, system=system )
 # # 

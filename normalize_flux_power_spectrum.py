@@ -132,14 +132,13 @@ for sim_id in sim_ids_proc:
 
     tau_eff_vals = { 'Simulation': tau_eff_simulation,  'Becker': tau_eff_Becker }
 
-    normaliztion = 'Simulation'
-    for normaliztion in tau_eff_vals:
+    for normalization in tau_eff_vals:
 
-      print( f'Normalization: {normaliztion}' )
+      print( f'Normalization: {normalization}' )
 
-      group = outfile.create_group( normaliztion )
+      group = outfile.create_group( normalization )
 
-      tau_eff = tau_eff_vals[normaliztion]
+      tau_eff = tau_eff_vals[normalization]
       group.attrs['tau_eff'] = tau_eff
 
 
@@ -168,9 +167,10 @@ for sim_id in sim_ids_proc:
         print( diff_ps )
         
         group.create_dataset( type, data=ps_mean )
+        print( f'Saved normalization: {normalization}')
 
     outfile.create_dataset( 'k_vals', data=k_vals )
-
+    outfile.close()
     print( f'Saved File: {output_file_name}' )
     # comm.Barrier()
     
