@@ -20,8 +20,8 @@ n_points = 1024
 grid_name = f'{n_points}_P19m_np4_nsim320'
 # grid_name = f'{n_points}_P19m_np4_nsim400'
 
-# load_reduced_files = True
-load_reduced_files = False
+load_reduced_files = True
+# load_reduced_files = False
 
 if system == 'Lux':
   root_dir   = f'/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/{grid_name}/'
