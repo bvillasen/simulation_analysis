@@ -69,7 +69,7 @@ for sim_id in sim_ids_proc:
     output_file_name = output_dir + f'flux_ps_{n_file}.h5'
     file_exists = check_if_file_exists( output_file_name )
     if file_exists:
-      print ( f'Skipping File: {out_file_name} ' )
+      print ( f'Skipping File: {output_file_name} ' )
       continue
     
     outfile = h5.File( output_file_name, 'w' )
