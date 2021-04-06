@@ -13,17 +13,23 @@ data_dir = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
 # data_dir = '/raid/bruno/data/cosmo_sims/sim_grid/'
 
 
-# src_grid_dir = data_dir + '1024_P19m_np4_nsim256/' 
-# dst_grid_dir = data_dir + '1024_P19m_np4_nsim320/'
+src_grid_dir = data_dir + '1024_P19m_np4_nsim256/' 
+dst_grid_dir = data_dir + '1024_P19m_np4_nsim320/'
+# 
+# src_grid_dir = data_dir + '1024_P19m_np4_nsim320/' 
+# dst_grid_dir = data_dir + '1024_P19m_np4_nsim400/'
 
-src_grid_dir = data_dir + '1024_P19m_np4_nsim320/' 
-dst_grid_dir = data_dir + '1024_P19m_np4_nsim400/'
 
-
-copy_reduced_files = True
+copy_reduced_files = False
 if copy_reduced_files:
   src_reduced = src_grid_dir + 'reduced_files/'
   dst_reduced = dst_grid_dir + 'reduced_files/'
+  create_directory( dst_reduced )
+
+copy_power_spectrum_files = False
+if copy_power_spectrum_files:
+  src_ps = src_grid_dir + 'flux_power_spectrum_files/'
+  dst_ps = dst_grid_dir + 'flux_power_spectrum_files/'
   create_directory( dst_reduced )
 
 
@@ -116,6 +122,20 @@ for sim_id in dst_ids_to_transfer:
         print( f' Copied  {src_red_short} -> {dst_red_short} ' )
       else: print( f'Skipped: {dst_red_dir}' )
       # time.sleep(0.1)
+    
+    if copy_power_spectrum_files:
+      src_ps_dir = src_ps_dir + src_sim['name']
+      dst_ps_dir = dst_ps + dst_sim['name']
+      src_ps_short = src_ps_dir[src_ps_dir.find('sim_grid')+9:]+'/'
+      dst_ps_short = dst_ps_dir[dst_ps_dir.find('sim_grid')+9:]+'/' 
+      dst_dir_content = os.listdir(dst_red_dir)
+      if len(dst_dir_content) == 0:
+        os.rmdir( dst_red_dir )
+        copytree(src_ps_dir, dst_ps_dir )
+        print( f' Copied  {src_ps_short} -> {dst_ps_short} ' )
+        time.sleep( 0.3 )
+        
+      
     
     n_copied += 1
   else:
