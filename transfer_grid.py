@@ -13,11 +13,11 @@ data_dir = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
 # data_dir = '/raid/bruno/data/cosmo_sims/sim_grid/'
 
 
-src_grid_dir = data_dir + '1024_P19m_np4_nsim256/' 
-dst_grid_dir = data_dir + '1024_P19m_np4_nsim320/'
+# src_grid_dir = data_dir + '1024_P19m_np4_nsim256/' 
+# dst_grid_dir = data_dir + '1024_P19m_np4_nsim320/'
 # 
-# src_grid_dir = data_dir + '1024_P19m_np4_nsim320/' 
-# dst_grid_dir = data_dir + '1024_P19m_np4_nsim400/'
+src_grid_dir = data_dir + '1024_P19m_np4_nsim320/' 
+dst_grid_dir = data_dir + '1024_P19m_np4_nsim400/'
 
 
 copy_reduced_files = False
