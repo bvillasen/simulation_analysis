@@ -100,11 +100,13 @@ for sim_id in dst_ids_to_transfer:
           if len( os.listdir(dst_mcmc) ) == 0:
             print( f' Deleting Empty: {dst_red_dir + "/analysis_files/fit_mcmc"}')
             os.rmdir( dst_red_dir + '/analysis_files/fit_mcmc' )
-            print( f' Deleting Empty: {dst_red_dir + "/analysis_files"}')
-            os.rmdir( dst_red_dir + '/analysis_files' )
             copy_directory = True
-          else:
-            copy_directory = False
+        else:
+          print( f' Deleting Empty: {dst_red_dir + "/analysis_files"}')
+          os.rmdir( dst_red_dir + '/analysis_files' )
+          copy_directory = True
+      else:
+        copy_directory = False
       if copy_directory:
         print( f' Deleting Empty: { dst_red_dir }')
         os.rmdir( dst_red_dir )
