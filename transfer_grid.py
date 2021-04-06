@@ -89,9 +89,10 @@ for sim_id in dst_ids_to_transfer:
     if copy_reduced_files:
       src_red_dir = src_reduced + src_sim['name']
       dst_red_dir = dst_reduced + dst_sim['name']
-      dst_dir_content = os.listdir(dst_red_dir)
       src_red_short = src_red_dir[src_red_dir.find('sim_grid')+9:]+'/'
       dst_red_short = dst_red_dir[dst_red_dir.find('sim_grid')+9:]+'/' 
+      dst_dir_content = os.listdir(dst_red_dir)
+      print(dst_dir_content )
       if len(dst_dir_content) == 0:
         print( f' Deleting Empty: {dst_red_dir}')
         os.rmdir( dst_red_dir )
