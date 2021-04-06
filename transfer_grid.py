@@ -12,7 +12,7 @@ data_dir = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
 # data_dir = '/gpfs/alpine/csc434/scratch/bvilasen/cosmo_sims/sim_grid/'
 # data_dir = '/raid/bruno/data/cosmo_sims/sim_grid/'
 
-'
+
 src_grid_dir = data_dir + '1024_P19m_np4_nsim256/' 
 dst_grid_dir = data_dir + '1024_P19m_np4_nsim320/'
 
