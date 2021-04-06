@@ -96,17 +96,19 @@ for sim_id in dst_ids_to_transfer:
       dst_analysis = dst_red_dir + '/analysis_files'
       dst_mcmc = dst_red_dir + "/analysis_files/fit_mcmc"
       copy_directory = False
+      empty_mcmc = False
       if os.path.isdir( dst_analysis ):
         if os.path.isdir( dst_mcmc ):
           if len( os.listdir(dst_mcmc) ) == 0:
+            empty_mcmc = True
             print( f' Deleting Empty: {dst_red_dir + "/analysis_files/fit_mcmc"}')
             os.rmdir( dst_red_dir + '/analysis_files/fit_mcmc' )
             copy_directory = True
-        else:
+        if len( os.listdir(dst_analysis) ) == 0:
           print( f' Deleting Empty: {dst_red_dir + "/analysis_files"}')
           os.rmdir( dst_red_dir + '/analysis_files' )
           copy_directory = True
-
+        
       if copy_directory:
         print( f' Deleting Empty: { dst_red_dir }')
         os.rmdir( dst_red_dir )
