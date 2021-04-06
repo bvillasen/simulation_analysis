@@ -13,11 +13,11 @@ data_dir = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
 # data_dir = '/raid/bruno/data/cosmo_sims/sim_grid/'
 
 
-src_grid_dir = data_dir + '1024_P19m_np4_nsim256/' 
-dst_grid_dir = data_dir + '1024_P19m_np4_nsim320/'
+# src_grid_dir = data_dir + '1024_P19m_np4_nsim256/' 
+# dst_grid_dir = data_dir + '1024_P19m_np4_nsim320/'
 
-# src_grid_dir = data_dir + '1024_P19m_np4_nsim320/' 
-# dst_grid_dir = data_dir + '1024_P19m_np4_nsim400/'
+src_grid_dir = data_dir + '1024_P19m_np4_nsim320/' 
+dst_grid_dir = data_dir + '1024_P19m_np4_nsim400/'
 
 
 copy_reduced_files = True
@@ -113,7 +113,7 @@ for sim_id in dst_ids_to_transfer:
         copytree(src_red_dir, dst_red_dir )
         print( f' Copied  {src_red_short} -> {dst_red_short} ' )
       else: print( f'Skipped: {dst_red_dir}' )
-      time.sleep(0.3)
+      # time.sleep(0.1)
     
     n_copied += 1
   else:
