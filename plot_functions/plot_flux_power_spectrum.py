@@ -140,7 +140,10 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
         #   ax.plot( k, delta, linewidth=3, label=sim_data['plot_label'], zorder=1  )
         #   # ax.plot( k, delta, c=color_line, linewidth=3, label=sim_data['plot_label']  )
         # 
-        ps_data = sim_data['power_spectrum']
+        if plot_ps_normalized:
+          ps_data = sim_data['power_spectrum_normalized']
+          name = ps_data['normalization_key'] 
+        else: ps_data = sim_data['power_spectrum']
         sim_z_vals = ps_data['z']
         diff = np.abs( sim_z_vals - current_z )
         diff_min = diff.min()
@@ -287,6 +290,7 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
         
 
   fileName = output_dir + f'flux_ps_grid_{scales}'
+  if plot_ps_normalized: fileName += f'_{name}'
   if high_z_only: fileName += '_highZ'
   fileName += '.png'
   # fileName += '.pdf'

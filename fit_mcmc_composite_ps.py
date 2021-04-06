@@ -16,8 +16,8 @@ from mcmc_plotting_functions import *
 from mcmc_sampling_functions import *
 
 # data_sets = [ 'Boss', 'Walther', 'Boera', 'Viel' ]
-data_ps_sets = [ 'Boss' ]
-# data_ps_sets = [ 'Walther' ]
+# data_ps_sets = [ 'Boss' ]
+data_ps_sets = [ 'Walther' ]
 # data_ps_sets = [ 'Boera' ]
 # data_ps_sets = [ 'Boss', 'Walther' ]
 # data_ps_sets = [ 'Walther', 'Boera' ]
@@ -39,18 +39,23 @@ field = 'P(k)+tau_HeII'
 fit_log_power_spectrum =  False
 if fit_log_power_spectrum: name += '_log'
 
+fit_normalized_ps = True
+# ps_norm = {'normalization':'Becker', 'type':'tau_eff'}
+ps_norm = {'normalization':'Becker', 'type':'F_mean'}
+
 ps_data_dir = 'lya_statistics/data/'
 mcmc_dir = root_dir + 'fit_mcmc/'
 create_directory( mcmc_dir )
-output_dir = mcmc_dir + f'fit_results_{field}_{name}/'
+if fit_normalized_ps: output_dir = mcmc_dir + f'fit_results_{field}_{name}_normalizd_{ps_norm["normalization"]}_{ps_norm["type"]}/' 
+else: output_dir = mcmc_dir + f'fit_results_{field}_{name}/'
 create_directory( output_dir )
 
-# load_mcmc_results = False
-load_mcmc_results = True
+load_mcmc_results = False
+# load_mcmc_results = True
 
 
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
-SG.Load_Grid_Analysis_Data()
+SG.Load_Grid_Analysis_Data( load_normalized_ps=fit_normalized_ps, ps_norm=ps_norm)
 ps_range = SG.Get_Power_Spectrum_Range( kmax=1e-1 )
 sim_ids = SG.sim_ids
 
@@ -58,11 +63,11 @@ z_min = 2.0
 z_max = 5.0 
 ps_extras = { 'range':ps_range, 'data_dir':ps_data_dir, 'data_sets':data_ps_sets }
 comparable_data = Get_Comparable_Composite( field,  z_min, z_max, ps_extras=ps_extras, log_ps=fit_log_power_spectrum )
-comparable_grid = Get_Comparable_Composite_from_Grid( field, comparable_data, SG, log_ps=fit_log_power_spectrum )
+comparable_grid = Get_Comparable_Composite_from_Grid( field, comparable_data, SG, log_ps=fit_log_power_spectrum, load_normalized_ps=fit_normalized_ps )
 Plot_Comparable_Data( field, comparable_data, comparable_grid, output_dir, log_ps=fit_log_power_spectrum  )
 
 z_vals = [ 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.6, 5.0,  ]
-data_grid, data_grid_power_spectrum = Get_Data_Grid_Composite( ['P(k)', 'T0', 'tau', 'tau_HeII'], SG, z_vals=z_vals )
+data_grid, data_grid_power_spectrum = Get_Data_Grid_Composite( ['P(k)', 'T0', 'tau', 'tau_HeII'], SG, z_vals=z_vals, load_normalized_ps=fit_normalized_ps )
 
 
 stats_file = output_dir + 'fit_mcmc.pkl'

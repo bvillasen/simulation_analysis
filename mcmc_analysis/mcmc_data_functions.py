@@ -38,13 +38,13 @@ def Write_MCMC_Results( stats, MDL, params_mcmc,  stats_file, samples_file,  out
   os.chdir( cwd )
   return samples
 
-def Get_Data_Grid_Composite( fields_list,  SG, z_vals=None ):
+def Get_Data_Grid_Composite( fields_list,  SG, z_vals=None, load_normalized_ps=False ):
   # fields_list = fields.split('+')
   data_grid_all = {}
   for field in fields_list:
     if field == 'T0':   data_grid_all[field] = Get_Data_Grid( [field], SG ) 
     if field == 'tau':  data_grid_all[field] = Get_Data_Grid( [field], SG ) 
-    if field == 'P(k)': data_grid_all[field] = Get_Data_Grid_Power_spectrum( z_vals, SG )
+    if field == 'P(k)': data_grid_all[field] = Get_Data_Grid_Power_spectrum( z_vals, SG, normalized_ps=load_normalized_ps )
     if field == 'tau_HeII':  data_grid_all[field] = Get_Data_Grid( [field], SG ) 
 
   data_grid = {}
@@ -61,14 +61,20 @@ def Get_Data_Grid_Composite( fields_list,  SG, z_vals=None ):
 
 
 
-def Get_Data_Grid_Power_spectrum( z_vals, SG ):
+def Get_Data_Grid_Power_spectrum( z_vals, SG, normalized_ps=False ):
   data_grid = {}
+  print_norm = True
   for id_z, z_val in enumerate( z_vals ):
     data_grid[id_z] = {}
     data_grid[id_z]['z'] = z_val
     sim_ids = SG.sim_ids
     for sim_id in sim_ids:
-      sim_ps_data = SG.Grid[sim_id]['analysis']['power_spectrum']
+      if normalized_ps:
+        sim_ps_data = SG.Grid[sim_id]['analysis']['power_spectrum_normalized']
+        label = sim_ps_data['normalization_key']
+        if print_norm: print( f'Loading Normalized: {label}' )
+        print_norm = False 
+      else: sim_ps_data = SG.Grid[sim_id]['analysis']['power_spectrum']
       sim_z_vals = sim_ps_data['z']
       diff_z = np.abs( sim_z_vals - z_val )
       diff_min = diff_z.min()
@@ -94,7 +100,7 @@ def Get_Data_Grid( fields, SG ):
       data_grid[sim_id][field]['mean'] = SG.Grid[sim_id]['analysis'][field]
   return data_grid
 
-def Get_Comparable_Composite_from_Grid( fields, comparable_data, SG, log_ps=False ):
+def Get_Comparable_Composite_from_Grid( fields, comparable_data, SG, log_ps=False, load_normalized_ps=False ):
   fields_list = fields.split('+')
 
   sim_ids = SG.sim_ids
@@ -102,7 +108,7 @@ def Get_Comparable_Composite_from_Grid( fields, comparable_data, SG, log_ps=Fals
   for field in fields_list:
     if field == 'T0':   comparable_grid_all[field] = Get_Comparable_T0_from_Grid(  comparable_data[field], SG )
     if field == 'tau':  comparable_grid_all[field] = Get_Comparable_tau_from_Grid( comparable_data[field], SG )
-    if field == 'P(k)': comparable_grid_all[field] = Get_Comparable_Power_Spectrum_from_Grid( comparable_data[field]['separate'], SG, log_ps=log_ps )
+    if field == 'P(k)': comparable_grid_all[field] = Get_Comparable_Power_Spectrum_from_Grid( comparable_data[field]['separate'], SG, log_ps=log_ps, normalized_ps=load_normalized_ps )
     if field == 'tau_HeII':  comparable_grid_all[field] = Get_Comparable_tau_HeII_from_Grid( comparable_data[field], SG )
     
   comparable_grid = {}
@@ -117,15 +123,22 @@ def Get_Comparable_Composite_from_Grid( fields, comparable_data, SG, log_ps=Fals
   return comparable_grid
 
 
-def Get_Comparable_Power_Spectrum_from_Grid( comparable_data, SG, log_ps=False ):
+def Get_Comparable_Power_Spectrum_from_Grid( comparable_data, SG, log_ps=False, normalized_ps=False ):
   
   print( 'Generating Simulation P(k) comparable data:')
   indices = comparable_data.keys()
   comparable_grid = {}
   sim_ids = SG.sim_ids
+  print_norm = True
   for sim_id in sim_ids:
     comparable_grid[sim_id] = {}  
-    sim_data = SG.Grid[sim_id]['analysis']['power_spectrum']
+    if normalized_ps:
+      sim_data = SG.Grid[sim_id]['analysis']['power_spectrum_normalized']
+      if print_norm:
+        label = sim_data['normalization_key']
+        print( f'Loading Normalized PS: {label}' )
+        print_norm = False
+    else:sim_data = SG.Grid[sim_id]['analysis']['power_spectrum']
     sim_z_all = sim_data['z']
     sim_k_vals_all = sim_data['k_vals']
     sim_ps_all = sim_data['ps_mean']

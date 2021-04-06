@@ -438,29 +438,29 @@ class Simulation_Grid:
       type = ps_norm['type']  
       # type = types[0]
       # normalization = 'Simulation'
-      for normalization in normalizations:
-        ps_key = f'power_spectrum_norm_{normalization}_{type}'  
+      # for normalization in normalizations:
+      ps_key = f'power_spectrum_norm_{normalization}_{type}'  
 
-        z_vals, data_ps_mean, data_kvals, data_kmax, data_kmin = [], [], [], [], []
-        
-        for n_file in indices:
-          file_name = ps_dir + f'flux_ps_{n_file}.h5'
-          file = h5.File( file_name, 'r' )
-          current_z = file.attrs['current_z']
-          # print( file.keys() )
-          k_vals = file['k_vals'][...]
-          ps_data = file[normalization]
-          tau_eff = ps_data.attrs['tau_eff']
-          ps_mean = ps_data['normalize_'+type][...]
-          z_vals.append( current_z )
-          data_kvals.append( k_vals )
-          data_ps_mean.append( ps_mean )
-          data_kmax.append( k_vals.max() )
-          data_kmin.append( k_vals.min() )
-        z_vals = np.array( z_vals )
-        data_kmin, data_kmax = np.array( data_kmin ), np.array( data_kmax )
-        data_ps = { 'z':z_vals, 'k_min':data_kmin, 'k_max':data_kmax, 'k_vals':data_kvals, 'ps_mean':data_ps_mean, 'normalization_key':ps_key }
-        self.Grid[sim_id]['analysis']['power_spectrum_normalized'] = data_ps
+      z_vals, data_ps_mean, data_kvals, data_kmax, data_kmin = [], [], [], [], []
+      
+      for n_file in indices:
+        file_name = ps_dir + f'flux_ps_{n_file}.h5'
+        file = h5.File( file_name, 'r' )
+        current_z = file.attrs['current_z']
+        # print( file.keys() )
+        k_vals = file['k_vals'][...]
+        ps_data = file[normalization]
+        tau_eff = ps_data.attrs['tau_eff']
+        ps_mean = ps_data['normalize_'+type][...]
+        z_vals.append( current_z )
+        data_kvals.append( k_vals )
+        data_ps_mean.append( ps_mean )
+        data_kmax.append( k_vals.max() )
+        data_kmin.append( k_vals.min() )
+      z_vals = np.array( z_vals )
+      data_kmin, data_kmax = np.array( data_kmin ), np.array( data_kmax )
+      data_ps = { 'z':z_vals, 'k_min':data_kmin, 'k_max':data_kmax, 'k_vals':data_kvals, 'ps_mean':data_ps_mean, 'normalization_key':ps_key }
+      self.Grid[sim_id]['analysis']['power_spectrum_normalized'] = data_ps
       
       
       

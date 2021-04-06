@@ -9,7 +9,7 @@ from parameters_UVB_rates import param_UVB_Rates
 from simulation_grid import Simulation_Grid
 from simulation_parameters import *
 from plot_flux_power_spectrum import plot_power_spectrum_grid
-# from plot_T0_tau import plot_T0_and_tau, plot_tau_HeII
+from plot_T0_tau import plot_T0_and_tau, plot_tau_HeII
 from mcmc_data_functions import Get_Comparable_Composite
 
 
@@ -20,7 +20,9 @@ create_directory( output_dir )
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
 sim_ids = list(SG.sim_ids)
 # sim_ids = [0]
-ps_norm = {'normalization':'Simulation', 'type':'F_mean'}
+# ps_norm = {'normalization':'Simulation', 'type':'F_mean'}
+# ps_norm = {'normalization':'Becker', 'type':'F_mean'}
+ps_norm = {'normalization':'Becker', 'type':'tau_eff'}
 SG.Load_Grid_Analysis_Data( sim_ids=sim_ids, load_fit=True, load_normalized_ps=True, ps_norm=ps_norm )
 
 
@@ -47,13 +49,13 @@ for sim_id in sim_ids_to_plot:
   sim_data_sets.append(sim_data)
 
 
-plot_power_spectrum_grid( ps_data_dir, output_dir, scales='small', sim_data_sets=sim_data_sets, system=system, plot_ps_normalized=False )
-plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_sets=sim_data_sets, system=system )
-# plot_power_spectrum_grid( ps_data_dir, output_dir, scales='middle', sim_data_sets=sim_data_sets, system=system )
-
-
-
-
-plot_T0_and_tau( comparable_data, output_dir, sim_data_sets=sim_data_sets, system=system )
-
-# plot_tau_HeII( output_dir, sim_data_sets=sim_data_sets, system=system )
+plot_power_spectrum_grid( ps_data_dir, output_dir, scales='small', sim_data_sets=sim_data_sets, system=system, plot_ps_normalized=True )
+# plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_sets=sim_data_sets, system=system )
+# # plot_power_spectrum_grid( ps_data_dir, output_dir, scales='middle', sim_data_sets=sim_data_sets, system=system )
+# 
+# 
+# 
+# 
+# plot_T0_and_tau( comparable_data, output_dir, sim_data_sets=sim_data_sets, system=system )
+# 
+# # plot_tau_HeII( output_dir, sim_data_sets=sim_data_sets, system=system )
