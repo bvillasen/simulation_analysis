@@ -94,8 +94,10 @@ for sim_id in dst_ids_to_transfer:
       dst_dir_content = os.listdir(dst_red_dir)
       # print(dst_dir_content )
       if len(dst_dir_content) == 1:
-        print( f' Deleting Empty: {dst_red_dir + f"/{dst_dir_content[0]}"}')
-        os.rmdir( dst_red_dir + f'/{dst_dir_content[0]}' )
+        print( f' Deleting Empty: {dst_red_dir + "/analysis_files/fit_mcmc"}')
+        os.rmdir( dst_red_dir + '/analysis_files/fit_mcmc' )
+        print( f' Deleting Empty: {dst_red_dir + "/analysis_files"}')
+        os.rmdir( dst_red_dir + '/analysis_files' )
         print( f' Deleting Empty: { dst_red_dir }')
         os.rmdir( dst_red_dir )
       copytree(src_red_dir, dst_red_dir )
