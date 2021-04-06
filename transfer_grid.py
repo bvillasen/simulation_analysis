@@ -30,7 +30,7 @@ copy_power_spectrum_files = True
 if copy_power_spectrum_files:
   src_ps = src_grid_dir + 'flux_power_spectrum_files/'
   dst_ps = dst_grid_dir + 'flux_power_spectrum_files/'
-  create_directory( dst_reduced )
+  create_directory( dst_ps )
 
 
 
