@@ -124,7 +124,7 @@ for sim_id in dst_ids_to_transfer:
       # time.sleep(0.1)
     
     if copy_power_spectrum_files:
-      src_ps_dir = src_ps_dir + src_sim['name']
+      src_ps_dir = src_ps + src_sim['name']
       dst_ps_dir = dst_ps + dst_sim['name']
       src_ps_short = src_ps_dir[src_ps_dir.find('sim_grid')+9:]+'/'
       dst_ps_short = dst_ps_dir[dst_ps_dir.find('sim_grid')+9:]+'/' 
