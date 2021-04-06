@@ -8,9 +8,9 @@ extend_path()
 from parameters_UVB_rates import param_UVB_Rates
 from simulation_grid import Simulation_Grid
 from simulation_parameters import *
-from plot_flux_power_spectrum import plot_power_spectrum_grid
-from plot_T0_tau import plot_T0_and_tau, plot_tau_HeII
-from mcmc_data_functions import Get_Comparable_Composite
+# from plot_flux_power_spectrum import plot_power_spectrum_grid
+# from plot_T0_tau import plot_T0_and_tau, plot_tau_HeII
+# from mcmc_data_functions import Get_Comparable_Composite
 
 
 ps_data_dir = 'lya_statistics/data/'
@@ -18,10 +18,11 @@ output_dir = root_dir + 'figures/'
 create_directory( output_dir )
 
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
-# sim_ids = SG.sim_ids
+sim_ids = SG.sim_ids
 # SG.Load_Grid_Analysis_Data( sim_ids=sim_ids, load_fit=True )
 
 SG.Load_Grid_Analysis_Data( sim_ids=[0], load_fit=True, load_normalized_ps=True )
+
 
 # 
 # field = 'T0+tau'

@@ -432,12 +432,33 @@ class Simulation_Grid:
       root_dir = self.root_dir
       sim_name = self.Grid[sim_id]['key']
       ps_dir = root_dir + f'flux_power_spectrum_files/{sim_name}/'
-      
-      indx = indices[0]
-      file_name = ps_dir + f'flux_ps_{indx}.h5'
-      file = h5.File( file_name, 'r' )
-      print( file.attrs.keys() )
-      print( file.keys() )
+      normalizations = [ 'Simulation', 'Becker' ]
+      types = [ 'F_mean', 'tau_eff' ] 
+        
+      type = types[0]
+      # normalization = 'Simulation'
+      for normalization in normalizations:
+        ps_key = f'power_spectrum_norm_{normalization}_{type}'  
+
+        z_vals, data_ps_mean, data_kvals, data_kmax, data_kmin = [], [], [], [], []
+        
+        for n_file in indices:
+          file_name = ps_dir + f'flux_ps_{n_file}.h5'
+          file = h5.File( file_name, 'r' )
+          current_z = file.attrs['current_z']
+          k_vals = file['k_vals'][...]
+          ps_data = file[normalization]
+          tau_eff = ps_data.attrs['tau_eff']
+          ps_mean = ps_data['normalize_'+type][...]
+          z_vals.append( current_z )
+          data_kvals.append( k_vals )
+          data_ps_mean.append( ps_mean )
+          data_kmax.append( k_vals.max() )
+          data_kmin.append( k_vals.min() )
+        z_vals = np.array( z_vals )
+        data_kmin, data_kmax = np.array( data_kmin ), np.array( data_kmax )
+        data_ps = { 'z':z_vals, 'k_min':data_kmin, 'k_max':data_kmax, 'k_vals':data_kvals, 'ps_mean':data_ps_mean }
+        self.Grid[sim_id]['analysis'][ps_key] = data_ps
       
       
       
