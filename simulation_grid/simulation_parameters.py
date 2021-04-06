@@ -1,6 +1,6 @@
 
 
-# system = 'Lux'
+system = 'Lux'
 # system = 'Shamrock'
 # system = 'Summit'
 
