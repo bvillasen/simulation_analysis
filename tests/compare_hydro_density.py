@@ -20,7 +20,7 @@ data_dir = '//gpfs/alpine/csc434/scratch/bvilasen/'
 # input_dir_cpu = data_dir + 'cosmo_sims/256_dm_50Mpc/output_files_cpu/'
 # input_dir_cpu = data_dir + 'cosmo_sims/256_hydro_50Mpc/data_stable/'
 # input_dir_gpu = data_dir + 'cosmo_sims/256_hydro_50Mpc/data_gpu/'
-input_dir_cpu = data_dir + 'sphere/data_gpu_new/'
+input_dir_cpu = data_dir + 'sphere/data_summit_cpu/'
 input_dir_gpu = data_dir + 'sphere/data_summit_gpu/'
 output_dir = data_dir + 'cosmo_sims/256_hydro_50Mpc/figures/'
 create_directory( output_dir ) 
