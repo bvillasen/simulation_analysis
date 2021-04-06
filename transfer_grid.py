@@ -13,11 +13,11 @@ data_dir = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
 # data_dir = '/raid/bruno/data/cosmo_sims/sim_grid/'
 
 
-# src_grid_dir = data_dir + '1024_P19m_np4_nsim256/' 
-# dst_grid_dir = data_dir + '1024_P19m_np4_nsim320/'
+src_grid_dir = data_dir + '1024_P19m_np4_nsim256/' 
+dst_grid_dir = data_dir + '1024_P19m_np4_nsim320/'
 # 
-src_grid_dir = data_dir + '1024_P19m_np4_nsim320/' 
-dst_grid_dir = data_dir + '1024_P19m_np4_nsim400/'
+# src_grid_dir = data_dir + '1024_P19m_np4_nsim320/' 
+# dst_grid_dir = data_dir + '1024_P19m_np4_nsim400/'
 
 
 copy_reduced_files = False
@@ -26,7 +26,7 @@ if copy_reduced_files:
   dst_reduced = dst_grid_dir + 'reduced_files/'
   create_directory( dst_reduced )
 
-copy_power_spectrum_files = True
+copy_power_spectrum_files = False
 if copy_power_spectrum_files:
   src_ps = src_grid_dir + 'flux_power_spectrum_files/'
   dst_ps = dst_grid_dir + 'flux_power_spectrum_files/'
@@ -44,8 +44,8 @@ Link_Simulation_dirctories( src_params, dst_params )
 
 files_to_copy = []
 directories_to_copy = [ ]
-# files_to_copy = ['run_output.log', 'param.txt', 'uvb_params.txt']
-# directories_to_copy = [ 'analysis_files' ]
+files_to_copy = ['run_output.log', 'param.txt', 'uvb_params.txt']
+directories_to_copy = [ 'analysis_files' ]
 
 
 copy_simulation_directory = True
