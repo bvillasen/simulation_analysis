@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, time
 import numpy
 from shutil import copyfile, copytree
 sys.path.append('tools')
@@ -96,10 +96,11 @@ for sim_id in dst_ids_to_transfer:
       if len(dst_dir_content) == 1:
         print( f' Deleting Empty: {dst_red_dir + f"/{dst_dir_content[0]}"}')
         os.rmdir( dst_red_dir + f'/{dst_dir_content[0]}' )
-        print( f' Deleting Empty: { dst_red_dir }'}')
+        print( f' Deleting Empty: { dst_red_dir }')
         os.rmdir( dst_red_dir )
       copytree(src_red_dir, dst_red_dir )
       print( f' Copied  {src_red_short} -> {dst_red_short} ' )
+      time.sleep(1)
     
     n_copied += 1
   else:
