@@ -128,9 +128,9 @@ for sim_id in dst_ids_to_transfer:
       dst_ps_dir = dst_ps + dst_sim['name']
       src_ps_short = src_ps_dir[src_ps_dir.find('sim_grid')+9:]+'/'
       dst_ps_short = dst_ps_dir[dst_ps_dir.find('sim_grid')+9:]+'/' 
-      dst_dir_content = os.listdir(dst_red_dir)
+      dst_dir_content = os.listdir(dst_ps_dir)
       if len(dst_dir_content) == 0:
-        os.rmdir( dst_red_dir )
+        os.rmdir( dst_ps_dir )
         copytree(src_ps_dir, dst_ps_dir )
         print( f' Copied  {src_ps_short} -> {dst_ps_short} ' )
         time.sleep( 0.3 )
