@@ -11,8 +11,13 @@ from transfer_grid_functions import *
 data_dir = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
 # data_dir = '/gpfs/alpine/csc434/scratch/bvilasen/cosmo_sims/sim_grid/'
 # data_dir = '/raid/bruno/data/cosmo_sims/sim_grid/'
-src_grid_dir = data_dir + '1024_P19m_np4_nsim320/' 
-dst_grid_dir = data_dir + '1024_P19m_np4_nsim400/'
+
+'
+src_grid_dir = data_dir + '1024_P19m_np4_nsim256/' 
+dst_grid_dir = data_dir + '1024_P19m_np4_nsim320/'
+
+# src_grid_dir = data_dir + '1024_P19m_np4_nsim320/' 
+# dst_grid_dir = data_dir + '1024_P19m_np4_nsim400/'
 
 
 copy_reduced_files = False
@@ -44,7 +49,7 @@ n_copied, n_skipped = 0, 0
 n_dst_sims = len( dst_params )
 dst_ids_to_transfer = range( n_dst_sims )
 
-dst_ids_to_transfer = [ 80 ]
+dst_ids_to_transfer = [ 64 ]
 for sim_id in dst_ids_to_transfer:
   dst_sim = dst_params[sim_id]
   dst_dir = dst_sim['dir']
