@@ -93,16 +93,25 @@ for sim_id in dst_ids_to_transfer:
       dst_red_short = dst_red_dir[dst_red_dir.find('sim_grid')+9:]+'/' 
       dst_dir_content = os.listdir(dst_red_dir)
       # print(dst_dir_content )
-      if len(dst_dir_content) == 1:
-        print( f' Deleting Empty: {dst_red_dir + "/analysis_files/fit_mcmc"}')
-        os.rmdir( dst_red_dir + '/analysis_files/fit_mcmc' )
-        print( f' Deleting Empty: {dst_red_dir + "/analysis_files"}')
-        os.rmdir( dst_red_dir + '/analysis_files' )
+      dst_analysis = dst_red_dir + '/analysis_files'
+      dst_mcmc = dst_red_dir + "/analysis_files/fit_mcmc"
+      if os.isdir( dst_analysis ):
+        if os.isdir( dst_mcmc ):
+          if len( os.listdir(dst_mcmc) ) == 0:
+            print( f' Deleting Empty: {dst_red_dir + "/analysis_files/fit_mcmc"}')
+            os.rmdir( dst_red_dir + '/analysis_files/fit_mcmc' )
+            print( f' Deleting Empty: {dst_red_dir + "/analysis_files"}')
+            os.rmdir( dst_red_dir + '/analysis_files' )
+            copy directory = True
+          else:
+            copy_directory = False
+      if copy_directory:
         print( f' Deleting Empty: { dst_red_dir }')
         os.rmdir( dst_red_dir )
-      copytree(src_red_dir, dst_red_dir )
-      print( f' Copied  {src_red_short} -> {dst_red_short} ' )
-      time.sleep(1)
+        copytree(src_red_dir, dst_red_dir )
+        print( f' Copied  {src_red_short} -> {dst_red_short} ' )
+      else: print( f'Skipped: {dst_red_dir}' )
+      time.sleep(0.3)
     
     n_copied += 1
   else:
