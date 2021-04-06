@@ -48,8 +48,8 @@ copy_simulation_directory = True
 n_copied, n_skipped = 0, 0
 n_dst_sims = len( dst_params )
 dst_ids_to_transfer = range( n_dst_sims )
+# dst_ids_to_transfer = [ 64 ]
 
-dst_ids_to_transfer = [ 64 ]
 for sim_id in dst_ids_to_transfer:
   dst_sim = dst_params[sim_id]
   dst_dir = dst_sim['dir']
