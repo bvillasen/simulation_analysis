@@ -399,7 +399,7 @@ class Simulation_Grid:
     # sim_data['power_spectrum'] = data_ps
     self.Grid[sim_id]['analysis'] = sim_data
     
-  def Load_Simulation_Power_Spectum_Data( self, sim_id, indices, load_normalized_ps=False  ):
+  def Load_Simulation_Power_Spectum_Data( self, sim_id, indices, load_normalized_ps=False, ps_norm=None  ):
     
     sim_dir = self.Get_Simulation_Directory( sim_id )
     input_dir = sim_dir + 'analysis_files/'
@@ -434,8 +434,9 @@ class Simulation_Grid:
       ps_dir = root_dir + f'flux_power_spectrum_files/{sim_name}/'
       normalizations = [ 'Simulation', 'Becker' ]
       types = [ 'F_mean', 'tau_eff' ] 
-        
-      type = types[0]
+      normalization = ps_norm['normalization']  
+      type = ps_norm['type']  
+      # type = types[0]
       # normalization = 'Simulation'
       for normalization in normalizations:
         ps_key = f'power_spectrum_norm_{normalization}_{type}'  
@@ -446,6 +447,7 @@ class Simulation_Grid:
           file_name = ps_dir + f'flux_ps_{n_file}.h5'
           file = h5.File( file_name, 'r' )
           current_z = file.attrs['current_z']
+          # print( file.keys() )
           k_vals = file['k_vals'][...]
           ps_data = file[normalization]
           tau_eff = ps_data.attrs['tau_eff']
@@ -457,14 +459,14 @@ class Simulation_Grid:
           data_kmin.append( k_vals.min() )
         z_vals = np.array( z_vals )
         data_kmin, data_kmax = np.array( data_kmin ), np.array( data_kmax )
-        data_ps = { 'z':z_vals, 'k_min':data_kmin, 'k_max':data_kmax, 'k_vals':data_kvals, 'ps_mean':data_ps_mean }
-        self.Grid[sim_id]['analysis'][ps_key] = data_ps
+        data_ps = { 'z':z_vals, 'k_min':data_kmin, 'k_max':data_kmax, 'k_vals':data_kvals, 'ps_mean':data_ps_mean, 'normalization_key':ps_key }
+        self.Grid[sim_id]['analysis']['power_spectrum_normalized'] = data_ps
       
       
       
   
 
-  def Load_Grid_Analysis_Data( self, sim_ids=None, load_fit=True, load_normalized_ps=False  ):
+  def Load_Grid_Analysis_Data( self, sim_ids=None, load_fit=True, load_normalized_ps=False, ps_norm=None  ):
     if sim_ids == None:  
       sim_ids = self.Grid.keys()
       indx_0 = list( sim_ids )[0]
@@ -482,7 +484,7 @@ class Simulation_Grid:
       if available: available_indices.append( n )
     
     for sim_id in sim_ids:
-      self.Load_Simulation_Power_Spectum_Data( sim_id, available_indices, load_normalized_ps=load_normalized_ps )
+      self.Load_Simulation_Power_Spectum_Data( sim_id, available_indices, load_normalized_ps=load_normalized_ps, ps_norm=ps_norm )
     
     print('\n')
   
