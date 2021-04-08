@@ -23,7 +23,7 @@ input_dir_gpu = data_dir + 'cosmo_sims/256_hydro_test/data_summit_gpu_mpi/'
 # input_dir_gpu = data_dir + 'cosmo_sims/256_hydro_test/output_files/'
 # input_dir_gpu = data_dir + 'cosmo_sims/256_hydro_test/data_summit_gpu/'
 # input_dir_cpu = data_dir + 'sphere/data_summit_gpu/'
-input_dir_gpu = data_dir + 'sphere/output_files/'
+# input_dir_gpu = data_dir + 'sphere/output_files/'
 output_dir = data_dir + 'cosmo_sims/256_hydro_50Mpc/figures/'
 create_directory( output_dir ) 
 
