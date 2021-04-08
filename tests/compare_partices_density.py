@@ -14,12 +14,14 @@ import matplotlib
 matplotlib.rcParams['mathtext.fontset'] = 'cm'
 matplotlib.rcParams['mathtext.rm'] = 'serif'
 
-
+data_dir = '/gpfs/alpine/csc434/scratch/bvilasen/'
 # data_dir = '/data/groups/comp-astro/bruno/'
-data_dir = '/raid/bruno/data/'
+# data_dir = '/raid/bruno/data/'
+input_dir_cpu = data_dir + 'cosmo_sims/256_hydro_test/data_dm_summit_gpu/'
+input_dir_gpu = data_dir + 'cosmo_sims/256_hydro_test/data_dm_summit_gpu_mpi/'
 # input_dir_cpu = data_dir + 'cosmo_sims/256_dm_50Mpc/output_files_cpu/'
-input_dir_cpu = data_dir + 'cosmo_sims/256_dm_50Mpc/data_gravity_cpu/'
-input_dir_gpu = data_dir + 'cosmo_sims/256_dm_50Mpc/data_gravity_gpu/'
+# input_dir_cpu = data_dir + 'cosmo_sims/256_dm_50Mpc/data_gravity_cpu/'
+# input_dir_gpu = data_dir + 'cosmo_sims/256_dm_50Mpc/data_gravity_gpu/'
 output_dir = data_dir + 'cosmo_sims/256_dm_50Mpc/figures/'
 create_directory( output_dir ) 
 
