@@ -22,6 +22,7 @@ data_dir = '/gpfs/alpine/csc434/scratch/bvilasen/'
 # input_dir_gpu = data_dir + 'cosmo_sims/256_hydro_test/data_summit_gpu_mpi/'
 
 data_name = 'cpu'
+data_name = 'gpu_part'
 input_dir_0 = data_dir + f'cosmo_sims/256_hydro_test/data_summit_{data_name}/'
 input_dir_1 = data_dir + f'cosmo_sims/256_hydro_test/data_caar_{data_name}/'
 # input_dir_cpu = data_dir + 'sphere/data_summit_gpu/'
