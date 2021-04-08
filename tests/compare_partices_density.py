@@ -22,8 +22,8 @@ input_dir_gpu = data_dir + 'cosmo_sims/256_hydro_test/data_dm_summit_gpu_mpi/'
 # input_dir_cpu = data_dir + 'cosmo_sims/256_dm_50Mpc/output_files_cpu/'
 # input_dir_cpu = data_dir + 'cosmo_sims/256_dm_50Mpc/data_gravity_cpu/'
 # input_dir_gpu = data_dir + 'cosmo_sims/256_dm_50Mpc/data_gravity_gpu/'
-output_dir = data_dir + 'cosmo_sims/256_dm_50Mpc/figures/'
-create_directory( output_dir ) 
+# output_dir = data_dir + 'cosmo_sims/256_dm_50Mpc/figures/'
+# create_directory( output_dir ) 
 
 precision = np.float64
 Lbox = 50000.0    #kpc/h
@@ -59,22 +59,22 @@ for n_snapshot in range(n_snaps):
   z_all.append(z)
 
 
-nrows = 1
-ncols = 1
-fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(8,6))
-
-
-ax.plot( z_all, diff_all )
-
-ax.set_yscale('log')
-
-ax.set_xlabel( r'$z$' )
-ax.set_ylabel( r'max $\Delta \rho / \rho$' )
-
-
-fileName = output_dir + 'delta_rho_max_gravity_gpu.png'
-fig.savefig( fileName, bbox_inches='tight', dpi=300)
-print('Saved Image: ', fileName)
-
-
-
+# nrows = 1
+# ncols = 1
+# fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(8,6))
+# 
+# 
+# ax.plot( z_all, diff_all )
+# 
+# ax.set_yscale('log')
+# 
+# ax.set_xlabel( r'$z$' )
+# ax.set_ylabel( r'max $\Delta \rho / \rho$' )
+# 
+# 
+# fileName = output_dir + 'delta_rho_max_gravity_gpu.png'
+# fig.savefig( fileName, bbox_inches='tight', dpi=300)
+# print('Saved Image: ', fileName)
+# 
+# 
+# 
