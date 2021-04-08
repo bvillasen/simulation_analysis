@@ -34,7 +34,7 @@ box_size = [ Lbox, Lbox, Lbox ]
 grid_size = [ n_cells, n_cells, n_cells ] #Size of the simulation grid
 
 
-n_snaps = 50
+n_snaps = 60
 
 diff_all = []
 z_all = []
