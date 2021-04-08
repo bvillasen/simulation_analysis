@@ -38,6 +38,8 @@ n_snaps = 60
 diff_all = []
 z_all = []
 
+dens_min = 1e-6
+
 # n_snapshot = 0
 for n_snapshot in range(n_snaps):
 
@@ -45,15 +47,16 @@ for n_snapshot in range(n_snaps):
   fields = [ 'density'  ]
   data_dm = load_snapshot_data_distributed( 'particles', fields, n_snapshot, input_dir_cpu, box_size, grid_size,  precision, show_progess=True, print_fields=True )
   dens_cpu = data_dm['density']          
-
+  dens_cpu[ dens_cpu < dens_min ] = dens_min
+  
   fields = [ 'density'  ]
   data_dm = load_snapshot_data_distributed( 'particles', fields, n_snapshot, input_dir_gpu, box_size, grid_size,  precision, show_progess=True, print_fields=True )
   z = data_dm['Current_z']
   dens_gpu = data_dm['density']    
-
-  indices = dens_cpu > 0  
-  dens_cpu = dens_cpu[indices]
-  dens_gpu = dens_gpu[indices]
+  dens_gpu[ dens_gpu < dens_min ] = dens_min
+  # indices = dens_cpu > 0  
+  # dens_cpu = dens_cpu[indices]
+  # dens_gpu = dens_gpu[indices]
 
   diff = np.abs( dens_gpu - dens_cpu ) / dens_cpu
   diff_all.append( diff.max() )
