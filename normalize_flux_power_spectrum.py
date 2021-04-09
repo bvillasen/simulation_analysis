@@ -163,6 +163,7 @@ for sim_id in sim_ids_proc:
             if type == 'tau_eff_global': tau_los =  tau_los / tau_eff_simulation * tau_eff
             F_los = np.exp( - tau_los )
             F_mean_los = F_los.mean()
+            F_mean = np.exp( -tau_eff )
             print( f'Skewer F_mean: {F_mean_los}   {F_mean}')
             
           F_mean_all.append( F_los.mean() )
