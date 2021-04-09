@@ -149,7 +149,7 @@ for sim_id in sim_ids_proc:
 
 
       d_log_k = 0.1
-      F_min = 1e-100
+      F_min = 1e-500
       for type in types:
         F_mean_all = []
         print( f' Type: {type} ')
