@@ -149,10 +149,11 @@ for sim_id in sim_ids_proc:
       d_log_k = 0.1
       F_min = 1e-100
       for type in types:
+        F_mean_all = []
         print( f' Type: {type} ')
         flux_ps_all = []
         for F_los in flux_all:
-          if type == 'normalize_tau_eff':
+          if type == 'tau_eff_local' or type == 'tau_eff_global':
             F_los[ F_los < F_min ] = F_min 
             tau_los  = -np.log( F_los )
             if type == 'tau_eff_local':  tau_los =  tau_los / tau_los.mean() * tau_eff
