@@ -17,7 +17,7 @@ from flux_power_spectrum import get_skewer_flux_power_spectrum
 
 
 
-use_mpi = True
+use_mpi = False
 if use_mpi:
   from mpi4py import MPI
   comm = MPI.COMM_WORLD
@@ -29,6 +29,7 @@ else:
   
 
 sim_ids = range(400)
+sim_ids = [0]
 
 sim_ids_proc = split_indices( sim_ids, rank, n_procs, adjacent=False )
 
@@ -124,11 +125,14 @@ for sim_id in sim_ids_proc:
 
     type = 'normalize_F_mean'
     type = 'normalize_tau_eff'
-    types = [ 'normalize_F_mean', 'normalize_tau_eff' ] 
+    # types = [ 'normalize_F_mean', 'normalize_tau_eff' ] 
     # types = [  'normalize_tau_eff' ]
     # types = [  'normalize_F_mean' ] 
 
 
+    types = [ 'tau_eff_local' ]
+    
+    type = 'tau_eff_local' 
 
     tau_eff_vals = { 'Simulation': tau_eff_simulation,  'Becker': tau_eff_Becker }
 
@@ -151,9 +155,12 @@ for sim_id in sim_ids_proc:
           if type == 'normalize_tau_eff':
             F_los[ F_los < F_min ] = F_min 
             tau_los  = -np.log( F_los )
-            # tau_mean = tau_los.mean()
+            if type == 'tau_eff_local':  tau_los =  tau_los / tau_los.mean() * tau_eff
+            if type == 'tau_eff_global': tau_los =  tau_los / tau_eff_simulation * tau_eff
             tau_los *= tau_eff / tau_eff_simulation
             F_los = np.exp( - tau_los )
+            
+          F_mean_all.append( F_los.mean() )
           F_mean = np.exp( -tau_eff )
           # print( F_los.mean() )
           delta_F = ( F_los - F_mean ) / F_mean
@@ -165,6 +172,11 @@ for sim_id in sim_ids_proc:
 
         diff_ps = np.abs( ps_mean - ps_mean_sim ) / ps_mean_sim
         print( diff_ps )
+        
+        
+        print( f'F_mean  comparison: {F_mean}   {F_mean_all.mean()}' )
+        print( f'tau_eff comparison: {tau_eff}   {-np.log(F_mean_all.mean())}' )
+        
         
         group.create_dataset( type, data=ps_mean )
         print( f'Saved normalization: {normalization}')

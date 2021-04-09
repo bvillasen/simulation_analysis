@@ -17,9 +17,9 @@ from mcmc_sampling_functions import *
 
 # data_sets = [ 'Boss', 'Walther', 'Boera', 'Viel' ]
 # data_ps_sets = [ 'Boss' ]
-data_ps_sets = [ 'Walther' ]
+# data_ps_sets = [ 'Walther' ]
 # data_ps_sets = [ 'Boera' ]
-# data_ps_sets = [ 'Boss', 'Walther' ]
+data_ps_sets = [ 'Boss', 'Walther' ]
 # data_ps_sets = [ 'Walther', 'Boera' ]
 # data_ps_sets = [ 'Walther', 'Viel' ]
 # data_ps_sets = [ 'Boss', 'Walther', 'Boera' ]
@@ -39,7 +39,7 @@ field = 'P(k)+tau_HeII'
 fit_log_power_spectrum =  False
 if fit_log_power_spectrum: name += '_log'
 
-fit_normalized_ps = True
+fit_normalized_ps = False
 # ps_norm = {'normalization':'Becker', 'type':'tau_eff'}
 ps_norm = {'normalization':'Becker', 'type':'F_mean'}
 

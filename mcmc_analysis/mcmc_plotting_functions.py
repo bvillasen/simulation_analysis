@@ -842,6 +842,7 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
 
     legend_loc = 3
     if indx_i == nrows-1 and nrows!=2: legend_loc = 2
+    
 
     if scales == 'large': legend_loc = 2
     label_bars =  r'1$\sigma$ skewers $P\,(\Delta_F^2)$'
@@ -851,9 +852,13 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
 
     if scales == 'middle' and indx_i == nrows-1 and indx_j == ncols-1: add_legend = True
 
+    if scales == 'middle':
+      if indx_i == 0: legend_loc = 3
+      if indx_i == 1: legend_loc = 2
+      if indx_i == 2: legend_loc = 3
+      
 
     if add_legend:
-      # leg = ax.legend( loc=legend_loc, frameon=False, fontsize=12)
       leg = ax.legend(  loc=legend_loc, frameon=False, prop=prop    )
 
       for text in leg.get_texts():
@@ -874,7 +879,7 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
       if indx_i == 2: y_min, y_max = 5e-2, 7e-1
 
     if scales == 'middle':
-      x_min, x_max = 5e-3, 1e-1
+      x_min, x_max = 2e-3, 1e-1
       if indx_i == 0: y_min, y_max = 4e-3, 9e-2
       if indx_i == 1: y_min, y_max = 1e-2, 5e-1
       
