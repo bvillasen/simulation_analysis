@@ -28,8 +28,8 @@ else:
   n_procs = 1
   
 
-  # sim_ids = [0]
-sim_ids = range(400)
+sim_ids = [0]
+# sim_ids = range(400)
 
 sim_ids_proc = split_indices( sim_ids, rank, n_procs, adjacent=False )
 
@@ -65,7 +65,7 @@ for sim_id in sim_ids_proc:
 
   # index =  0
   # n_file = available_indices[index]
-  # available_indices = [55]
+  available_indices = [30]
   
   for n_file in available_indices:
 
