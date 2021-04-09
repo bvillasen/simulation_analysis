@@ -132,7 +132,7 @@ for sim_id in sim_ids_proc:
     # types = [  'normalize_F_mean' ] 
 
 
-    types = [ 'tau_eff_local',  ]
+    types = [ 'tau_eff_local', 'tau_eff_global',  ]
     
     type = 'tau_eff_local' 
 
