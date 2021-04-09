@@ -17,7 +17,7 @@ from flux_power_spectrum import get_skewer_flux_power_spectrum
 
 
 
-use_mpi = False
+use_mpi = True
 if use_mpi:
   from mpi4py import MPI
   comm = MPI.COMM_WORLD
