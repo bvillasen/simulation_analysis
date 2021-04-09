@@ -66,7 +66,7 @@ for sim_id in sim_ids_proc:
   # index =  0
   # n_file = available_indices[index]
   
-  available_indices = [0]
+  available_indices = [59]
   for n_file in available_indices:
 
     output_file_name = output_dir + f'flux_ps_{n_file}.h5'
