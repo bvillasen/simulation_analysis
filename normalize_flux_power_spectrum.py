@@ -148,8 +148,8 @@ for sim_id in sim_ids_proc:
 
       d_log_k = 0.1
       F_min = 1e-100
+      F_mean_all = []
       for type in types:
-        F_mean_all = []
         print( f' Type: {type} ')
         flux_ps_all = []
         for F_los in flux_all:
@@ -168,6 +168,7 @@ for sim_id in sim_ids_proc:
           k_vals, flux_power_spectrum = get_skewer_flux_power_spectrum( vel_Hubble, delta_F, d_log_k=d_log_k )
           flux_ps_all.append( flux_power_spectrum )
 
+        F_mean_all = np.array( F_mean_all )
         flux_ps_all = np.array( flux_ps_all )  
         ps_mean = flux_ps_all.mean( axis=0 )  
 
@@ -176,7 +177,7 @@ for sim_id in sim_ids_proc:
         
         
         print( f'F_mean  comparison: {F_mean}   {F_mean_all.mean()}' )
-        print( f'tau_eff comparison: {tau_eff}   {-np.log(F_mean_all.mean())}' )
+        print( f'tau_eff comparison: {tau_eff}   {-np.log(F_mean_all.mean() ) }' )
         
         
         group.create_dataset( type, data=ps_mean )
