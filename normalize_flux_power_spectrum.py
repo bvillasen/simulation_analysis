@@ -132,7 +132,7 @@ for sim_id in sim_ids_proc:
     # types = [  'normalize_F_mean' ] 
 
 
-    types = [ 'tau_eff_local' ]
+    types = [ 'tau_eff_local',  ]
     
     type = 'tau_eff_local' 
 
@@ -160,7 +160,6 @@ for sim_id in sim_ids_proc:
             tau_los  = -np.log( F_los )
             if type == 'tau_eff_local':  tau_los =  tau_los / tau_los.mean() * tau_eff
             if type == 'tau_eff_global': tau_los =  tau_los / tau_eff_simulation * tau_eff
-            tau_los *= tau_eff / tau_eff_simulation
             F_los = np.exp( - tau_los )
             
           F_mean_all.append( F_los.mean() )
