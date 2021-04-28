@@ -24,9 +24,9 @@ n_points = 1024
 n_boxes  = 128
 
 # data_dir = '/raid/bruno/data/'
-# data_dir = '/data/groups/comp-astro/bruno/'
+data_dir = '/data/groups/comp-astro/bruno/'
 # data_dir = '/home/bruno/Desktop/ssd_0/data/'
-data_dir = '/gpfs/alpine/csc434/scratch/bvilasen/'
+# data_dir = '/gpfs/alpine/csc434/scratch/bvilasen/'
 input_dir  = data_dir + f'cosmo_sims/ics/enzo/{n_points}_50Mpc/'
 output_dir = data_dir + f'cosmo_sims/ics/enzo/{n_points}_50Mpc/ics_{n_boxes}_z100/'
 print(f'Input Dir: {input_dir}' )
