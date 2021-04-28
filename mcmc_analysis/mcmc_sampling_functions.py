@@ -82,8 +82,9 @@ def Sample_Power_Spectrum_from_Trace( param_samples, data_grid, SG, hpi_sum=0.7,
 
 
 
-def Sample_Fields_from_Trace( fields_list, param_samples, data_grid, SG, hpi_sum=0.7, n_samples=None, params_HL=None ):
+def Sample_Fields_from_Trace( fields_list, param_samples, data_grid, SG, hpi_sum=0.7, n_samples=None, params_HL=None, sample_log=False ):
 
+  if sample_log: print( 'WARNING: Sampling Log Space')
   fields_list = [ field for field in fields_list if field != 'P(k)' ]
   print(f'\nSampling Fields: {fields_list}')
   param_ids = param_samples.keys()
@@ -100,8 +101,8 @@ def Sample_Fields_from_Trace( fields_list, param_samples, data_grid, SG, hpi_sum
     samples = []
     for i in range( n_samples ):
       p_vals = param_samples_array[i]
-      if n_param == 3: interp = Interpolate_3D(  p_vals[0], p_vals[1], p_vals[2], data_grid, field, 'mean', SG, clip_params=True ) 
-      if n_param == 4: interp = Interpolate_4D(  p_vals[0], p_vals[1], p_vals[2], p_vals[3], data_grid, field, 'mean', SG, clip_params=True ) 
+      if n_param == 3: interp = Interpolate_3D(  p_vals[0], p_vals[1], p_vals[2], data_grid, field, 'mean', SG, clip_params=True, interp_log=sample_log ) 
+      if n_param == 4: interp = Interpolate_4D(  p_vals[0], p_vals[1], p_vals[2], p_vals[3], data_grid, field, 'mean', SG, clip_params=True, interp_log=sample_log ) 
       samples.append( interp )
     samples = np.array( samples ).T
     mean = np.array([ vals.mean() for vals in samples ])
@@ -110,10 +111,12 @@ def Sample_Fields_from_Trace( fields_list, param_samples, data_grid, SG, hpi_sum
     for i in range( len( samples ) ):
       sigma.append( np.sqrt(  ( (samples[i] - mean[i])**2).mean()  ) )
       values = samples[i]
-      n_bins = 100
+      n_bins = 1000
       distribution, bin_centers = compute_distribution( values, n_bins, log=False )
       fill_sum = hpi_sum
-      v_l, v_r, v_max, sum = get_highest_probability_interval( bin_centers, distribution, fill_sum, log=True, n_interpolate=1000)
+      log_hpi = True
+      if sample_log: log_hpi = False
+      v_l, v_r, v_max, sum = get_highest_probability_interval( bin_centers, distribution, fill_sum, log=log_hpi, n_interpolate=1000)
       lower.append( v_l )
       higher.append( v_r )
     sigma  = np.array( sigma )
@@ -121,14 +124,19 @@ def Sample_Fields_from_Trace( fields_list, param_samples, data_grid, SG, hpi_sum
     higher = np.array( higher )
     samples_stats = {}
     samples_stats['mean']   = mean
-    samples_stats['sigma']  = sigma
+    # samples_stats['sigma']  = sigma
     samples_stats['z'] = data_grid[0][field]['z']
     samples_stats['lower']  = lower
     samples_stats['higher'] = higher
     if params_HL is not None:
-      if n_param == 3: interp_HL = Interpolate_3D(  params_HL[0], params_HL[1], params_HL[2], data_grid, field, 'mean', SG, clip_params=True ) 
-      if n_param == 4: interp_HL = Interpolate_4D(  params_HL[0], params_HL[1], params_HL[2], params_HL[3], data_grid, field, 'mean', SG, clip_params=True ) 
+      if n_param == 3: interp_HL = Interpolate_3D(  params_HL[0], params_HL[1], params_HL[2], data_grid, field, 'mean', SG, clip_params=True, interp_log=sample_log ) 
+      if n_param == 4: interp_HL = Interpolate_4D(  params_HL[0], params_HL[1], params_HL[2], params_HL[3], data_grid, field, 'mean', SG, clip_params=True, interp_log=sample_log ) 
       samples_stats['Highest_Likelihood'] = interp_HL
+    
+    if sample_log:
+      for key in samples_stats:
+        if key == 'z': continue
+        samples_stats[key] = 10**samples_stats[key]
     samples_out[field] = samples_stats
   return samples_out
 

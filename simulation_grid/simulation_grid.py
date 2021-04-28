@@ -235,7 +235,7 @@ class Simulation_Grid:
     return param_values
     
     
-  def Create_UVB_Rates_File( self, sim_id ):
+  def Create_UVB_Rates_File( self, sim_id, max_delta_z=0.1 ):
     simulation = self.Grid[sim_id]
   
     grackle_in_file_name =  'rates_uvb/CloudyData_UVB_Puchwein2019_cloudy.h5' 
@@ -243,12 +243,12 @@ class Simulation_Grid:
     sim_dir = self.Get_Simulation_Directory( sim_id )
      
     out_file_name = sim_dir + 'UVB_rates.h5'
-    Generate_Modified_Rates_File( grackle_in_file_name, out_file_name, param_values  )
+    Generate_Modified_Rates_File( grackle_in_file_name, out_file_name, param_values, max_delta_z=max_delta_z  )
           
-  def Create_UVB_Rates_Files( self ):
+  def Create_UVB_Rates_Files( self, max_delta_z=0.1 ):
     print("Creating UVB Rates Files:")
     for sim_id in self.Grid.keys():
-      self.Create_UVB_Rates_File( sim_id )
+      self.Create_UVB_Rates_File( sim_id, max_delta_z=max_delta_z )
       
   def Submit_Simulation_Job( self, sim_id, partition=None ):
     sim_dir = self.Get_Simulation_Directory( sim_id )
@@ -451,7 +451,7 @@ class Simulation_Grid:
         k_vals = file['k_vals'][...]
         ps_data = file[normalization]
         tau_eff = ps_data.attrs['tau_eff']
-        ps_mean = ps_data['normalize_'+type][...]
+        ps_mean = ps_data[type][...]
         z_vals.append( current_z )
         data_kvals.append( k_vals )
         data_ps_mean.append( ps_mean )

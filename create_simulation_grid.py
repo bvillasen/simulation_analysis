@@ -15,7 +15,7 @@ SG.Create_Grid_Directory_Structure()
 SG.Create_Directories_for_Simulations()
 # SG.Create_All_Submit_Job_Scripts()
 SG.Create_All_Parameter_Files()
-SG.Create_UVB_Rates_Files()
+SG.Create_UVB_Rates_Files( max_delta_z=0.1)
 
 
 output_dir = root_dir + 'figures/'

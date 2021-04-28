@@ -4,13 +4,50 @@ import pickle
 import matplotlib.pyplot as plt
 import pymc 
 import palettable
+import pylab
 from load_tabulated_data import *
 from data_optical_depth import *
 from data_optical_depth_HeII import data_tau_HeII_Worserc_2019
 from data_thermal_history import *
+analysis_dir = os.path.dirname(os.getcwd()) + '/'
+sys.path.append(analysis_dir + 'phase_diagram')
+sys.path.append(analysis_dir + 'lya_statistics')
+sys.path.append(analysis_dir + 'tools')
+from tools import *
 
+color_map_0 = palettable.cmocean.sequential.Ice_20_r
+color_map_1 = palettable.cmocean.sequential.Amp_20
+color_map_2 = palettable.cmocean.sequential.Tempo_20
+color_map_3 = palettable.cmocean.sequential.Dense_20
+color_map_4 = palettable.cmocean.sequential.Algae_20
+color_map_list = [ color_map_0, color_map_1, color_map_2, color_map_3, color_map_4 ]
 
-def Plot_tau_HeII_Sampling( samples_fields, output_dir, system='Shamrock', label='' ):
+c_boss = pylab.cm.viridis(.3)
+c_walther = pylab.cm.viridis(.3)
+
+c_0 = pylab.cm.viridis(.7)
+c_1 = pylab.cm.cool(.3)
+c_2 = 'C3'
+c_3 = pylab.cm.Purples(.7)
+c_4 = 'C1'
+
+color_lines_list = [ c_0, c_1, c_2, c_3  ] 
+
+use_color_from_colormap = False
+
+def Plot_tau_HeII_Sampling( samples_tau_H, samples_tau_HeII, output_dir, system='Shamrock', label='', multiple=False ):
+  
+  if not multiple:
+    labels_multiple = [label]
+    samples_tau_H_multiple = {}
+    samples_tau_H_multiple[0] = samples_tau_H
+    samples_tau_HeII_multiple = {}
+    samples_tau_HeII_multiple[0] = samples_tau_HeII
+  else:
+    labels_multiple = label
+    samples_tau_H_multiple = samples_tau_H
+    samples_tau_HeII_multiple = samples_tau_HeII
+    
    
   from scipy import interpolate as interp 
   import pylab
@@ -43,21 +80,28 @@ def Plot_tau_HeII_Sampling( samples_fields, output_dir, system='Shamrock', label
   color_bosman = c_viel
   
   
+  
   fig, ax_l = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,8*nrows))
 
 
   ax = ax_l[0]
-  obs_name = 'tau'
-  samples = samples_fields[obs_name]
-  z = samples['z']
-  mean = samples['mean']
-  high = samples['higher']
-  low = samples['lower']
-  if 'Highest_Likelihood' in samples:
-    print( 'Plotting Highest_Likelihood T0')
-    mean = samples['Highest_Likelihood']
-  ax.plot( z, mean, color=color_line, zorder=1, label=label )
-  ax.fill_between( z, high, low, color=color_line, alpha=alpha, zorder=1 )  
+  for data_id in samples_tau_H_multiple:
+    colormap = color_map_list[data_id]
+    colors = colormap.mpl_colors
+    n_colors = len( colors )
+    if use_color_from_colormap: color_line = colors[n_colors//2]
+    else:color_line = color_lines_list[data_id]
+    label = labels_multiple[data_id]
+    samples = samples_tau_H_multiple[data_id]
+    z = samples['z']
+    mean = samples['mean']
+    high = samples['higher']
+    low = samples['lower']
+    if 'Highest_Likelihood' in samples:
+      print( 'Plotting Highest_Likelihood T0')
+      mean = samples['Highest_Likelihood']
+    ax.plot( z, mean, color=color_line, zorder=1, label=label )
+    ax.fill_between( z, high, low, color=color_line, alpha=alpha, zorder=1 )  
   
 
   data_set = data_optical_depth_Bosman_2018
@@ -78,7 +122,7 @@ def Plot_tau_HeII_Sampling( samples_fields, output_dir, system='Shamrock', label
   data_tau_sigma = data_set['tau_sigma'] 
   ax.errorbar( data_z, data_tau, yerr=data_tau_sigma, fmt='none',  alpha=0.8, ecolor= color_becker, zorder=3)
   ax.scatter( data_z, data_tau, label=data_name, alpha=0.8, color= color_becker, zorder=3) 
-  ax.plot( z_analytical, data_analytical, '--', c=color_becker, zorder=4, label=data_name +  ' analytical fit')
+  # ax.plot( z_analytical, data_analytical, '--', c=color_becker, zorder=4, label=data_name +  ' analytical fit')
 
   ax.tick_params(axis='both', which='major', direction='in', labelsize=label_size )
   ax.tick_params(axis='both', which='minor', direction='in' )
@@ -91,31 +135,38 @@ def Plot_tau_HeII_Sampling( samples_fields, output_dir, system='Shamrock', label
   
 
   ax = ax_l[1]
-  obs_name = 'tau_HeII'
-  samples = samples_fields[obs_name]
-  z = samples['z']
-  mean = samples['mean']
-  high = samples['higher']
-  low = samples['lower']
-  if 'Highest_Likelihood' in samples:
-    print( 'Plotting Highest_Likelihood T0')
-    mean = samples['Highest_Likelihood']
-  # ax.plot( z, mean, color=color_line, zorder=1, label=label )
-  # ax.fill_between( z, high, low, color=color_line, alpha=alpha, zorder=1 )  
-  sort_indices = np.argsort( z )
-  z = z[sort_indices]
-  mean = mean[sort_indices]
-  high = high[sort_indices]
-  low  = low[sort_indices]
-  n_samples_intgerp = 10000
-  z_interp = np.linspace( z[0], z[-1], n_samples_intgerp )  
-  f_mean = interp.interp1d( z, mean, kind='cubic' )
-  f_high = interp.interp1d( z, high, kind='cubic' )
-  f_low  = interp.interp1d( z, low,  kind='cubic' )
-  ax.plot( z_interp, f_mean(z_interp), color=color_line, zorder=1, label=label )
-  ax.fill_between( z_interp, f_high(z_interp), f_low(z_interp), color=color_line, alpha=alpha, zorder=1 )  
-
   
+  for data_id in samples_tau_HeII_multiple:
+    colormap = color_map_list[data_id]
+    colors = colormap.mpl_colors
+    n_colors = len( colors )
+    if use_color_from_colormap: color_line = colors[n_colors//2]
+    else:color_line = color_lines_list[data_id]
+    label = labels_multiple[data_id]
+    samples = samples_tau_HeII_multiple[data_id]
+    z = samples['z']
+    mean = samples['mean']
+    high = samples['higher']
+    low = samples['lower']
+    if 'Highest_Likelihood' in samples:
+      print( 'Plotting Highest_Likelihood T0')
+      mean = samples['Highest_Likelihood']
+    # ax.plot( z, mean, color=color_line, zorder=1, label=label )
+    # ax.fill_between( z, high, low, color=color_line, alpha=alpha, zorder=1 )  
+    sort_indices = np.argsort( z )
+    z = z[sort_indices]
+    mean = mean[sort_indices]
+    high = high[sort_indices]
+    low  = low[sort_indices]
+    n_samples_intgerp = 10000
+    z_interp = np.linspace( z[0], z[-1], n_samples_intgerp )  
+    f_mean = interp.interp1d( z, mean, kind='cubic' )
+    f_high = interp.interp1d( z, high, kind='cubic' )
+    f_low  = interp.interp1d( z, low,  kind='cubic' )
+    ax.plot( z_interp, f_mean(z_interp), color=color_line, zorder=1, label=label )
+    ax.fill_between( z_interp, f_high(z_interp), f_low(z_interp), color=color_line, alpha=alpha, zorder=1 )  
+
+    
 
   data_set = data_tau_HeII_Worserc_2019
   data_name = data_set['name']
@@ -240,10 +291,9 @@ def Plot_T0_tau_Sampling( samples_fields, comparable_data, output_dir, system='S
   print( f'Saved Figure: {figure_name}' )
 
 
-def Plot_T0_Sampling( samples, output_dir, system='Shamrock', label='', plot_splines=False ):
+def Plot_T0_Sampling( samples, output_dir, system='Shamrock', label='', plot_splines=False, multiple=False ):
    
   from scipy import interpolate as interp 
-  import pylab
   import matplotlib
   import matplotlib.font_manager
   matplotlib.rcParams['mathtext.fontset'] = 'cm'
@@ -254,6 +304,14 @@ def Plot_T0_Sampling( samples, output_dir, system='Shamrock', label='', plot_spl
 
   nrows = 1
   ncols = 1
+  
+  if not multiple: 
+    samples_multiple = {}
+    samples_multiple[0] = samples
+    labels_multiple = [ label ]
+  else:
+    samples_multiple = samples
+    labels_multiple = label
   
   
   
@@ -276,36 +334,44 @@ def Plot_T0_Sampling( samples, output_dir, system='Shamrock', label='', plot_spl
   text_color  = 'black'
   color_line = c_pchw18
   color_data = c_boss
+  
 
   fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,8*nrows))
-
-  obs_name = 'T0'
-  z = samples['z']
-  mean = samples['mean']
-  high = samples['higher']
-  low = samples['lower']
-  if 'Highest_Likelihood' in samples:
-    print( 'Plotting Highest_Likelihood T0')
-    mean = samples['Highest_Likelihood']
   
-  if plot_splines:
-    print( '  Plotting Splines interpolation')
-    n_samples_intgerp = 10000
-    sort_indices = np.argsort( z )
-    z = z[sort_indices]
-    mean = mean[sort_indices]
-    high = high[sort_indices]
-    low  = low[sort_indices]
-    z_interp = np.linspace( z[0], z[-1], n_samples_intgerp )  
-    f_mean = interp.interp1d( z, mean, kind='cubic' )
-    f_high = interp.interp1d( z, high, kind='cubic' )
-    f_low  = interp.interp1d( z, low,  kind='cubic' )
-    ax.plot( z_interp, f_mean(z_interp)/1e4, color=color_line, zorder=1, label=label )
-    ax.fill_between( z_interp, f_high(z_interp)/1e4, f_low(z_interp)/1e4, color=color_line, alpha=alpha, zorder=1 )  
-
-  else:
-    ax.plot( z, mean/1e4, color=color_line, zorder=1, label=label )
-    ax.fill_between( z, high/1e4, low/1e4, color=color_line, alpha=alpha, zorder=1 )  
+  for data_id in samples_multiple:
+    colormap = color_map_list[data_id]
+    colors = colormap.mpl_colors
+    n_colors = len( colors )
+    if use_color_from_colormap: color_line = colors[n_colors//2]
+    else:color_line = color_lines_list[data_id]
+    samples = samples_multiple[data_id]
+    obs_name = 'T0'
+    z = samples['z']
+    mean = samples['mean']
+    high = samples['higher']
+    low = samples['lower']
+    label = labels_multiple[data_id]
+    if 'Highest_Likelihood' in samples:
+      print( 'Plotting Highest_Likelihood T0')
+      mean = samples['Highest_Likelihood']
+    
+    if plot_splines:
+      print( '  Plotting Splines interpolation')
+      n_samples_intgerp = 10000
+      sort_indices = np.argsort( z )
+      z = z[sort_indices]
+      mean = mean[sort_indices]
+      high = high[sort_indices]
+      low  = low[sort_indices]
+      z_interp = np.linspace( z[0], z[-1], n_samples_intgerp )  
+      f_mean = interp.interp1d( z, mean, kind='cubic' )
+      f_high = interp.interp1d( z, high, kind='cubic' )
+      f_low  = interp.interp1d( z, low,  kind='cubic' )
+      ax.plot( z_interp, f_mean(z_interp)/1e4, color=color_line, zorder=1, label=label )
+      ax.fill_between( z_interp, f_high(z_interp)/1e4, f_low(z_interp)/1e4, color=color_line, alpha=alpha, zorder=1 )  
+    else:
+      ax.plot( z, mean/1e4, color=color_line, zorder=1, label=label )
+      ax.fill_between( z, high/1e4, low/1e4, color=color_line, alpha=alpha, zorder=1 )  
 
   data_set = data_thermal_history_Gaikwad_2020a
   data_z = data_set['z']
@@ -368,9 +434,31 @@ def Plot_Comparable_Data( field, comparable_data, comparable_grid, output_dir, l
   print( f'Saved Figure: {figure_name}' )
 
 
-def Plot_Corner( samples, labels, output_dir, n_bins_1D=20, n_bins_2D=30,  lower_mask_factor=50  ):
+def Plot_Corner( samples, data_label, labels, output_dir, n_bins_1D=20, n_bins_2D=30,  lower_mask_factor=50, multiple=False, system='Shamrock'  ):
+  
+  
+  from scipy import interpolate as interp 
+  import matplotlib
+  matplotlib.rcParams['mathtext.fontset'] = 'cm'
+  matplotlib.rcParams['mathtext.rm'] = 'serif'
+  if system == 'Lux':      prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/brvillas/fonts', "Helvetica.ttf"), size=12)
+  if system == 'Shamrock': prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/bruno/fonts/Helvetica', "Helvetica.ttf"), size=12)
+
+
+  
+  if not multiple:
+    data_labels = [data_label]
+    samples_multiple = {}
+    samples_multiple[0] = samples
+  else: 
+    data_labels = data_label
+    samples_multiple = samples
+    
+  samples = samples_multiple[0]  
   param_ids = samples.keys()
   n_param = len( param_ids )
+
+      
   color = 'C0'
   data_color = 'C9'
   font_size = 16
@@ -396,16 +484,15 @@ def Plot_Corner( samples, labels, output_dir, n_bins_1D=20, n_bins_2D=30,  lower
   color_map_4 = palettable.cmocean.sequential.Algae_20
   color_map_list = [ color_map_0, color_map_1, color_map_2, color_map_3, color_map_4 ]
   
-  from scipy import interpolate as interp 
-  import matplotlib
-  matplotlib.rcParams['mathtext.fontset'] = 'cm'
-  matplotlib.rcParams['mathtext.rm'] = 'serif'
 
   fig, ax_l = plt.subplots(nrows=n_param, ncols=n_param, figsize=(fig_size*n_param,fig_size*n_param),  sharex='col' )
   fig.subplots_adjust( wspace=space, hspace=space )
 
   for j in range( n_param ):
     for i in range( n_param ):
+      
+      add_data_label = False
+      if i== 0 and j == 0: add_data_label = True
 
       ax = ax_l[j][i]
       plot_y_lables, plot_x_lables = False, False
@@ -438,41 +525,49 @@ def Plot_Corner( samples, labels, output_dir, n_bins_1D=20, n_bins_2D=30,  lower
       if i == j: plot_type = '1D'
       if i < j:  plot_type = '2D'
       
-      colormap = color_map_list[0]
-      hist_2D_colormap = colormap.mpl_colormap
-      contour_colormap = colormap.mpl_colors
-
-      n_colors = len( contour_colormap )
-      line_color = contour_colormap[n_colors//2]
-      contour_colors = [contour_colormap[n_colors//2], contour_colormap[-1]]
       
-      if plot_type == '1D':
-        name  = samples[j]['name']
-        trace = samples[j]['trace']
-        hist, bin_edges = np.histogram( trace, bins=n_bins_1D ) 
-        bin_centers = ( bin_edges[:-1] + bin_edges[1:] ) / 2.
-        bin_width = bin_centers[0] - bin_centers[1]  
-        bin_centers_interp = np.linspace( bin_centers[0], bin_centers[-1], 10000 )
-        f_interp  = interp.interp1d( bin_centers, hist,  kind='cubic' )
-        ax.plot( bin_centers_interp, f_interp(bin_centers_interp),   color=line_color, linewidth=hist_1D_line_width  )
-        # ax.plot( bin_centers, hist,   color=line_color, linewidth=hist_1D_line_width  )
-        # ax.step( bin_centers, hist, where='mid',  color=line_color, linewidth=hist_1D_line_width  )
+      for data_id in samples_multiple:
+        samples = samples_multiple[data_id]
+        
+        colormap = color_map_list[data_id]
+        hist_2D_colormap = colormap.mpl_colormap
+        contour_colormap = colormap.mpl_colors
+        n_colors = len( contour_colormap )
+        line_color = contour_colormap[n_colors//2]
+        contour_colors = [contour_colormap[n_colors//2], contour_colormap[-1]]
+        
+        if plot_type == '1D':
+          name  = samples[j]['name']
+          trace = samples[j]['trace']
+          hist, bin_edges = np.histogram( trace, bins=n_bins_1D ) 
+          bin_centers = ( bin_edges[:-1] + bin_edges[1:] ) / 2.
+          bin_width = bin_centers[0] - bin_centers[1]  
+          bin_centers_interp = np.linspace( bin_centers[0], bin_centers[-1], 10000 )
+          f_interp  = interp.interp1d( bin_centers, hist,  kind='cubic' )
+          if add_data_label: data_label = data_labels[data_id] 
+          else: data_label = ''
+          ax.plot( bin_centers_interp, f_interp(bin_centers_interp),   color=line_color, linewidth=hist_1D_line_width, label=data_label  )
+          # ax.plot( bin_centers, hist,   color=line_color, linewidth=hist_1D_line_width  ), 
+          # ax.step( bin_centers, hist, where='mid',  color=line_color, linewidth=hist_1D_line_width  )
 
-      if plot_type == '2D':
-        trace_y = samples[j]['trace']
-        trace_x = samples[i]['trace']
-        hist, x_edges, y_edges = np.histogram2d( trace_x, trace_y, bins=[n_bins_2D, n_bins_2D] )
-        hist = hist.astype( np.float ) 
-        # hist = hist.T / hist.sum()
-        hist = hist.T 
-        hist_mean = hist.mean()
-        hist_sigma = np.sqrt( ((hist-hist_mean)**2).mean() )
-        extent = [ trace_x.min(), trace_x.max(), trace_y.min(), trace_y.max() ]
-        hist_2D = hist
-        lower = hist_2D.max() / lower_mask_factor
-        hist_2D_masked = np.ma.masked_where( hist_2D < lower, hist_2D )
-        ax.imshow( hist_2D_masked[::-1], cmap=hist_2D_colormap, extent=extent, aspect='auto', interpolation='bilinear' )
-        ax.contour( hist, [hist_sigma, 2* hist_sigma], extent=extent, colors= contour_colors, linewidths=2 )
+        if plot_type == '2D':
+          trace_y = samples[j]['trace']
+          trace_x = samples[i]['trace']
+          hist, x_edges, y_edges = np.histogram2d( trace_x, trace_y, bins=[n_bins_2D, n_bins_2D] )
+          hist = hist.astype( np.float ) 
+          # hist = hist.T / hist.sum()
+          hist = hist.T 
+          hist_mean = hist.mean()
+          hist_sigma = np.sqrt( ((hist-hist_mean)**2).mean() )
+          extent = [ trace_x.min(), trace_x.max(), trace_y.min(), trace_y.max() ]
+          hist_2D = hist
+          lower = hist_2D.max() / lower_mask_factor
+          hist_2D_masked = np.ma.masked_where( hist_2D < lower, hist_2D )
+          ax.imshow( hist_2D_masked[::-1], cmap=hist_2D_colormap, extent=extent, aspect='auto', interpolation='bilinear' )
+          ax.contour( hist, [hist_sigma, 2* hist_sigma], extent=extent, colors= contour_colors, linewidths=2 )
+        
+        if add_data_label:
+          ax.legend( loc=0, frameon=False, fontsize=font_size, prop=prop )
 
       [sp.set_linewidth(border_width) for sp in ax.spines.values()]
       
@@ -623,13 +718,24 @@ def Plot_Observables( observables_samples, comparable_data, params, SG, plot_typ
 
 
 
-def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='small', system=None, name='', label='', plot_type='samples' ):
+def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='small', linewidth=2.5, system=None, name='', label='', plot_type='samples', rescaled_walther=False, rescale_walter_file=None, multiple=False ):
+
+  
+  if not multiple:
+    labels_multiple = [ label ]
+    ps_samples_multiple = {}
+    ps_samples_multiple[0] = ps_samples
+  else:
+    labels_multiple = label
+    ps_samples_multiple = ps_samples
+
 
   import matplotlib
   import pylab
-
   matplotlib.rcParams['mathtext.fontset'] = 'cm'
   matplotlib.rcParams['mathtext.rm'] = 'serif'
+  if system == 'Lux':      prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/brvillas/fonts', "Helvetica.ttf"), size=12)
+  if system == 'Shamrock': prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/bruno/fonts/Helvetica', "Helvetica.ttf"), size=12)
 
 
   if system == 'Lux': matplotlib.use('Agg')
@@ -652,8 +758,6 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
   tick_width_minor = 1
   border_width = 1
 
-  if system == 'Lux':      prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/brvillas/fonts', "Helvetica.ttf"), size=12)
-  if system == 'Shamrock': prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/bruno/fonts/Helvetica', "Helvetica.ttf"), size=12)
 
   dir_boss = ps_data_dir + 'data_power_spectrum_boss/'
   data_filename = dir_boss + 'data_table.py'
@@ -671,10 +775,14 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
   data_dir_viel = ps_data_dir + 'data_power_spectrum_viel_2013/'
   data_viel = load_tabulated_data_viel( data_dir_viel)
   data_z_v = data_viel['z_vals']
+  
+  if rescaled_walther:
+    print(f" Loading Walther rescale values: {rescale_walter_file}")
+    rescale_walter_alphas = Load_Pickle_Directory( rescale_walter_file)
 
   z_vals_small_scale  = [ 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 4.2, 4.6, 5.0, 5.4 ]
   z_vals_large_scale  = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.6 ]
-  z_vals_middle_scale = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 4.2, 4.6 ]
+  z_vals_middle_scale = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4,   ]
   z_vals_all_scale    = z_vals_large_scale
   z_high = [ 5.0, 5.4 ]
 
@@ -696,7 +804,7 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
 
   if scales == 'middle':flags = np.zeros( (nrows, ncols ))
 
-  # if scales == 'middle': nrows = 2
+  if scales == 'middle': nrows = 2
 
 
   fig, ax_l = plt.subplots(nrows=nrows, ncols=ncols, figsize=(2*fig_width,fig_height*nrows))
@@ -715,7 +823,7 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
   color_line = c_pchw18
 
   if scales == 'middle' or scales == 'all':
-    c_walther = c_pchw18
+    c_walther = 'C1'
 
   alpha_bar = 0.4
 
@@ -752,32 +860,44 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
           
       
     if plot_type == 'samples':
-      n_samples = len( ps_samples )
-      z_samples = np.array([ ps_samples[i]['z'] for i in range(n_samples) ])
-      if ps_samples != []:
-        diff = np.abs( z_samples - current_z )
-        diff_min = diff.min()
-        if diff_min < 0.05:
-          index = np.where( diff == diff_min )[0][0]
-          k_vals = ps_samples[index]['k_vals']
-          delta_mean = ps_samples[index]['mean']
-          delta_sigma = ps_samples[index]['sigma'] 
-          delta_higher = ps_samples[index]['higher']
-          delta_lower = ps_samples[index]['lower']
-          delta_p = delta_mean + delta_sigma
-          delta_m = delta_mean - delta_sigma 
-          
-          if 'Highest_Likelihood' in ps_samples[index]:
-            print( 'Plotting Highest_Likelihood PS')
-            delta_mean = ps_samples[index]['Highest_Likelihood']
-          else:
-            print( 'Plotting mean of distribution (Not Highest_Likelihood)')
-          ax.plot( k_vals, delta_mean, linewidth=3, color=color_line, zorder=1, label=label   )
-          # ax.fill_between( k_vals, delta_p, delta_m, facecolor=color_line, alpha=alpha_bar, zorder=1   )
-          ax.fill_between( k_vals, delta_higher, delta_lower, facecolor=color_line, alpha=alpha_bar, zorder=1   )
+      
+      for data_id in ps_samples_multiple:
+        
+        colormap = color_map_list[data_id]
+        colors = colormap.mpl_colors
+        n_colors = len( colors )
+        if use_color_from_colormap: color_line = colors[n_colors//2]
+        else:color_line = color_lines_list[data_id]
+        
+        ps_samples = ps_samples_multiple[data_id]
+        label = labels_multiple[data_id]
+        
+        n_samples = len( ps_samples )
+        z_samples = np.array([ ps_samples[i]['z'] for i in range(n_samples) ])
+        if ps_samples != []:
+          diff = np.abs( z_samples - current_z )
+          diff_min = diff.min()
+          if diff_min < 0.05:
+            index = np.where( diff == diff_min )[0][0]
+            k_vals = ps_samples[index]['k_vals']
+            delta_mean = ps_samples[index]['mean']
+            delta_sigma = ps_samples[index]['sigma'] 
+            delta_higher = ps_samples[index]['higher']
+            delta_lower = ps_samples[index]['lower']
+            delta_p = delta_mean + delta_sigma
+            delta_m = delta_mean - delta_sigma 
+            
+            if 'Highest_Likelihood' in ps_samples[index]:
+              print( 'Plotting Highest_Likelihood PS')
+              delta_mean = ps_samples[index]['Highest_Likelihood']
+            else:
+              print( 'Plotting mean of distribution (Not Highest_Likelihood)')
+            ax.plot( k_vals, delta_mean,  linewidth=linewidth, color=color_line, zorder=1, label=label   )
+            # ax.fill_between( k_vals, delta_p, delta_m, facecolor=color_line, alpha=alpha_bar, zorder=1   )
+            ax.fill_between( k_vals, delta_higher, delta_lower, facecolor=color_line, alpha=alpha_bar, zorder=1   )
 
-  
-  
+    
+    
     ax.text(0.85, 0.95, r'$z={0:.1f}$'.format(current_z), horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size, color=text_color) 
 
 
@@ -809,35 +929,42 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
         data_delta_power = data_walther[data_index]['delta_power']
         data_delta_power_error = data_walther[data_index]['delta_power_error']
         label_walther ='Walther et al. (2018)' 
-        d_walther = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_walther, label=label_walther, zorder=2)
+        
+        if rescaled_walther and data_index in rescale_walter_alphas:
+  
+          rescale_z = rescale_walter_alphas[data_index]['z']
+          rescale_alpha = rescale_walter_alphas[data_index]['alpha']
+          print( f'  Rescaling z={rescale_z:.1f}    alpha={rescale_alpha:.3f} ')
+          data_delta_power *= rescale_alpha
+          d_walther = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_walther, label=label_walther, zorder=2)
 
-
-      # Add Boera data
-      z_diff = np.abs( data_z_b - current_z )
-      diff_min = z_diff.min()
-      if diff_min < 1e-1:
-        data_index = np.where( z_diff == diff_min )[0][0]
-        data_z_local = data_z_b[data_index]
-
-        data_k = data_boera[data_index]['k_vals']
-        data_delta_power = data_boera[data_index]['delta_power']
-        data_delta_power_error = data_boera[data_index]['delta_power_error']
-        label_boera ='Boera et al. (2019)'
-        d_boera = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boera, label=label_boera, zorder=2 )
-
-
-      # Add Viel data
-      z_diff = np.abs( data_z_v - current_z )
-      diff_min = z_diff.min()
-      if diff_min < 1e-1:
-        data_index = np.where( z_diff == diff_min )[0][0]
-        data_z_local = data_z_v[data_index]
-
-        data_k = data_viel[data_index]['k_vals']
-        data_delta_power = data_viel[data_index]['delta_power']
-        data_delta_power_error = data_viel[data_index]['delta_power_error']
-        label_viel = 'Viel et al. (2013)'
-        d_viel = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_viel, label=label_viel, zorder=2 )
+        
+      # # Add Boera data
+      # z_diff = np.abs( data_z_b - current_z )
+      # diff_min = z_diff.min()
+      # if diff_min < 1e-1:
+      #   data_index = np.where( z_diff == diff_min )[0][0]
+      #   data_z_local = data_z_b[data_index]
+      # 
+      #   data_k = data_boera[data_index]['k_vals']
+      #   data_delta_power = data_boera[data_index]['delta_power']
+      #   data_delta_power_error = data_boera[data_index]['delta_power_error']
+      #   label_boera ='Boera et al. (2019)'
+      #   d_boera = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boera, label=label_boera, zorder=2 )
+      # 
+      # 
+      # # Add Viel data
+      # z_diff = np.abs( data_z_v - current_z )
+      # diff_min = z_diff.min()
+      # if diff_min < 1e-1:
+      #   data_index = np.where( z_diff == diff_min )[0][0]
+      #   data_z_local = data_z_v[data_index]
+      # 
+      #   data_k = data_viel[data_index]['k_vals']
+      #   data_delta_power = data_viel[data_index]['delta_power']
+      #   data_delta_power_error = data_viel[data_index]['delta_power_error']
+      #   label_viel = 'Viel et al. (2013)'
+      #   d_viel = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_viel, label=label_viel, zorder=2 )
 
 
     legend_loc = 3
@@ -854,9 +981,14 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
 
     if scales == 'middle':
       if indx_i == 0: legend_loc = 3
-      if indx_i == 1: legend_loc = 2
+      if indx_i == 1: legend_loc = 3
       if indx_i == 2: legend_loc = 3
       
+    if scales == 'all':
+      if indx_i == 0: legend_loc = 3
+      if indx_i == 1: legend_loc = 3
+      if indx_i == 2: legend_loc = 3
+  
 
     if add_legend:
       leg = ax.legend(  loc=legend_loc, frameon=False, prop=prop    )
@@ -881,13 +1013,13 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
     if scales == 'middle':
       x_min, x_max = 2e-3, 1e-1
       if indx_i == 0: y_min, y_max = 4e-3, 9e-2
-      if indx_i == 1: y_min, y_max = 1e-2, 5e-1
+      if indx_i == 1: y_min, y_max = 1e-2, 2e-1
       
     if scales == 'all':
-      x_min, x_max = 1e-3, 1e0
-      if indx_i == 0: y_min, y_max = 8e-5, 9e-2
-      if indx_i == 1: y_min, y_max = 8e-5, 2e-1
-      if indx_i == 2: y_min, y_max = 5e-4, 6e-1
+      x_min, x_max = 2e-3, 1e-1 
+      if indx_i == 0: y_min, y_max = 4e-3, 9e-2
+      if indx_i == 1: y_min, y_max = 1e-2, 2e-1
+      if indx_i == 2: y_min, y_max = 3e-2, 6e-1
 
 
     ax.set_xlim( x_min, x_max )
@@ -916,7 +1048,7 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
           ax = ax_l[i][j].axis('off')
 
 
-  fileName = output_dir + f'flux_ps_{plot_type}_{scales}'
+  fileName = output_dir + f'fig_flux_ps_{plot_type}_{scales}'
   if name != '': fileName += f'_{name}'
   fileName += '.png'
   # fileName += '.pdf'

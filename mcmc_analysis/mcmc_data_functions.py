@@ -38,36 +38,62 @@ def Write_MCMC_Results( stats, MDL, params_mcmc,  stats_file, samples_file,  out
   os.chdir( cwd )
   return samples
 
-def Get_Data_Grid_Composite( fields_list,  SG, z_vals=None, load_normalized_ps=False ):
+def Get_Data_Grid_Composite( fields_list,  SG, z_vals=None, load_normalized_ps=False, sim_ids=None, load_uvb_rates=False ):
   # fields_list = fields.split('+')
   data_grid_all = {}
   for field in fields_list:
-    if field == 'T0':   data_grid_all[field] = Get_Data_Grid( [field], SG ) 
-    if field == 'tau':  data_grid_all[field] = Get_Data_Grid( [field], SG ) 
-    if field == 'P(k)': data_grid_all[field] = Get_Data_Grid_Power_spectrum( z_vals, SG, normalized_ps=load_normalized_ps )
-    if field == 'tau_HeII':  data_grid_all[field] = Get_Data_Grid( [field], SG ) 
+    if field == 'T0':   data_grid_all[field] = Get_Data_Grid( [field], SG, sim_ids=sim_ids ) 
+    if field == 'tau':  data_grid_all[field] = Get_Data_Grid( [field], SG, sim_ids=sim_ids ) 
+    if field == 'P(k)': data_grid_all[field] = Get_Data_Grid_Power_spectrum( z_vals, SG, normalized_ps=load_normalized_ps, sim_ids=sim_ids )
+    if field == 'tau_HeII':  data_grid_all[field] = Get_Data_Grid( [field], SG, sim_ids=sim_ids ) 
 
   data_grid = {}
-  sim_ids = SG.sim_ids
+  if not sim_ids: sim_ids = SG.sim_ids
+  
   for sim_id in sim_ids:  
     data_grid[sim_id] = {}
     for field in fields_list:
-      if field == 'P(k)' or field == '': continue
-      z = data_grid_all[field][sim_id]['z']
-      mean = data_grid_all[field][sim_id][field]['mean']
-      data_grid[sim_id][field] = {'mean':mean, 'z':z }
+     if field == 'P(k)' or field == '': continue
+     z = data_grid_all[field][sim_id]['z']
+     mean = data_grid_all[field][sim_id][field]['mean']
+     data_grid[sim_id][field] = {'mean':mean, 'z':z }
+
+  if load_uvb_rates:
+    photoheating_keys    = [ 'piHI', 'piHeI', 'piHeII' ]
+    photoionization_keys = [ 'k24', 'k25', 'k26' ]
+
+    key_names = { 'piHI': 'photoheating_HI',   'piHeI': 'photoheating_HeI',  'piHeII': 'photoheating_HeII', 
+    'k24': 'photoionization_HI', 'k26': 'photoionization_HeI', 'k25': 'photoionization_HeII' }
+     
+    for sim_id in sim_ids:
+      for key in photoheating_keys:
+        z = SG.Grid[sim_id]['UVB_rates']['z']
+        rates = SG.Grid[sim_id]['UVB_rates']['Photoheating'][key]
+        key_name = key_names[key]
+        data_grid[sim_id][key_name] = {}
+        data_grid[sim_id][key_name]['mean'] = rates
+        data_grid[sim_id][key_name]['z'] = z
+        
+      for key in photoionization_keys:
+        z = SG.Grid[sim_id]['UVB_rates']['z']
+        rates = SG.Grid[sim_id]['UVB_rates']['Chemistry'][key]
+        key_name = key_names[key]
+        data_grid[sim_id][key_name] = {}
+        data_grid[sim_id][key_name]['mean'] = rates
+        data_grid[sim_id][key_name]['z'] = z
+    
   if 'P(k)' in fields_list:  return data_grid, data_grid_all['P(k)']
   else:                      return data_grid
 
 
 
-def Get_Data_Grid_Power_spectrum( z_vals, SG, normalized_ps=False ):
+def Get_Data_Grid_Power_spectrum( z_vals, SG, normalized_ps=False, sim_ids=None ):
   data_grid = {}
   print_norm = True
   for id_z, z_val in enumerate( z_vals ):
     data_grid[id_z] = {}
     data_grid[id_z]['z'] = z_val
-    sim_ids = SG.sim_ids
+    if not sim_ids: sim_ids = SG.sim_ids
     for sim_id in sim_ids:
       if normalized_ps:
         sim_ps_data = SG.Grid[sim_id]['analysis']['power_spectrum_normalized']
@@ -89,8 +115,8 @@ def Get_Data_Grid_Power_spectrum( z_vals, SG, normalized_ps=False ):
   return data_grid
 
 
-def Get_Data_Grid( fields, SG ):
-  sim_ids = SG.sim_ids
+def Get_Data_Grid( fields, SG, sim_ids=None ):
+  if not sim_ids: sim_ids = SG.sim_ids
   data_grid = {}
   for sim_id in sim_ids:
     data_grid[sim_id] = {}
@@ -207,12 +233,16 @@ def Get_Comparable_Field_from_Grid( field, comparable_data, SG, interpolate=True
   return comparable_grid
   
 
-def Get_Comparable_Composite( fields, z_min, z_max, ps_extras=None, tau_extras=None, log_ps=False ):
+def Get_Comparable_Composite( fields, z_min, z_max, ps_extras=None, tau_extras=None, log_ps=False, rescale_tau_HeII_sigma=1.0 ):
   
+  rescaled_walther = False
+  rescale_walter_file = None
   if ps_extras is not None:
     ps_data_dir = ps_extras['data_dir']
     data_ps_sets = ps_extras['data_sets'] 
-    ps_range = ps_extras['range'] 
+    ps_range = ps_extras['range']
+    rescaled_walther = ps_extras['rescaled_walther'] 
+    rescale_walter_file = ps_extras['rescale_walter_file']
 
   if tau_extras is not None:
     factor_sigma_tau_becker  = tau_extras['factor_sigma_becker']
@@ -224,7 +254,7 @@ def Get_Comparable_Composite( fields, z_min, z_max, ps_extras=None, tau_extras=N
   for field in fields_list:
     append_comparable = False
     if field == 'P(k)':
-      comparable_ps = Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_ps_sets, ps_range, log_ps=log_ps )
+      comparable_ps = Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_ps_sets, ps_range, log_ps=log_ps, rescaled_walther=rescaled_walther, rescale_walter_file=rescale_walter_file )
       comparable_ps_all = comparable_ps['P(k)']
       comparable_ps_separate = comparable_ps['separate']
       comparable_all['P(k)'] = { 'all':comparable_ps_all, 'separate':comparable_ps_separate }
@@ -238,7 +268,7 @@ def Get_Comparable_Composite( fields, z_min, z_max, ps_extras=None, tau_extras=N
       comparable_field = Get_Comparable_Tau( z_min, z_max, factor_sigma_tau_becker=factor_sigma_tau_becker, factor_sigma_tau_keating=factor_sigma_tau_keating )
       append_comparable = True
     if field == 'tau_HeII': 
-      comparable_field = Get_Comparable_Tau_HeII( )
+      comparable_field = Get_Comparable_Tau_HeII( rescale_tau_HeII_sigma=rescale_tau_HeII_sigma )
       append_comparable = True
     if append_comparable:
       comparable_all[field] = comparable_field
@@ -249,7 +279,7 @@ def Get_Comparable_Composite( fields, z_min, z_max, ps_extras=None, tau_extras=N
   
 
 
-def Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_sets, ps_range, log_ps=False ):
+def Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_sets, ps_range, log_ps=False, rescaled_walther=False, rescale_walter_file=None ):
   print( f'Loading P(k) Data:' )
   dir_boss = ps_data_dir + 'data_power_spectrum_boss/'
   data_filename = dir_boss + 'data_table.py'
@@ -277,6 +307,10 @@ def Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_sets, ps_rang
     data_set = data_dir[data_name]
     keys = data_set.keys()
     n_indices = len(keys) - 1
+    if data_name == 'Walther':
+      if rescaled_walther:
+        print(f" Loading Walther rescale values: {rescale_walter_file}")
+        rescale_walter_alphas = Load_Pickle_Directory( rescale_walter_file)
     for index in range(n_indices):
       data = data_set[index]
       z = data['z']
@@ -293,6 +327,11 @@ def Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_sets, ps_rang
         delta_ps_sigma = data['delta_power_error'][k_indices]
         log_delta_ps = np.log( delta_ps )
         log_delta_ps_sigma = 1/delta_ps * delta_ps_sigma
+        if data_name == 'Walther' and rescaled_walther:
+          rescale_z = rescale_walter_alphas[index]['z']
+          rescale_alpha = rescale_walter_alphas[index]['alpha']
+          print( f'  Rescaling z={rescale_z:.1f}    alpha={rescale_alpha:.3f} ')
+          delta_ps *= rescale_alpha
         ps_data[data_id] = {'z':z, 'k_vals':k_vals, 'delta_ps':delta_ps, 'delta_ps_sigma':delta_ps_sigma }
         data_z.append( z )
         data_kvals.append( k_vals )
@@ -334,12 +373,15 @@ def Get_Comparable_T0_Gaikwad():
   print( f' N data points: {len(data_mean)} ' )
   return comparable
 
-def Get_Comparable_Tau_HeII( ):
+def Get_Comparable_Tau_HeII( rescale_tau_HeII_sigma = 1.0 ):
   comparable_z, comparable_tau, comparable_sigma = [], [], []
   data_set = data_tau_HeII_Worserc_2019
   z   = data_set['z']
   tau = data_set['tau']
   sigma = data_set['tau_sigma'] 
+  if rescale_tau_HeII_sigma != 1.0:
+    print( f' Rescaling tau HeII sigma by {rescale_tau_HeII_sigma} ')
+    sigma *= rescale_tau_HeII_sigma 
   comparable = {}
   comparable['z']     = z
   comparable['mean']  = tau
@@ -418,7 +460,7 @@ def Interpolate_Power_Spectrum( p_vals, data_grid, SG ):
   return ps_output
 
 
-def Interpolate_4D( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, clip_params=False, parameter_grid=None, param_id=None, sim_coords_before=None ):
+def Interpolate_4D( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, clip_params=False, parameter_grid=None, param_id=None, sim_coords_before=None, interp_log=False ):
   param_values = np.array([ p0, p1, p2, p3 ])
   n_param = len(param_values)
   if param_id == None: param_id = n_param - 1
@@ -446,13 +488,13 @@ def Interpolate_4D( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, c
   if p_val_l == p_val_r: delta = 0.5
   else: delta = ( p_val - p_val_l ) / ( p_val_r - p_val_l )  
   if param_id == 0:
-    value_l = Get_Value_From_Simulation( sim_coords_l, data_to_interpolate, field, sub_field, SG )
-    value_r = Get_Value_From_Simulation( sim_coords_r, data_to_interpolate, field, sub_field, SG )
+    value_l = Get_Value_From_Simulation( sim_coords_l, data_to_interpolate, field, sub_field, SG, interp_log=interp_log )
+    value_r = Get_Value_From_Simulation( sim_coords_r, data_to_interpolate, field, sub_field, SG, interp_log=interp_log )
     value_interp = delta*value_r + (1-delta)*value_l 
     return value_interp
   
-  value_l = Interpolate_4D( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_l, clip_params=clip_params )
-  value_r = Interpolate_4D( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_r, clip_params=clip_params )
+  value_l = Interpolate_4D( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_l, clip_params=clip_params, interp_log=interp_log )
+  value_r = Interpolate_4D( p0, p1, p2, p3, data_to_interpolate, field, sub_field, SG, parameter_grid=parameter_grid, param_id=param_id-1, sim_coords_before=sim_coords_r, clip_params=clip_params, interp_log=interp_log )
   value_interp = delta*value_r + (1-delta)*value_l
   return value_interp
 
@@ -595,9 +637,10 @@ def Get_Simulation_ID_From_Coordinates( sim_coords, SG ):
   return sim_id
 
 
-def Get_Value_From_Simulation( sim_coords, data_to_interpolate, field, sub_field, SG ):
+def Get_Value_From_Simulation( sim_coords, data_to_interpolate, field, sub_field, SG, interp_log=False ):
   sim_id = Get_Simulation_ID_From_Coordinates( sim_coords, SG )
   sim = SG.Grid[sim_id]
   param_values = sim['parameter_values']
   value = data_to_interpolate[sim_id][field][sub_field]
+  if interp_log: value = np.log10(value)
   return value

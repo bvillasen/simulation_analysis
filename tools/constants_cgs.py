@@ -9,7 +9,7 @@ e_charge = 4.8032e-10 # cm^3/2 g^1/2 s^-1
 #electron mass
 M_e = 9.10938356e-28 #g
 #Solar Mass
-Msun = Msun = 1.98847e33  #g
+Msun = 1.98847e33  #g
 #Parsec
 pc = 3.0857e18  #cm
 kpc = 1000 * pc

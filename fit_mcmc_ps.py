@@ -27,7 +27,7 @@ data_ps_sets = [ 'Boss' ]
 name = ''
 for data_set in data_ps_sets:
   name += data_set + '_'
-name = name[:-1] 
+name = name[:-1]  
 
 
 field = 'P(k)+'

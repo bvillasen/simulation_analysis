@@ -77,7 +77,16 @@ def Interpoate_Rate( z_new, z_0, rate, interp_log=False ):
   if interp_log: rate_new = 10**rate_new
   return rate_new 
   
-  
+def Copy_Grakle_UVB_Rates( rates_data ):
+  grackle_keys = { 'Photoheating':['piHI', 'piHeI', 'piHeII'], 'Chemistry':['k24', 'k25', 'k26'] }
+  output_rates = { 'UVBRates':{} }
+  output_rates['UVBRates']['z'] = rates_data['UVBRates']['z'].copy()
+  for grackle_key in grackle_keys:
+    output_rates['UVBRates'][grackle_key] = {}
+    field_keys = grackle_keys[grackle_key]
+    for field_key in field_keys:
+      output_rates['UVBRates'][grackle_key][field_key] = rates_data['UVBRates'][grackle_key][field_key].copy()
+  return output_rates  
   
 def Extend_Rates_Redshift( max_delta_z, grackle_data ):
   data_out = {}
@@ -98,10 +107,33 @@ def Extend_Rates_Redshift( max_delta_z, grackle_data ):
   return data_out
 
 
-def Modify_Rates_From_Grackle_File( grackle_file_name, parameter_values, max_delta_z = 0.1 ):
-  grackle_data = Load_Grackle_File( grackle_file_name )
-  rates = grackle_data.copy()  
-  rates_data = Extend_Rates_Redshift( max_delta_z, rates )
+def Modify_UVB_Rates( parameter_values, rates ):
+  input_rates = rates.copy()
+  rates_modified = Modify_Rates_From_Grackle_File( None, parameter_values, rates_data=input_rates )
+  uvb_rates = rates_modified['UVBRates']
+  z = uvb_rates['z']
+  heat_HI   = uvb_rates['Photoheating']['piHI']
+  heat_HeI  = uvb_rates['Photoheating']['piHeI']
+  heat_HeII = uvb_rates['Photoheating']['piHeII']
+  ion_HI   = uvb_rates['Chemistry']['k24']
+  ion_HeI  = uvb_rates['Chemistry']['k26']
+  ion_HeII = uvb_rates['Chemistry']['k25']
+  rates_modified =  {}
+  rates_modified['z'] = z
+  rates_modified['photoheating_HI'] = heat_HI 
+  rates_modified['photoheating_HeI'] = heat_HeI 
+  rates_modified['photoheating_HeII'] = heat_HeII 
+  rates_modified['photoionization_HI'] = ion_HI 
+  rates_modified['photoionization_HeI'] = ion_HeI 
+  rates_modified['photoionization_HeII'] = ion_HeII 
+  return rates_modified
+  
+
+def Modify_Rates_From_Grackle_File( grackle_file_name, parameter_values, max_delta_z = 0.1, rates_data=None ):
+  if not rates_data:
+    grackle_data = Load_Grackle_File( grackle_file_name )
+    rates = grackle_data.copy()  
+    rates_data = Extend_Rates_Redshift( max_delta_z, rates )
   
   info = 'Rates for '
   for p_name in parameter_values.keys():
@@ -161,8 +193,8 @@ def Write_Rates_Grackle_File( out_file_name, rates ):
       
       
       
-def Generate_Modified_Rates_File( grackle_file_name, out_file_name, parameter_values ):      
-  rates = Modify_Rates_From_Grackle_File( grackle_file_name, parameter_values )
+def Generate_Modified_Rates_File( grackle_file_name, out_file_name, parameter_values, max_delta_z=0.1 ):      
+  rates = Modify_Rates_From_Grackle_File( grackle_file_name, parameter_values, max_delta_z=max_delta_z )
   Write_Rates_Grackle_File( out_file_name, rates )
       
 

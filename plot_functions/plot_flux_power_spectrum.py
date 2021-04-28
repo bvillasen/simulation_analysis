@@ -72,12 +72,14 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
   z_vals_small_scale  = [ 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 4.2, 4.6, 5.0, 5.4 ]
   z_vals_large_scale  = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.6 ]
   z_vals_middle_scale = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 4.2, 4.6 ]
+  z_vals_small_scale_walther  = [ 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4,  ]
   z_high = [ 5.0, 5.4 ]
   
   
   if scales == 'large': z_vals = z_vals_large_scale
   elif scales == 'small': z_vals = z_vals_small_scale
   elif scales == 'middle': z_vals = z_vals_middle_scale
+  elif scales == 'small_walther': z_vals = z_vals_small_scale_walther
   else: 
     print( "ERROR: Scales = large,  small of middle ")
     return
@@ -86,6 +88,8 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
     
   nrows = 3
   ncols = 4
+  
+  if scales == 'small_walther': nrows = 2
   
   if high_z_only:    nrows, ncols = 1, 2
   
@@ -175,7 +179,7 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
         label_boss = 'eBOSS (2019)'
         d_boss = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boss, label=label_boss, zorder=2)
 
-    if scales == 'small' or scales == 'middle':
+    if scales == 'small' or scales == 'middle' or scales == 'small_walther':
       
       # Add Walther data
       z_diff = np.abs( data_z_w - current_z )

@@ -41,7 +41,15 @@ if fit_log_power_spectrum: name += '_log'
 
 fit_normalized_ps = False
 # ps_norm = {'normalization':'Becker', 'type':'tau_eff'}
-ps_norm = {'normalization':'Becker', 'type':'F_mean'}
+ps_norm = None
+
+# kmax = 0.02
+kmax = 0.1
+name += f'_kmax{kmax:.2f}'
+
+rescale_tau_HeII_sigma = 0.01
+name += f'_rescaleTauHeII{rescale_tau_HeII_sigma:.2f}'
+
 
 ps_data_dir = 'lya_statistics/data/'
 mcmc_dir = root_dir + 'fit_mcmc/'
@@ -53,16 +61,21 @@ create_directory( output_dir )
 load_mcmc_results = False
 # load_mcmc_results = True
 
+rescaled_walther = True
+rescale_walter_file = ps_data_dir + 'rescale_walther_to_boss.pkl' 
 
+
+
+# sim_ids = range(10)
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
-SG.Load_Grid_Analysis_Data( load_normalized_ps=fit_normalized_ps, ps_norm=ps_norm)
-ps_range = SG.Get_Power_Spectrum_Range( kmax=1e-1 )
+SG.Load_Grid_Analysis_Data(  load_normalized_ps=fit_normalized_ps, ps_norm=ps_norm)
+ps_range = SG.Get_Power_Spectrum_Range( kmax=kmax )
 sim_ids = SG.sim_ids
 
-z_min = 2.0
+z_min = 2.2
 z_max = 5.0 
-ps_extras = { 'range':ps_range, 'data_dir':ps_data_dir, 'data_sets':data_ps_sets }
-comparable_data = Get_Comparable_Composite( field,  z_min, z_max, ps_extras=ps_extras, log_ps=fit_log_power_spectrum )
+ps_extras = { 'range':ps_range, 'data_dir':ps_data_dir, 'data_sets':data_ps_sets, 'rescaled_walther':rescaled_walther, 'rescale_walter_file':rescale_walter_file }
+comparable_data = Get_Comparable_Composite( field,  z_min, z_max, ps_extras=ps_extras, log_ps=fit_log_power_spectrum, rescale_tau_HeII_sigma=rescale_tau_HeII_sigma )
 comparable_grid = Get_Comparable_Composite_from_Grid( field, comparable_data, SG, log_ps=fit_log_power_spectrum, load_normalized_ps=fit_normalized_ps )
 Plot_Comparable_Data( field, comparable_data, comparable_grid, output_dir, log_ps=fit_log_power_spectrum  )
 
@@ -146,9 +159,10 @@ label += r'$\Delta z_{\mathrm{He}}:$' + f'{deltaZ_He:.2f}' + '\n'
 label += r'$\Delta z_{\mathrm{H}}:$' + f'{deltaZ_H:.2f}' 
 
 
-if 'Boss'    in data_ps_sets: Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='large', system=system, label=label )
-if 'Walther' in data_ps_sets: Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='small', system=system, label=label )
-Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='all', system=system, label=label )
+# if 'Boss'    in data_ps_sets: Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='large', system=system, label=label, rescaled_walther=rescaled_walther, rescale_walter_file=rescale_walter_file )
+# if 'Walther' in data_ps_sets: Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='small', system=system, label=label, rescaled_walther=rescaled_walther, rescale_walter_file=rescale_walter_file )
+# Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='all',    system=system, label=label,  )
+Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='middle', system=system, label=label, rescaled_walther=rescaled_walther, rescale_walter_file=rescale_walter_file )
 
 Plot_T0_Sampling( samples_fields['T0'], output_dir, system=system, label=label, plot_splines=True )
 

@@ -5,10 +5,17 @@ import numpy as np
 import h5py as h5
 import time
 
+
+def Get_Free_Memory( print_out=False):
+  import psutil
+  mem = psutil.virtual_memory()
+  free = mem.free / 1e9
+  if print_out: print( f'Free Memory: {free:.1f} GB' )
+  return free 
+  
 def check_if_file_exists( file_name ):
   return os.path.isfile( file_name )
   
-
 
 def Load_Pickle_Directory( input_name ):
   import pickle
