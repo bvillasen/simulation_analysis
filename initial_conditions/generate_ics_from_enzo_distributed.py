@@ -28,7 +28,7 @@ print( f'Type: {type} ' )
 print( f'Field: {field} ' )
 
 # Box Size
-Lbox = 50000.0    #kpc/h
+Lbox = 100000.0    #kpc/h
 n_points = 2048
 n_boxes  = 512
 
@@ -36,8 +36,8 @@ n_boxes  = 512
 data_dir = '/data/groups/comp-astro/bruno/'
 # data_dir = '/home/bruno/Desktop/ssd_0/data/'
 # data_dir = '/gpfs/alpine/csc434/scratch/bvilasen/'
-input_dir  = data_dir + f'cosmo_sims/ics/enzo/{n_points}_50Mpc/'
-output_dir = data_dir + f'cosmo_sims/ics/enzo/{n_points}_50Mpc/ics_{n_boxes}_z100/'
+input_dir  = data_dir + f'cosmo_sims/ics/enzo/{n_points}_100Mpc/'
+output_dir = data_dir + f'cosmo_sims/ics/enzo/{n_points}_100Mpc/ics_{n_boxes}_z100/'
 print(f'Input Dir: {input_dir}' )
 print(f'Output Dir: {output_dir}' )
 create_directory( output_dir )
