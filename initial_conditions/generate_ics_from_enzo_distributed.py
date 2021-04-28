@@ -14,14 +14,23 @@ from load_data import get_domain_block
 from ics_particles import  Compute_Particles_Domain_Indices, generate_ics_particles_distributed_single_field, Merge_Particles_Fileds
 from ics_grid import expand_data_grid_to_cholla
 
-hydro = False
-particles = True
+type  = None
+field = None
+for option in sys.argv:
+  if option.find("type=") != -1:  type=option[option.find('='):]
+  if option.find("field=") != -1: field=option[option.find('='):]
+  
+if not type: 
+  print( 'Set type=hydro or type=particles')
+  exit(-1)  
 
+print( f'Type: {type} ' )
+print( f'Field: {field} ' )
 
 # Box Size
 Lbox = 50000.0    #kpc/h
-n_points = 1024
-n_boxes  = 128
+n_points = 2048
+n_boxes  = 512
 
 # data_dir = '/raid/bruno/data/'
 data_dir = '/data/groups/comp-astro/bruno/'
@@ -64,20 +73,20 @@ print( f' Grid Size: {grid_size}')
 print( f' Proc Grid: {proc_grid}')
 time.sleep(2)
 
+if type == 'particles'
 
-Get_Free_Memory( print_out=True )
-particles_domain_indices = Compute_Particles_Domain_Indices( box_size, grid_size, proc_grid, data, ds, output_dir, type_int=np.int16 )
-Get_Free_Memory( print_out=True )
-
-
-field_list = [ 'mass', 'pos_x', 'pos_y', 'pos_z', 'vel_x', 'vel_y', 'vel_z' ]
-
-for field in field_list:
-  generate_ics_particles_distributed_single_field( field, particles_domain_indices, proc_grid, grid_size, output_dir, ds, data  )
-  Get_Free_Memory( print_out=True )
-  time.sleep(2)
+  if field == 'global_indices':
+    Get_Free_Memory( print_out=True )
+    particles_domain_indices = Compute_Particles_Domain_Indices( box_size, grid_size, proc_grid, data, ds, output_dir, type_int=np.int16 )
+    Get_Free_Memory( print_out=True )
 
 
-Merge_Particles_Fileds( field_list, proc_grid, grid_size, output_dir, output_base_name = 'particles.h5')
+  field_list = [ 'mass', 'pos_x', 'pos_y', 'pos_z', 'vel_x', 'vel_y', 'vel_z' ]
+  if field in field_list:
+    generate_ics_particles_distributed_single_field( field, particles_domain_indices, proc_grid, grid_size, output_dir, ds, data  )
+    Get_Free_Memory( print_out=True )
+    time.sleep(2)
+
+  if field == 'merge_fields': Merge_Particles_Fileds( field_list, proc_grid, grid_size, output_dir, output_base_name = 'particles.h5')
 
 
