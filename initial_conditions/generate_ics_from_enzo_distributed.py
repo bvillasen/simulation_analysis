@@ -17,8 +17,8 @@ from ics_grid import expand_data_grid_to_cholla
 type  = None
 field = None
 for option in sys.argv:
-  if option.find("type=") != -1:  type=option[option.find('='):]
-  if option.find("field=") != -1: field=option[option.find('='):]
+  if option.find("type=") != -1:  type=option[option.find('=')+1:]
+  if option.find("field=") != -1: field=option[option.find('=')+1:]
   
 if not type: 
   print( 'Set type=hydro or type=particles')
