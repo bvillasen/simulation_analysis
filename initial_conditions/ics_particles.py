@@ -62,7 +62,7 @@ def Merge_Particles_Fileds( field_list, proc_grid, grid_size, output_dir, output
     for field in field_list:
       #Load the field data
       file_name = f'{output_dir}temp_{field}_{proc_id}.h5'
-      print(f' Loading Field: {field}     File: {file_name}' )
+      # print(f' Loading Field: {field}     File: {file_name}' )
       in_file = h5.File( file_name, 'r' )
       data_field = in_file[field][...]
       n_local = in_file.attrs['n_particles_local']
@@ -74,7 +74,7 @@ def Merge_Particles_Fileds( field_list, proc_grid, grid_size, output_dir, output
           out_file.attrs[key] = in_file.attrs[key]
         print(' Saved Attrs')
     
-      print(f' Writing Field: {field}   n_local: {n_local}' )
+      print(f' Writing Field: {field}   n_local: {n_local}   ' )
       out_file.create_dataset( field, data=data_field )
       in_file.close()
     
