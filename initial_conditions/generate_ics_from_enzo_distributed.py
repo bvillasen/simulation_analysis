@@ -76,10 +76,9 @@ time.sleep(2)
 
 if type == 'particles':
 
-  if field == 'global_indices':
-    Get_Free_Memory( print_out=True )
-    particles_domain_indices = Compute_Particles_Domain_Indices( box_size, grid_size, proc_grid, data, ds, output_dir, type_int=np.int16 )
-    Get_Free_Memory( print_out=True )
+  Get_Free_Memory( print_out=True )
+  particles_domain_indices = Compute_Particles_Domain_Indices( box_size, grid_size, proc_grid, data, ds, output_dir, type_int=np.int16 )
+  Get_Free_Memory( print_out=True )
 
 
   field_list = [ 'mass', 'pos_x', 'pos_y', 'pos_z', 'vel_x', 'vel_y', 'vel_z' ]
