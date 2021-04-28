@@ -73,7 +73,7 @@ print( f' Grid Size: {grid_size}')
 print( f' Proc Grid: {proc_grid}')
 time.sleep(2)
 
-if type == 'particles'
+if type == 'particles':
 
   if field == 'global_indices':
     Get_Free_Memory( print_out=True )
