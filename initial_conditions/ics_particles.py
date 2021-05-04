@@ -36,7 +36,9 @@ def generate_ics_particles_distributed_single_field( field, particles_domain_ind
     data_local = data_field[indices_local]
     out_file_name = output_dir + f'temp_{field}_{proc_id}.h5'
     out_file = h5.File( out_file_name, 'w' )
-    if field == 'mass': out_file.attrs['particle_mass'] = particle_mass
+    if field == 'mass':  out_file.attrs['particle_mass'] = particle_mass    
+    out_file.attrs['current_a'] = current_a
+    out_file.attrs['current_z'] = current_z
     out_file.attrs['n_particles_local'] = n_local
     out_file.create_dataset( field, data=data_local )
     out_file.close()
@@ -46,7 +48,7 @@ def generate_ics_particles_distributed_single_field( field, particles_domain_ind
   data_field, data_local = None, None
 
 
-def Merge_Particles_Fileds( field_list, proc_grid, grid_size, output_dir, output_base_name = 'particles.h5'):
+def Merge_Particles_Fileds( field_list, proc_grid, grid_size, output_dir, output_base_name = 'particles.h5', n_snapshot=0 ):
 
   n_procs = proc_grid[0]*proc_grid[1]*proc_grid[2]
   n_total = []
@@ -54,7 +56,7 @@ def Merge_Particles_Fileds( field_list, proc_grid, grid_size, output_dir, output
     print('\nproc_id: ', proc_id)
     
     # Create the final output file
-    out_file_name = f'{output_dir}{output_base_name}.{proc_id}'
+    out_file_name = f'{output_dir}{n_snapshot}_{output_base_name}.{proc_id}'
     out_file = h5.File( out_file_name, 'w' )
     
     n_local_all = []
@@ -72,7 +74,9 @@ def Merge_Particles_Fileds( field_list, proc_grid, grid_size, output_dir, output
         n_total.append( in_file.attrs['n_particles_local'] )
         for key in list(in_file.attrs.keys()):
           out_file.attrs[key] = in_file.attrs[key]
-        print(' Saved Attrs')
+        print(f' Saved Attrs')
+        for key in list(out_file.attrs.keys()):
+          print( f' {key}: {out_file.attrs[key]} ')
     
       print(f' Writing Field: {field}   n_local: {n_local}   ' )
       out_file.create_dataset( field, data=data_field )
@@ -84,7 +88,7 @@ def Merge_Particles_Fileds( field_list, proc_grid, grid_size, output_dir, output
     
     out_file.close()
     print('Saved File: ', out_file_name)
-    time.sleep(2)
+    time.sleep(0.1)
   print( f'\nTotal Partilces Saved: {np.sum(n_total)}   Grid_size: {np.prod(grid_size)} ') 
 
 

@@ -12,13 +12,15 @@ sys.path.extend(sub_directories)
 from tools import *
 from load_data import get_domain_block
 from ics_particles import  Compute_Particles_Domain_Indices, generate_ics_particles_distributed_single_field, Merge_Particles_Fileds
-from ics_grid import expand_data_grid_to_cholla
+from ics_grid import generate_ics_hydro_distributed_single_field, Merge_Hydro_Fileds
 
 type  = None
 field = None
+L_MPC = None
 for option in sys.argv:
   if option.find("type=") != -1:  type=option[option.find('=')+1:]
   if option.find("field=") != -1: field=option[option.find('=')+1:]
+  if option.find("L_MPC=") != -1: L_MPC=int(option[option.find('=')+1:])
   
 if not type: 
   print( 'Set type=hydro or type=particles')
@@ -26,18 +28,28 @@ if not type:
 
 print( f'Type: {type} ' )
 print( f'Field: {field} ' )
+print( f'L_MPC: {L_MPC} ' )
 
 # Box Size
-Lbox = 100000.0    #kpc/h
+Lbox = L_MPC * 1e3
+
+# Grid Parameters
 n_points = 2048
 n_boxes  = 512
 
+# n_points = 1024
+# n_boxes  = 128
+
+# n_points = 256
+# n_boxes  = 8
+
+# L_MPC = int(Lbox/1000)
 # data_dir = '/raid/bruno/data/'
-data_dir = '/data/groups/comp-astro/bruno/'
+# data_dir = '/data/groups/comp-astro/bruno/'
 # data_dir = '/home/bruno/Desktop/ssd_0/data/'
-# data_dir = '/gpfs/alpine/csc434/scratch/bvilasen/'
-input_dir  = data_dir + f'cosmo_sims/ics/enzo/{n_points}_200Mpc/'
-output_dir = data_dir + f'cosmo_sims/ics/enzo/{n_points}_200Mpc/ics_{n_boxes}_z100/'
+data_dir = '/gpfs/alpine/csc434/scratch/bvilasen/'
+input_dir  = data_dir + f'cosmo_sims/ics/enzo/{n_points}_{L_MPC}Mpc/'
+output_dir = data_dir + f'cosmo_sims/ics/enzo/{n_points}_{L_MPC}Mpc/ics_{n_boxes}_z100/'
 print(f'Input Dir: {input_dir}' )
 print(f'Output Dir: {output_dir}' )
 create_directory( output_dir )
@@ -85,8 +97,41 @@ if type == 'particles':
   if field in field_list:
     generate_ics_particles_distributed_single_field( field, particles_domain_indices, proc_grid, grid_size, output_dir, ds, data  )
     Get_Free_Memory( print_out=True )
-    time.sleep(2)
+    
+  if field == 'all':
+    for field in field_list:
+      generate_ics_particles_distributed_single_field( field, particles_domain_indices, proc_grid, grid_size, output_dir, ds, data  )
+      Get_Free_Memory( print_out=True )
+      time.sleep(2)
 
-  if field == 'merge_fields': Merge_Particles_Fileds( field_list, proc_grid, grid_size, output_dir, output_base_name = 'particles.h5')
+  if field == 'merge': Merge_Particles_Fileds( field_list, proc_grid, grid_size, output_dir, output_base_name = 'particles.h5', n_snapshot=0 )
 
 
+if type == 'hydro':
+  
+  data_grid = ds.covering_grid( level=0, left_edge=ds.domain_left_edge, dims=ds.domain_dimensions )
+  
+
+  field_list = [ 'density', 'velocity_x', 'velocity_y', 'velocity_z', 'thermal_energy' ]
+
+  if field in field_list:
+    Get_Free_Memory( print_out=True )
+    generate_ics_hydro_distributed_single_field( field, proc_grid, output_dir, ds, data_grid )
+
+    
+  if field == 'all':
+    for field in field_list:
+      Get_Free_Memory( print_out=True )
+      generate_ics_hydro_distributed_single_field( field, proc_grid, output_dir, ds, data_grid )
+      print('')
+      time.sleep(2)
+   
+  if field == 'merge': Merge_Hydro_Fileds( field_list, proc_grid, output_dir, output_base_name='h5', n_snapshot=0 ) 
+
+    
+    
+    
+    
+    
+    
+    
