@@ -1,5 +1,31 @@
 import numpy as np
 
+def load_data_irsic( data_filename ):
+  table = np.loadtxt( data_filename )
+  z_vals_all =  np.round(table[:,0], decimals=1 )
+  z_vals = np.array(list(set(list(z_vals_all))))
+  z_vals.sort()
+  data_out = {}
+  data_out['z_vals'] = z_vals
+  for i,z in enumerate(z_vals):
+    indices = np.where(z_vals_all==z)[0]
+    data_z =  table[indices]
+    k_vals = data_z[:,1]
+    power_1 = data_z[:,2]
+    power_2 = data_z[:,6] 
+    sigma_1 = data_z[:,3]
+    sigma_2 = data_z[:,4]
+    power = power_1
+    power[z>3.7]  = power_2[z>3.7]
+    power_error = sigma_1 + sigma_2
+    data_out[i] = {}
+    data_out[i]['z'] = z
+    data_out[i]['k_vals'] = k_vals
+    data_out[i]['delta_power'] = power * k_vals / np.pi 
+    data_out[i]['delta_power_error'] = power_error * k_vals / np.pi 
+    data_out[i]['power_spectrum'] = power  
+    data_out[i]['sigma_power_spectrum'] = power_error  
+  return data_out
 
 
 def load_data_boss( data_filename ):

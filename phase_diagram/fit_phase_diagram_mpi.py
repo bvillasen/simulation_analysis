@@ -3,7 +3,8 @@ from pathlib import Path
 import h5py as h5
 import numpy as np
 import matplotlib.pyplot as plt
-sys.path.append('tools')
+cosmo_dir = os.path.dirname(os.getcwd()) + '/'
+sys.path.append(cosmo_dir + 'tools')
 from tools import *
 #Append analysis directories to path
 extend_path()

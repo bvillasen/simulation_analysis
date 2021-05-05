@@ -13,67 +13,78 @@ root_dir = os.path.dirname(os.getcwd()) + '/'
 subDirectories = [x[0] for x in os.walk(root_dir)]
 sys.path.extend(subDirectories)
 from tools import *
-from load_tabulated_data import load_power_spectrum_table, load_tabulated_data_boera, load_tabulated_data_viel, load_data_boss
+from load_tabulated_data import load_power_spectrum_table, load_tabulated_data_boera, load_tabulated_data_viel, load_data_boss, load_data_irsic
 from plotting_tools import smooth_line
 
-import matplotlib
-matplotlib.rcParams['mathtext.fontset'] = 'cm'
-matplotlib.rcParams['mathtext.rm'] = 'serif'
 
-uvb = 'pchw18'
-# uvb = 'hm12'
-# dataDir = '/home/bruno/Desktop/data/'
-dataDir = '/raid/bruno/data/'
-# dataDir = '/data/groups/comp-astro/bruno/'
-simulation_dir = dataDir + 'cosmo_sims/2048_hydro_50Mpc/'
-output_dir = simulation_dir + 'figures/flux_power_spectrum/'.format(uvb)
+data_dir = '/raid/bruno/data/'
+input_dir_0  = data_dir + f'cosmo_sims/rescaled_P19/1024_50Mpc/analysis_files/ps_statistics/'
+input_dir_1  = data_dir + f'cosmo_sims/rescaled_P19/2048_100Mpc/analysis_files/ps_statistics/'
+input_dir_2  = data_dir + f'cosmo_sims/rescaled_P19/2048_200Mpc/analysis_files/ps_statistics/'
+output_dir = data_dir + f'cosmo_sims/rescaled_P19/figures/'
 create_directory( output_dir )
 
-fig_width = 8
-fig_dpi = 300
+input_dir_list = [ input_dir_0, input_dir_1, input_dir_2 ]
+input_dir_list = [ input_dir_0, input_dir_1 ]
 
-label_size = 18
-figure_text_size = 18
-legend_font_size = 16
-tick_label_size_major = 15
-tick_label_size_minor = 13
-tick_size_major = 5
-tick_size_minor = 3
-tick_width_major = 1.5
-tick_width_minor = 1
-border_width = 1
+line_widths = [ 2, 2, 2 ]
+line_styles = [ 'solid', 'dashed', 'dashed' ]
 
-prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/bruno/fonts/Helvetica', "Helvetica.ttf"), size=12)
+show_error_bar = [ 'False', 'False', 'False' ]
 
-errorbar = True
+labels = [ r'$50 \,\,\,\, h^{-1}\mathrm{Mpc} \,\,\, 1024^3 $', r'$100 \,h^{-1}\mathrm{Mpc} \,\,\, 2048^3 $', r'$200 \,h^{-1}\mathrm{Mpc} \,\,\, 2048^3 $']
 
-# plot_boss = False
-plot_boss = True
 
-# errorbars = 'symmetric'
-errorbars = 'asymmetric'
+file_ids = range(15, 56)
+data_sets = []
+for data_id, input_dir in  enumerate(input_dir_list) :
+  data_set = {}
+  z_vals = []
+  for index,file_id in enumerate(file_ids):
+    in_file_name = input_dir + f'{file_id}_stats.h5'
+    print( f'Loading File: {in_file_name} ' )
+    in_file = h5.File( in_file_name, 'r' )
+    
+    data_set[index] = {}
+    for key in in_file.attrs.keys():
+      data_set[index][key] = in_file.attrs[key][0]
+    z_vals.append( in_file.attrs['current_z'][0] )
+    k_vals = in_file['k_vals'][...]
+    ps_mean = in_file['mean'][...]
+    ps_max  = in_file['max'][...]
+    ps_high = in_file['higher'][...]
+    ps_low  = in_file['lower'][...]
+    n_independent = in_file['n_independent'][...]
+    in_file.close()
+    data_set[index]['n_independent'] = n_independent 
+    data_set[index]['k_vals'] = k_vals 
+    data_set[index]['mean'] = k_vals / np.pi * ps_mean
+    data_set[index]['max']  = k_vals / np.pi * ps_max
+    data_set[index]['high'] = k_vals / np.pi * ps_high
+    data_set[index]['low']  = k_vals / np.pi * ps_low
+  z_vals = np.array( z_vals )
+  data_set['z'] = z_vals
+  data_set['label'] = labels[data_id]
+  data_sets.append( data_set )
 
-smooth_error_bars = True
 
-#Cosmological Parameters 
-H0 = 67.66 
-cosmo_h = H0 / 100
-Omega_M = 0.3111
-Omega_L = 0.6889
-
-#Box parameters
-Lbox = 50.0 #Mpc/h
-nPoints = 2048
-nx = nPoints
-ny = nPoints
-nz = nPoints
-ncells = nx * ny * nz
+ 
+plot_ps_data = data_sets
+scales = 'middle'
+scales = 'all'
+  
+high_redshift = True
 
 
 dir_boss = 'data/data_power_spectrum_boss/'
 data_filename = dir_boss + 'data_table.py'
 data_boss = load_data_boss( data_filename )
 data_z_boss = data_boss['z_vals']
+
+dir_irsic = 'data/data_power_spectrum_irsic_2017/'
+data_filename = dir_irsic + 'data_table.py'
+data_irsic = load_data_irsic( data_filename )
+data_z_irsic = data_irsic['z_vals']
 
 data_filename = 'data/data_power_spectrum_walther_2019/data_table.txt'
 data_walther = load_power_spectrum_table( data_filename )
@@ -88,283 +99,257 @@ data_viel = load_tabulated_data_viel( data_dir_viel)
 data_z_v = data_viel['z_vals']
 
 
-snapshots_indices = [ 83, 90,  96, 102,  119, 124, 130, 136, 143, 151, 159, 169, ]
-if plot_boss: snapshots_indices = [  96,  102, 106, 110,  114, 119, 124, 130, 136, 143, 151, 159 ]
-snapshots_indices.reverse()
 
-uvb_list = ['pchw18', 'hm12']
+z_vals_small_scale  = [ 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 4.2, 4.6, 5.0, 5.4 ]
+z_vals_large_scale  = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.4 ]
+z_vals_middle_scale = [ 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2   ]
+z_vals_all_scale    = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.4 ]
+z_high = [ 4.6, 4.8, 5.0, 5.4 ]
+z_high = [ 4.2, 4.6, 5.0  ]
+
+if scales == 'large':    z_vals = z_vals_large_scale
+elif scales == 'small':  z_vals = z_vals_small_scale
+elif scales == 'middle': z_vals = z_vals_middle_scale
+elif scales == 'all':    z_vals = z_vals_all_scale
+else: 
+  print( "ERROR: Scales = large,  small, middle or all ")
+  # return
+if high_redshift: z_vals = z_high
+
+plot_boss, plot_boera, plot_viel, plot_walther, plot_irsic = False, False, False, False, False 
+if scales == 'large' : plot_boss = True
+
+# plot_boss = plot_irsic = True
+plot_boss = True 
+plot_boera = True
+
+fig_width = 4
+fig_dpi = 300
+label_size = 18
+figure_text_size = 18
+legend_font_size = 16
+tick_label_size_major = 15
+tick_label_size_minor = 13
+tick_size_major = 5
+tick_size_minor = 3
+tick_width_major = 1.5
+tick_width_minor = 1
+border_width = 1
+text_color  = 'black'
+linewidth = 2
+alpha_bar = 0.5
+
+# Colors
+bright_green = pylab.cm.viridis(.7)
+light_blue = pylab.cm.cool(.3)
+dark_blue = pylab.cm.viridis(.3) 
+purple = pylab.cm.Purples(.7)
+blue = 'C0'
+orange = 'C1'
+green = 'C2'
+red = 'C3'
+purple_2 = 'C4'
+
+c_boss = dark_blue
+c_boera = purple_2
+c_irsic = purple_2
 
 
+colors = [ blue, orange, green ]
 
-# data_cholla = {}
-# for uvb in uvb_list:
-#   input_dir = simulation_dir + 'transmited_flux_{0}_review/bootstraped_power_spectrum/statistics/'.format(uvb)
-#   data_cholla[uvb] = {}
-#   for n_snap in snapshots_indices:
-#     stats_file = input_dir + f'stats_{n_snap}.pkl'
-#     print( f'Loading File: {stats_file}')
-#     data = pickle.load( open( stats_file, 'rb' ) ) 
-#     data_cholla[uvb][n_snap] = {}
-#     data_cholla[uvb][n_snap]['current_z'] = data['current_z']
-#     data_cholla[uvb][n_snap]['k_vals'] = data['k_vals']
-#     data_cholla[uvb][n_snap]['mean'] = data['mean'] * data_cholla[uvb][n_snap]['k_vals'] / np.pi
-#     data_cholla[uvb][n_snap]['sigma'] = data['bootstrap'][n_in_sample]['statistics']['sigma'] * data_cholla[uvb][n_snap]['k_vals'] / np.pi
-#     data_cholla[uvb][n_snap]['sigma'] *= factor
-
-
-
-data_cholla = {}
-for uvb in uvb_list:
-  input_dir = simulation_dir + 'transmited_flux_{0}_review/flux_power_spectrum_new/'.format(uvb)
-  data_cholla[uvb] = {}
-  for n_snap in snapshots_indices:
-    stats_file = input_dir + f'stats_{n_snap}.pkl'
-    print( f'Loading File: {stats_file}')
-    data = pickle.load( open( stats_file, 'rb' ) ) 
-    data_cholla[uvb][n_snap] = {}
-    data_cholla[uvb][n_snap]['current_z'] = data['current_z']
-    data_cholla[uvb][n_snap]['k_vals'] = data['k_vals']
-    data_cholla[uvb][n_snap]['n_independent'] = data['n_independent']
-    data_cholla[uvb][n_snap]['mean'] = data['delta_mean'] 
-    data_cholla[uvb][n_snap]['sigma'] = data['delta_sigma']
-    data_cholla[uvb][n_snap]['sigma_l'] = data['delta_sigma_l']
-    data_cholla[uvb][n_snap]['sigma_r'] = data['delta_sigma_r']
-
-
-
-nrows = 3
-ncols = 4
-fig, ax_l = plt.subplots(nrows=nrows, ncols=ncols, figsize=(2*fig_width,5*nrows))
+import matplotlib
+matplotlib.rcParams['mathtext.fontset'] = 'cm'
+matplotlib.rcParams['mathtext.rm'] = 'serif'
+prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/bruno/fonts/Helvetica', "Helvetica.ttf"), size=12)
+  
+nrows, ncols = 3, 4
+if high_redshift: nrows, ncols = 1, 3
+if scales == 'middle': nrows, ncols = 2, 4
+fig, ax_l = plt.subplots(nrows=nrows, ncols=ncols, figsize=(fig_width*ncols,5*nrows))
 plt.subplots_adjust( hspace = 0.02, wspace=0.02)
 
 
-c_pchw18 = pylab.cm.viridis(.7)
-c_hm12 = pylab.cm.cool(.3)
+n_data_sets = len( plot_ps_data )
 
-c_boss = pylab.cm.viridis(.3)
-c_walther = pylab.cm.viridis(.3)
-c_viel = 'C1'
-c_boera = pylab.cm.Purples(.7)
-
-alpha_bar = 0.4
-text_color  = 'black'
+for index, current_z in enumerate( z_vals ):
 
 
 
-
-
-for uvb_index,uvb in enumerate(uvb_list):
-
-
-
-  plot_data_observed = False
-  if uvb_index == len(uvb_list)-1: plot_data_observed = True
-
-
-  if uvb == 'pchw18':
-    color_line = c_pchw18
-    label = 'CHIPS.P19'
-
-  if uvb == 'hm12':
-    color_line = c_hm12
-    label = 'CHIPS.HM12'
-
-
-  print( f'Plotting UVB: {uvb}' )
-  data = data_cholla[uvb]
-  for snap_index, nSnap in enumerate(snapshots_indices):
-
-
-
-    indx_j = snap_index % ncols
-    indx_i = snap_index//ncols
-
-    ax = ax_l[indx_i][indx_j]
-
-
-    factor = 1.0
-    if indx_i == nrows-1: factor = 1.1
-
-    if plot_boss: 
-      factor = 1.1
-      if indx_i == nrows-1 and indx_j==ncols-1: factor = 1.0
-
-    current_z = data[nSnap]['current_z']
-    k = data[nSnap]['k_vals']
-    delta = data[nSnap]['mean'] 
-    sigma = data[nSnap]['sigma']
-    N = data[nSnap]['n_independent']
-    if errorbar == 'symmetric': 
-      delta *= factor
-      delta_p = delta + sigma / np.sqrt(N) 
-      delta_m = delta - sigma / np.sqrt(N)
-    else:
-      sigma_p = ( data[nSnap]['sigma_r'] - delta ) / np.sqrt(N)
-      sigma_m = ( delta - data[nSnap]['sigma_l'] ) / np.sqrt(N)
-      delta *= factor  
-      # delta_p = delta + sigma_p / np.sqrt(N)
-      # delta_m = delta - sigma_m / np.sqrt(N) 
-      # 
-    if smooth_error_bars:
-      n_neig = 7
-      order = 2
-      delta_smooth, k_smooth = smooth_line( delta, k, log=True, n_neig=n_neig, order=order, interpolate=False )
-      sigma_p_smooth, k_smooth = smooth_line( sigma_p, k, log=True, n_neig=n_neig, order=order, interpolate=False )
-      sigma_m_smooth, k_smooth = smooth_line( sigma_m, k, log=True, n_neig=n_neig, order=order, interpolate=False )
-      delta_p_smooth = delta_smooth + sigma_p_smooth
-      if not plot_boss: 
-        if indx_i == nrows-1: factor_m = 1.4
-        else: factor_m = 1.2
-        delta_m_smooth = delta_smooth - sigma_m_smooth * factor_m
-      else: 
-        factor_p = 0.9
-        factor_m = 1.2
-        delta_p_smooth = delta_smooth + sigma_p_smooth * factor_p
-        delta_m_smooth = delta_smooth - sigma_m_smooth * factor_m
-    
-    else:
-      k_smooth = k
-      delta_p_smooth = delta_p
-      delta_m_smooth = delta_m
+  indx_j = index % ncols
+  indx_i = index//ncols
+  if nrows > 1: ax = ax_l[indx_i][indx_j]
+  else: ax = ax_l[indx_j]
   
-    if uvb_index == 0: line_pchw18, = ax.plot( k, delta, c=color_line, linewidth=3, zorder=1  )
-    if uvb_index == 1: line_hm12, = ax.plot( k, delta, c=color_line, linewidth=3, zorder=1  )
-    if uvb_index == 0: bar_pchw18 = ax.fill_between( k_smooth, delta_p_smooth, delta_m_smooth, facecolor=color_line, alpha=alpha_bar, zorder=1  )
-    if uvb_index == 1: bar_hm12   = ax.fill_between( k_smooth, delta_p_smooth, delta_m_smooth, facecolor=color_line, alpha=alpha_bar, zorder=1  )
+  for data_id in range( n_data_sets ):
+    data_set = plot_ps_data[data_id]
+    z_vals = data_set['z']
+    diff = np.abs( z_vals - current_z )
+    diff_min = diff.min()
+    color_line = colors[data_id]
+    if diff_min < 0.05:
+      index = np.where( diff == diff_min )[0][0]
+      data_ps = data_set[index]
+      k_vals = data_ps['k_vals']
+      delta_ps = data_ps['mean']
+      label = data_set['label']
+      linewidth = line_widths[data_id]
+      linestyle = line_styles[data_id]
+      ax.plot( k_vals, delta_ps,  linewidth=linewidth, color=color_line, zorder=1, label=label, linestyle=linestyle   )
+      if show_error_bar[data_id]:
+        high = data_ps['high']
+        low = data_ps['low']
+        n_ind = data_ps['n_independent']
+        sigma  = 0.5*(  high - low )
+        high_ind = delta_ps + 1/np.sqrt(n_ind) * ( high - delta_ps ) 
+        low_ind =  delta_ps - 1/np.sqrt(n_ind) * (  delta_ps - low ) 
+        if data_id == 0: high_ind[4]*=1.1
+        if data_id == 1: high_ind[4]*=1.1
+        # n_neig = 7
+        # order = 2
+        # high_smooth, k_smooth = smooth_line( high_ind, k_vals, log=True, n_neig=n_neig, order=order, interpolate=False )
+        # low_smooth,  k_smooth = smooth_line( low_ind,  k_vals, log=True, n_neig=n_neig, order=order, interpolate=False )
+        # high = delta_ps + 1/np.sqrt(n_ind) * sigma
+        # low = delta_ps - 1/np.sqrt(n_ind) * sigma
+        ax.fill_between( k_vals, high_ind, low_ind, facecolor=color_line, alpha=alpha_bar, zorder=1  )
+        
+    
+  
+  ax.text(0.85, 0.95, r'$z={0:.1f}$'.format(current_z), horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size, color=text_color) 
+
+  # Add Boss data
+  if plot_boss:
+    z_diff = np.abs( data_z_boss - current_z )
+    diff_min = z_diff.min()
+    if diff_min < 1e-1:
+      data_index = np.where( z_diff == diff_min )[0][0]
+      data_z_local = data_z_boss[data_index]
+
+      data_k = data_boss[data_index]['k_vals']
+      data_delta_power = data_boss[data_index]['delta_power']
+      data_delta_power_error = data_boss[data_index]['delta_power_error']
+      label_boss = 'eBOSS (2019)'
+      d_boss = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boss, label=label_boss, zorder=2)
+
+  # Add Irsic data
+  if plot_irsic:
+    z_diff = np.abs( data_z_irsic - current_z )
+    diff_min = z_diff.min()
+    if diff_min < 1e-1:
+      data_index = np.where( z_diff == diff_min )[0][0]
+      data_z_local = data_z_irsic[data_index]
+
+      data_k = data_irsic[data_index]['k_vals']
+      data_delta_power = data_irsic[data_index]['delta_power']
+      data_delta_power_error = data_irsic[data_index]['delta_power_error']
+      label_irsic = 'Irsic et al. (2017)'
+      d_irsic = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_irsic, label=label_irsic, zorder=2)
+
+  # Add Walther data
+  if plot_walther:
+    z_diff = np.abs( data_z_w - current_z )
+    diff_min = z_diff.min()
+    if diff_min < 1e-1:
+      data_index = np.where( z_diff == diff_min )[0][0]
+      data_z_local = data_z_w[data_index]
+
+      data_k = data_walther[data_index]['k_vals']
+      data_delta_power = data_walther[data_index]['delta_power']
+      data_delta_power_error = data_walther[data_index]['delta_power_error']
+      label_walther ='Walther et al. (2018)' 
 
 
+  # Add Boera data
+  if plot_boera:
+    z_diff = np.abs( data_z_b - current_z )
+    diff_min = z_diff.min()
+    if diff_min < 1e-1:
+      data_index = np.where( z_diff == diff_min )[0][0]
+      data_z_local = data_z_b[data_index]
+    
+      data_k = data_boera[data_index]['k_vals']
+      data_delta_power = data_boera[data_index]['delta_power'] 
+      data_delta_power_error = data_boera[data_index]['delta_power_error']
+      label_boera ='Boera et al. (2019)'
+      d_boera = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boera, label=label_boera, zorder=2 )
+    
+    
+  # Add Viel data
+  if plot_viel:
+    z_diff = np.abs( data_z_v - current_z )
+    diff_min = z_diff.min()
+    if diff_min < 1e-1:
+      data_index = np.where( z_diff == diff_min )[0][0]
+      data_z_local = data_z_v[data_index]
+    
+      data_k = data_viel[data_index]['k_vals']
+      data_delta_power = data_viel[data_index]['delta_power']
+      data_delta_power_error = data_viel[data_index]['delta_power_error']
+      label_viel = 'Viel et al. (2013)'
+      d_viel = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_viel, label=label_viel, zorder=2 )
 
 
-    ax.text(0.85, 0.95, r'$z={0:.1f}$'.format(current_z), horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size, color=text_color) 
-
-
-    if plot_data_observed :
-
-      if plot_boss:
-
-        # Add Boss data
-        z_diff = np.abs( data_z_boss - current_z )
-        diff_min = z_diff.min()
-        if diff_min < 1e-1:
-          data_index = np.where( z_diff == diff_min )[0][0]
-          data_z_local = data_z_boss[data_index]
-
-          data_k = data_boss[data_index]['k_vals']
-          data_delta_power = data_boss[data_index]['delta_power']
-          data_delta_power_error = data_boss[data_index]['delta_power_error']
-          label_boss = 'eBOSS (2019)'
-          d_boss = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boss, zorder=2 )
-
-      else:
-
-        # Add Walther data
-        z_diff = np.abs( data_z_w - current_z )
-        diff_min = z_diff.min()
-        if diff_min < 1e-1:
-          data_index = np.where( z_diff == diff_min )[0][0]
-          data_z_local = data_z_w[data_index]
-
-          data_k = data_walther[data_index]['k_vals']
-          data_delta_power = data_walther[data_index]['delta_power']
-          data_delta_power_error = data_walther[data_index]['delta_power_error']
-          label_walther ='Walther et al. (2018)' 
-          d_walther = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_walther, zorder=2 )
-
-
-        # Add Boera data
-        z_diff = np.abs( data_z_b - current_z )
-        diff_min = z_diff.min()
-        if diff_min < 1e-1:
-          data_index = np.where( z_diff == diff_min )[0][0]
-          data_z_local = data_z_b[data_index]
-
-          data_k = data_boera[data_index]['k_vals']
-          data_delta_power = data_boera[data_index]['delta_power']
-          data_delta_power_error = data_boera[data_index]['delta_power_error']
-          label_boera ='Boera et al. (2019)'
-          d_boera = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boera, zorder=2  )
-
-
-        # Add Viel data
-        z_diff = np.abs( data_z_v - current_z )
-        diff_min = z_diff.min()
-        if diff_min < 1e-1:
-          data_index = np.where( z_diff == diff_min )[0][0]
-          data_z_local = data_z_v[data_index]
-
-          data_k = data_viel[data_index]['k_vals']
-          data_delta_power = data_viel[data_index]['delta_power']
-          data_delta_power_error = data_viel[data_index]['delta_power_error']
-          label_viel = 'Viel et al. (2013)'
-          d_viel = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_viel, zorder=2 )
-
-
-    legend_loc = 3
-    if indx_i == nrows-1 and nrows!=2: legend_loc = 2
-
-    if plot_boss: legend_loc = 2
-    label_bars =  r'1$\sigma$ skewers $P\,(\Delta_F^2)$'
-
-    if indx_j == 0 and uvb_index == 1 :
-      # leg = ax.legend( loc=legend_loc, frameon=False, fontsize=12)
-      if plot_boss: leg = ax.legend( [line_pchw18, line_hm12, d_boss], ['CHIPS.P19', 'CHIPS.HM12',  label_boss ], loc=legend_loc, frameon=False, prop=prop,   handler_map={tuple: HandlerTuple(ndivide=None)}  )
-      else: 
-        if indx_i in [0, 1]: leg = ax.legend( [line_pchw18, line_hm12, d_walther], ['CHIPS.P19', 'CHIPS.HM12', label_walther ], loc=legend_loc, frameon=False, prop=prop,   handler_map={tuple: HandlerTuple(ndivide=None)}  )
-        else: leg = ax.legend( [line_pchw18, line_hm12, d_boera, d_viel], ['CHIPS.P19', 'CHIPS.HM12', label_boera, label_viel ], loc=legend_loc, frameon=False, prop=prop,   handler_map={tuple: HandlerTuple(ndivide=None)}  )
-
-
-      for text in leg.get_texts():
-          plt.setp(text, color = text_color)
-
-
-
+  if scales == 'large': legend_loc = 2
+  if scales == 'all':   legend_loc = 3
+  if scales == 'middle':   legend_loc = 3
+  
+    
+  if indx_j == 0:
+    ax.legend( loc=legend_loc, frameon=False, prop=prop )
+  
+  if scales == 'small':
     x_min, x_max = 4e-3, 2.5e-1
     if indx_i == 0: y_min, y_max = 1e-3, 9e-2
     if indx_i == 1: y_min, y_max = 5e-3, 2e-1
     if indx_i == 2: y_min, y_max = 5e-2, 3
 
-    if plot_boss:
-      x_min, x_max = 2e-3, 2.3e-2
-      if indx_i == 0: y_min, y_max = 1e-2, 1.2e-1
-      if indx_i == 1: y_min, y_max = 2e-2, 2.5e-1
-      if indx_i == 2: y_min, y_max = 5e-2, 7e-1
+  if scales == 'large':
+    x_min, x_max = 8e-4, 2.3e-2
+    if indx_i == 0: y_min, y_max = 6e-3, 9e-2
+    if indx_i == 1: y_min, y_max = 1.2e-2, 2.05e-1
+    if indx_i == 2: y_min, y_max = 2.5e-2, 6e-1
+
+  if scales == 'middle':
+    x_min, x_max = 2e-3, 7e-2
+    if indx_i == 0: y_min, y_max = 1e-2, 2e-1
+    if indx_i == 1: y_min, y_max = 3e-2, 5e-1
+    
+  if scales == 'all':
+    x_min, x_max = 2e-4, 1e-0 
+    x_min, x_max = 1e-3, 3e-1 
+    if indx_i == 0: y_min, y_max = 3e-7, 9e-2
+    if indx_i == 1: y_min, y_max = 1e-6, 2e-1
+    if indx_i == 2: y_min, y_max = 1e-5, 6e-1
+    
+  if high_redshift:
+    if indx_i == 0: y_min, y_max = 1e-2, 8e-1
+  
+    
 
 
+  ax.set_xlim( x_min, x_max )
+  ax.set_ylim( y_min, y_max )
+  ax.set_xscale('log')
+  ax.set_yscale('log')
 
 
-    ax.set_xlim( x_min, x_max )
-    ax.set_ylim( y_min, y_max )
-    ax.set_xscale('log')
-    ax.set_yscale('log')
+  [sp.set_linewidth(border_width) for sp in ax.spines.values()]
+
+  if indx_j > 0:ax.set_yticklabels([])
+  if indx_i != nrows-1 :ax.set_xticklabels([])
+
+  ax.tick_params(axis='both', which='major', labelsize=tick_label_size_major, size=tick_size_major, width=tick_width_major, direction='in' )
+  ax.tick_params(axis='both', which='minor', labelsize=tick_label_size_minor, size=tick_size_minor, width=tick_width_minor, direction='in')
+
+  if indx_j == 0: ax.set_ylabel( r' $\Delta_F^2(k)$', fontsize=label_size, color= text_color )
+  if indx_i == nrows-1: ax.set_xlabel( r'$ k   \,\,\,  [\mathrm{s}\,\mathrm{km}^{-1}] $',  fontsize=label_size, color= text_color )
 
 
-    [sp.set_linewidth(border_width) for sp in ax.spines.values()]
+file_name = output_dir + f'flux_power_spectrum_grid_{scales}'
+if high_redshift: file_name += '_highZ'
+file_name += '.png'
 
-    if indx_j > 0:ax.set_yticklabels([])
-    if indx_i != nrows-1 :ax.set_xticklabels([])
-
-    ax.tick_params(axis='both', which='major', labelsize=tick_label_size_major, size=tick_size_major, width=tick_width_major, direction='in' )
-    ax.tick_params(axis='both', which='minor', labelsize=tick_label_size_minor, size=tick_size_minor, width=tick_width_minor, direction='in')
-
-    if indx_j == 0: ax.set_ylabel( r' $\Delta_F^2(k)$', fontsize=label_size, color= text_color )
-    if indx_i == nrows-1: ax.set_xlabel( r'$ k   \,\,\,  [\mathrm{s}\,\mathrm{km}^{-1}] $',  fontsize=label_size, color= text_color )
+fig.savefig( file_name,  pad_inches=0.1, bbox_inches='tight', dpi=fig_dpi)
+print('Saved Image: ', file_name )
 
 
-
-
-
-
-
-
-
-
-
-fileName = output_dir + 'flux_power_spectrum_grid_review'
-if plot_boss: fileName += '_BOSS'
-# fileName += f'_{errorbars}'
-# fileName += '.png'
-fileName += '.pdf'
-fig.savefig( fileName,  pad_inches=0.1, bbox_inches='tight', dpi=fig_dpi)
-print('Saved Image: ', fileName)
-
-
+   

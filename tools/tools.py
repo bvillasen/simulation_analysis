@@ -69,11 +69,13 @@ def create_directory( dir ):
     print( " Directory created")
 
 
-def get_files_names( fileKey, inDir, type='cholla' ):
+def get_files_names( inDir, fileKey='',  type=None ):
+  if not type: dataFiles = [f for f in listdir(inDir) if isfile(join(inDir, f)) ]
   if type=='nyx': dataFiles = [f for f in listdir(inDir) if (f.find(fileKey) >= 0 )  ]
   if type == 'cholla': dataFiles = [f for f in listdir(inDir) if (isfile(join(inDir, f)) and (f.find(fileKey) >= 0 ) ) ]
   dataFiles = np.sort( dataFiles )
   nFiles = len( dataFiles )
   # index_stride = int(dataFiles[1][len(fileKey):]) - int(dataFiles[0][len(fileKey):])
+  if not type: return dataFiles
   if type == 'nyx': return dataFiles, nFiles
   if type == 'cholla': return dataFiles, nFiles
