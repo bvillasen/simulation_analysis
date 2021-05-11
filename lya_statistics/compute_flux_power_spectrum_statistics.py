@@ -9,11 +9,11 @@ from tools import *
 from stats_functions import compute_distribution, get_highest_probability_interval
 
 
-# n_points = 1024
-# L_MPC = 50
+n_points = 1024
+L_MPC = 50
 
-n_points = 2048
-L_MPC = 200
+# n_points = 2048
+# L_MPC = 100
 
 data_dir = '/raid/bruno/data/'
 input_dir  = data_dir + f'cosmo_sims/rescaled_P19/{n_points}_{L_MPC}Mpc/analysis_files/'

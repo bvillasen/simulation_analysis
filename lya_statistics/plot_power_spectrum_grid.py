@@ -30,7 +30,7 @@ input_dir_list = [ input_dir_0, input_dir_1 ]
 line_widths = [ 2, 2, 2 ]
 line_styles = [ 'solid', 'dashed', 'dashed' ]
 
-show_error_bar = [ 'False', 'False', 'False' ]
+show_error_bar = [ True, True, False ]
 
 labels = [ r'$50 \,\,\,\, h^{-1}\mathrm{Mpc} \,\,\, 1024^3 $', r'$100 \,h^{-1}\mathrm{Mpc} \,\,\, 2048^3 $', r'$200 \,h^{-1}\mathrm{Mpc} \,\,\, 2048^3 $']
 
@@ -72,8 +72,10 @@ for data_id, input_dir in  enumerate(input_dir_list) :
 plot_ps_data = data_sets
 scales = 'middle'
 scales = 'all'
+# scales = 'large'
   
 high_redshift = True
+# high_redshift = False
 
 
 dir_boss = 'data/data_power_spectrum_boss/'
@@ -204,12 +206,6 @@ for index, current_z in enumerate( z_vals ):
         low_ind =  delta_ps - 1/np.sqrt(n_ind) * (  delta_ps - low ) 
         if data_id == 0: high_ind[4]*=1.1
         if data_id == 1: high_ind[4]*=1.1
-        # n_neig = 7
-        # order = 2
-        # high_smooth, k_smooth = smooth_line( high_ind, k_vals, log=True, n_neig=n_neig, order=order, interpolate=False )
-        # low_smooth,  k_smooth = smooth_line( low_ind,  k_vals, log=True, n_neig=n_neig, order=order, interpolate=False )
-        # high = delta_ps + 1/np.sqrt(n_ind) * sigma
-        # low = delta_ps - 1/np.sqrt(n_ind) * sigma
         ax.fill_between( k_vals, high_ind, low_ind, facecolor=color_line, alpha=alpha_bar, zorder=1  )
         
     
@@ -321,7 +317,7 @@ for index, current_z in enumerate( z_vals ):
     if indx_i == 2: y_min, y_max = 1e-5, 6e-1
     
   if high_redshift:
-    if indx_i == 0: y_min, y_max = 1e-2, 8e-1
+    if indx_i == 0: y_min, y_max = 5e-3, 8e-1
   
     
 

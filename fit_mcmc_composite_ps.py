@@ -15,22 +15,23 @@ from data_thermal_history import *
 from mcmc_plotting_functions import *
 from mcmc_sampling_functions import *
 
-# data_sets = [ 'Boss', 'Walther', 'Boera', 'Viel' ]
-# data_ps_sets = [ 'Boss' ]
 # data_ps_sets = [ 'Walther' ]
+# data_ps_sets = [ 'Boss' ]
+# data_ps_sets = [ 'Irsic' ]
 # data_ps_sets = [ 'Boera' ]
-data_ps_sets = [ 'Boss', 'Walther' ]
-# data_ps_sets = [ 'Walther', 'Boera' ]
-# data_ps_sets = [ 'Walther', 'Viel' ]
-# data_ps_sets = [ 'Boss', 'Walther', 'Boera' ]
-# data_ps_sets = [ 'Boss', 'Walther', 'Viel' ]
+# data_ps_sets = [ 'Boss', 'Boera' ]
+data_ps_sets = [ 'Boss', 'Irsic' ]
+data_ps_sets = [ 'Boss', 'Irsic', 'Boera' ]
 
 
 name = ''
+data_label  = ''
 for data_set in data_ps_sets:
   name += data_set + '_'
+  data_label += data_set + ' + '
 name = name[:-1] 
-
+data_label = data_label[:-3]
+print(f'Data Lable: {data_label}')
 # field = 'P(k)+T0'
 # field = 'P(k)+'
 field = 'P(k)+tau_HeII'
@@ -44,11 +45,11 @@ fit_normalized_ps = False
 ps_norm = None
 
 # kmax = 0.02
-kmax = 0.1
-name += f'_kmax{kmax:.2f}'
+kmax = 0.2
+# name += f'_kmax{kmax:.2f}'
 
-rescale_tau_HeII_sigma = 0.01
-name += f'_rescaleTauHeII{rescale_tau_HeII_sigma:.2f}'
+rescale_tau_HeII_sigma = 1.0
+# name += f'_rescaleTauHeII{rescale_tau_HeII_sigma:.2f}'
 
 
 ps_data_dir = 'lya_statistics/data/'
@@ -122,48 +123,47 @@ else:
 
 # Make Corner plot from posteriors 
 labels = { 'scale_He':r'$\beta_{\mathrm{He}}$', 'scale_H':r'$\beta_{\mathrm{H}}$', 'deltaZ_He':r'$\Delta z_{\mathrm{He}}$', 'deltaZ_H':r'$\Delta z_{\mathrm{H}}$'    }
-Plot_Corner( param_samples, labels, output_dir, n_bins_1D=40, n_bins_2D=40, lower_mask_factor=70  )
-
+Plot_Corner( param_samples, data_label, labels, output_dir, n_bins_1D=40, n_bins_2D=40, lower_mask_factor=70  )
 
 # Get the Highest_Likelihood parameter values 
 params_HL = Get_Highest_Likelihood_Params( param_samples, n_bins=100 )
 
-hpi_sum = 0.95
-n_samples = 100000
-
-# Obtain distribution of the power spectrum
-file_name = output_dir + 'samples_power_spectrum.pkl'
-if load_mcmc_results:
-  samples_ps = Load_Pickle_Directory( file_name )
-else:  
-  samples_ps = Sample_Power_Spectrum_from_Trace( param_samples, data_grid_power_spectrum, SG, hpi_sum=hpi_sum, n_samples=n_samples, params_HL=params_HL )
-  Write_Pickle_Directory( samples_ps, file_name )
-
-
-
-# Obtain distribution of the other fields
-file_name = output_dir + 'samples_fields.pkl' 
-field_list = ['T0', 'tau', 'tau_HeII']
-if load_mcmc_results:
-  samples_fields = Load_Pickle_Directory( file_name )
-else:  
-  samples_fields = Sample_Fields_from_Trace( field_list, param_samples, data_grid, SG, hpi_sum=hpi_sum, n_samples=n_samples, params_HL=params_HL )
-  Write_Pickle_Directory( samples_fields, file_name )
-
-
-params_HL = params_HL.flatten()
-beta_He, beta_H, deltaZ_He, deltaZ_H = params_HL
-label =  r'$\beta_{\mathrm{He}}:$' + f'{beta_He:.2f}' + '\n' 
-label += r'$\beta_{\mathrm{H}}:$' + f' {beta_H:.2f}' + '\n' 
-label += r'$\Delta z_{\mathrm{He}}:$' + f'{deltaZ_He:.2f}' + '\n' 
-label += r'$\Delta z_{\mathrm{H}}:$' + f'{deltaZ_H:.2f}' 
-
-
-# if 'Boss'    in data_ps_sets: Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='large', system=system, label=label, rescaled_walther=rescaled_walther, rescale_walter_file=rescale_walter_file )
-# if 'Walther' in data_ps_sets: Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='small', system=system, label=label, rescaled_walther=rescaled_walther, rescale_walter_file=rescale_walter_file )
-# Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='all',    system=system, label=label,  )
-Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='middle', system=system, label=label, rescaled_walther=rescaled_walther, rescale_walter_file=rescale_walter_file )
-
-Plot_T0_Sampling( samples_fields['T0'], output_dir, system=system, label=label, plot_splines=True )
-
-Plot_tau_HeII_Sampling( samples_fields, output_dir, system=system, label=label )
+# hpi_sum = 0.95
+# n_samples = 100000
+# 
+# # Obtain distribution of the power spectrum
+# file_name = output_dir + 'samples_power_spectrum.pkl'
+# if load_mcmc_results:
+#   samples_ps = Load_Pickle_Directory( file_name )
+# else:  
+#   samples_ps = Sample_Power_Spectrum_from_Trace( param_samples, data_grid_power_spectrum, SG, hpi_sum=hpi_sum, n_samples=n_samples, params_HL=params_HL )
+#   Write_Pickle_Directory( samples_ps, file_name )
+# 
+# 
+# 
+# # Obtain distribution of the other fields
+# file_name = output_dir + 'samples_fields.pkl' 
+# field_list = ['T0', 'tau', 'tau_HeII']
+# if load_mcmc_results:
+#   samples_fields = Load_Pickle_Directory( file_name )
+# else:  
+#   samples_fields = Sample_Fields_from_Trace( field_list, param_samples, data_grid, SG, hpi_sum=hpi_sum, n_samples=n_samples, params_HL=params_HL )
+#   Write_Pickle_Directory( samples_fields, file_name )
+# 
+# 
+# params_HL = params_HL.flatten()
+# beta_He, beta_H, deltaZ_He, deltaZ_H = params_HL
+# label =  r'$\beta_{\mathrm{He}}:$' + f'{beta_He:.2f}' + '\n' 
+# label += r'$\beta_{\mathrm{H}}:$' + f' {beta_H:.2f}' + '\n' 
+# label += r'$\Delta z_{\mathrm{He}}:$' + f'{deltaZ_He:.2f}' + '\n' 
+# label += r'$\Delta z_{\mathrm{H}}:$' + f'{deltaZ_H:.2f}' 
+# 
+# 
+# # if 'Boss'    in data_ps_sets: Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='large', system=system, label=label, rescaled_walther=rescaled_walther, rescale_walter_file=rescale_walter_file )
+# # if 'Walther' in data_ps_sets: Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='small', system=system, label=label, rescaled_walther=rescaled_walther, rescale_walter_file=rescale_walter_file )
+# # Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='all',    system=system, label=label,  )
+# Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='middle', system=system, label=label, rescaled_walther=rescaled_walther, rescale_walter_file=rescale_walter_file )
+# 
+# Plot_T0_Sampling( samples_fields['T0'], output_dir, system=system, label=label, plot_splines=True )
+# 
+# Plot_tau_HeII_Sampling( samples_fields, output_dir, system=system, label=label )

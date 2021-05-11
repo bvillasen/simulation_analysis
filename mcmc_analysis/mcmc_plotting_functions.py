@@ -64,7 +64,8 @@ def Plot_tau_HeII_Sampling( samples_tau_H, samples_tau_HeII, output_dir, system=
 
   font_size = 18
   label_size = 16
-  alpha = 0.5
+  alpha = 0.2
+  linewidth = 2
 
   c_pchw18 = pylab.cm.viridis(.7)
   c_hm12 = pylab.cm.cool(.3)
@@ -100,7 +101,7 @@ def Plot_tau_HeII_Sampling( samples_tau_H, samples_tau_HeII, output_dir, system=
     if 'Highest_Likelihood' in samples:
       print( 'Plotting Highest_Likelihood T0')
       mean = samples['Highest_Likelihood']
-    ax.plot( z, mean, color=color_line, zorder=1, label=label )
+    ax.plot( z, mean, color=color_line, zorder=1, label=label, linewidth=linewidth )
     ax.fill_between( z, high, low, color=color_line, alpha=alpha, zorder=1 )  
   
 
@@ -321,7 +322,8 @@ def Plot_T0_Sampling( samples, output_dir, system='Shamrock', label='', plot_spl
 
   font_size = 18
   label_size = 16
-  alpha = 0.4
+  alpha = 0.2
+  linewidth = 2
 
   c_pchw18 = pylab.cm.viridis(.7)
   c_hm12 = pylab.cm.cool(.3)
@@ -370,7 +372,7 @@ def Plot_T0_Sampling( samples, output_dir, system='Shamrock', label='', plot_spl
       ax.plot( z_interp, f_mean(z_interp)/1e4, color=color_line, zorder=1, label=label )
       ax.fill_between( z_interp, f_high(z_interp)/1e4, f_low(z_interp)/1e4, color=color_line, alpha=alpha, zorder=1 )  
     else:
-      ax.plot( z, mean/1e4, color=color_line, zorder=1, label=label )
+      ax.plot( z, mean/1e4, color=color_line, zorder=1, label=label, linewidth=linewidth )
       ax.fill_between( z, high/1e4, low/1e4, color=color_line, alpha=alpha, zorder=1 )  
 
   data_set = data_thermal_history_Gaikwad_2020a
@@ -540,6 +542,7 @@ def Plot_Corner( samples, data_label, labels, output_dir, n_bins_1D=20, n_bins_2
           name  = samples[j]['name']
           trace = samples[j]['trace']
           hist, bin_edges = np.histogram( trace, bins=n_bins_1D ) 
+          hist = hist / hist.sum()
           bin_centers = ( bin_edges[:-1] + bin_edges[1:] ) / 2.
           bin_width = bin_centers[0] - bin_centers[1]  
           bin_centers_interp = np.linspace( bin_centers[0], bin_centers[-1], 10000 )

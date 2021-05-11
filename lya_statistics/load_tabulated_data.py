@@ -60,7 +60,8 @@ def load_tabulated_data_boera( dir_data_boera ):
     file_name = dir_data_boera + 'data_table_{0}.txt'.format( data_index )
     data  = np.loadtxt( file_name )
     k_vals = 10**data[:,0]
-    power_vals = data[:,2]
+    # power_vals = data[:,2]
+    power_vals = data[:,1]
     power_error = data[:,3]
     delta_power = k_vals * power_vals / np.pi
     delta_power_error = k_vals * power_error / np.pi

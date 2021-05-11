@@ -12,7 +12,7 @@ from tools import *
 from data_thermal_history import data_thermal_history_Gaikwad_2020a, data_thermal_history_Gaikwad_2020b
 from data_optical_depth import *
 from data_optical_depth_HeII import data_tau_HeII_Worserc_2019
-from load_tabulated_data import load_power_spectrum_table, load_tabulated_data_boera, load_tabulated_data_viel, load_data_boss
+from load_tabulated_data import load_power_spectrum_table, load_tabulated_data_boera, load_tabulated_data_viel, load_data_boss, load_data_irsic
 from stats_functions import compute_distribution, get_highest_probability_interval
 
 
@@ -284,6 +284,10 @@ def Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_sets, ps_rang
   dir_boss = ps_data_dir + 'data_power_spectrum_boss/'
   data_filename = dir_boss + 'data_table.py'
   data_boss = load_data_boss( data_filename )
+  
+  dir_irsic = ps_data_dir + 'data_power_spectrum_irsic_2017/'
+  data_filename = dir_irsic + 'data_table.py'
+  data_irsic = load_data_irsic( data_filename )
 
   data_filename = ps_data_dir + 'data_power_spectrum_walther_2019/data_table.txt'
   data_walther = load_power_spectrum_table( data_filename )
@@ -294,7 +298,7 @@ def Get_Comparable_Power_Spectrum( ps_data_dir, z_min, z_max, data_sets, ps_rang
   data_dir_viel = ps_data_dir + 'data_power_spectrum_viel_2013/'
   data_viel = load_tabulated_data_viel( data_dir_viel)
 
-  data_dir = { 'Boss':data_boss, 'Walther':data_walther, 'Boera':data_boera, 'Viel':data_viel }
+  data_dir = { 'Boss':data_boss, 'Walther':data_walther, 'Boera':data_boera, 'Viel':data_viel, 'Irsic':data_irsic }
 
   data_kvals, data_ps, data_ps_sigma, data_indices, data_z  = [], [], [], [], []
   log_data_ps, log_data_ps_sigma = [], []

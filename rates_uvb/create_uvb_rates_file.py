@@ -20,10 +20,10 @@ max_delta_z = 0.1
 rates_data = Extend_Rates_Redshift( max_delta_z, grackle_data )
 input_rates = Copy_Grakle_UVB_Rates( rates_data )
 
-parameter_values = { 'scale_He':  0.46,
+parameter_values = { 'scale_He':  0.44,
                      'scale_H':   0.78,
-                     'deltaZ_He': 0.28,
-                     'deltaZ_H':  0.04 }
+                     'deltaZ_He': 0.27,
+                     'deltaZ_H':  0.05 }
 # parameter_values = { 'scale_He':  0.46,
 #                     'scale_H':   0.78,
 #                     'deltaZ_He': 0.0,

@@ -23,14 +23,12 @@ create_directory( output_dir )
 rescale_walter_file = ps_data_dir + 'rescale_walther_to_boss.pkl' 
 
 data_boss = 'fit_results_P(k)+tau_HeII_Boss'
-data_walther = 'fit_results_P(k)+tau_HeII_Walther_kmax0.10_rescaleTauHeII0.8'
-data_boss_walther = 'fit_results_P(k)+tau_HeII_Boss_Walther_kmax0.10_rescaleTauHeII0.3'
+data_boss_irsic = 'fit_results_P(k)+tau_HeII_Boss_Irsic'
+data_boss_boera = 'fit_results_P(k)+tau_HeII_Boss_Boera'
+data_boss_irsic_boera = 'fit_results_P(k)+tau_HeII_Boss_Irsic_Boera'
 
-# data_sets = [ data_boss ]
-data_sets = [ data_walther ]
-# data_sets = [ data_boss, data_walther, data_boss_walther ]
-data_labels = [ 'Fit to BOSS', 'Fit to Walther', 'Fit to BOSS+Walther' ]
-data_labels = [ 'Fit to Walther', 'Fit to BOSS+Walther' ]
+data_sets = [ data_boss, data_boss_irsic, data_boss_boera, data_boss_irsic_boera ]
+data_labels = [ 'BOSS', 'BOSS + Irsic', 'BOSS + Boera', 'BOSS + Irsic + Boera'  ]
 
 samples_all = {}
 samples_all['param'] = {}
@@ -62,15 +60,15 @@ for data_id, data_name in enumerate(data_sets):
 
   # Get the Highest_Likelihood parameter values 
   params_HL = Get_Highest_Likelihood_Params( param_samples, n_bins=100 )
-
+  # 
   # Obtain distribution of the power spectrum
   file_name = input_dir + 'samples_power_spectrum.pkl'
   samples_ps = Load_Pickle_Directory( file_name )
-
+  
   # Obtain distribution of the other fields
   file_name = input_dir + 'samples_fields.pkl'
   samples_fields = Load_Pickle_Directory( file_name )
-
+  
   samples_all['P(k)'][data_id] = samples_ps
   for field in field_list:
     samples_all[field][data_id] = samples_fields[field] 
@@ -84,7 +82,7 @@ Plot_Corner( samples_all['param'], data_labels, corner_labels, output_dir, n_bin
 # Plot_Power_Spectrum_Sampling( samples_all['P(k)'], ps_data_dir, output_dir, scales='middle', linewidth=2, system=system, label=data_labels, rescaled_walther=True, rescale_walter_file=rescale_walter_file, multiple=True )
 # Plot_Power_Spectrum_Sampling( samples_all['P(k)'], ps_data_dir, output_dir, scales='all', linewidth=2, system=system, label=data_labels, rescaled_walther=True, rescale_walter_file=rescale_walter_file, multiple=True )
 # 
-# Plot_T0_Sampling( samples_all['T0'], output_dir, system=system, label=data_labels, plot_splines=True, multiple=True)
-# 
-# 
-# Plot_tau_HeII_Sampling( samples_all['tau'], samples_all['tau_HeII'], output_dir, system=system, label=data_labels, multiple=True )
+Plot_T0_Sampling( samples_all['T0'], output_dir, system=system, label=data_labels, plot_splines=True, multiple=True)
+
+
+Plot_tau_HeII_Sampling( samples_all['tau'], samples_all['tau_HeII'], output_dir, system=system, label=data_labels, multiple=True )

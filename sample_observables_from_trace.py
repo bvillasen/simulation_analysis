@@ -16,10 +16,15 @@ from mcmc_plotting_functions import *
 from mcmc_sampling_functions import *
 
 
-data_name = 'fit_results_P(k)+tau_HeII_Boss'
-# data_name = 'fit_results_P(k)+tau_HeII_Walther_kmax0.02_rescaleTauHeII1.0'
-# data_name = 'fit_results_P(k)+tau_HeII_Walther_kmax0.10_rescaleTauHeII0.8'
-# data_name = 'fit_results_P(k)+tau_HeII_Boss_Walther_kmax0.10_rescaleTauHeII0.3'
+# data_name = 'fit_results_P(k)+tau_HeII_Boss'
+# data_name = 'fit_results_P(k)+tau_HeII_Boss_Irsic'
+# data_name = 'fit_results_P(k)+tau_HeII_Boss_Boera'
+data_name = 'fit_results_P(k)+tau_HeII_Boss_Irsic_Boera'
+
+# data_labels = 'BOSS'
+# data_labels = 'BOSS + Irsic'
+# data_labels = 'BOSS + Boera'
+data_labels = 'BOSS + Irsic + Boera'
 
 ps_data_dir = 'lya_statistics/data/'
 mcmc_dir = root_dir + 'fit_mcmc/'
@@ -27,7 +32,7 @@ input_dir = mcmc_dir + f'{data_name}/'
 output_dir = input_dir + 'observable_samples/'
 create_directory( output_dir )
 
-kmax = 0.1
+kmax = 0.2
 
 # sim_ids = range(10)
 sim_ids = None
@@ -39,7 +44,7 @@ ps_range = SG.Get_Power_Spectrum_Range( kmax=kmax )
 
 
 
-z_vals = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.6   ]
+z_vals = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.4,  4.6, 5.0   ]
 data_grid, data_grid_power_spectrum = Get_Data_Grid_Composite(  ['P(k)', 'T0', 'tau', 'tau_HeII'], SG, z_vals=z_vals, sim_ids=sim_ids, load_uvb_rates=True )
 
 
@@ -88,7 +93,6 @@ params_HL = Get_Highest_Likelihood_Params( param_samples, n_bins=100 )
 
 # Make Corner plot from posteriors 
 labels = { 'scale_He':r'$\beta_{\mathrm{He}}$', 'scale_H':r'$\beta_{\mathrm{H}}$', 'deltaZ_He':r'$\Delta z_{\mathrm{He}}$', 'deltaZ_H':r'$\Delta z_{\mathrm{H}}$'    }
-data_labels = ''
 Plot_Corner( param_samples, data_labels, labels, output_dir, n_bins_1D=40, n_bins_2D=40, lower_mask_factor=70  )
 
 
@@ -98,31 +102,22 @@ n_samples = 400000
 load_samples = False
 
 
-# # Obtain distribution of the power spectrum
-# file_name = output_dir + 'samples_power_spectrum.pkl'
-# if load_samples:
-#   samples_ps = Load_Pickle_Directory( file_name )
-# else:  
-#   samples_ps = Sample_Power_Spectrum_from_Trace( param_samples, data_grid_power_spectrum, SG, hpi_sum=hpi_sum, n_samples=n_samples, params_HL=params_HL )
-#   Write_Pickle_Directory( samples_ps, file_name )
-
-
-
-# # Obtain distribution of the other fields
-# file_name = output_dir + 'samples_fields.pkl' 
-# field_list = ['T0', 'tau', 'tau_HeII']
-# if load_samples:
-#   samples_fields = Load_Pickle_Directory( file_name )
-# else:  
-#   samples_fields = Sample_Fields_from_Trace( field_list, param_samples, data_grid, SG, hpi_sum=hpi_sum, n_samples=n_samples, params_HL=params_HL )
-#   Write_Pickle_Directory( samples_fields, file_name )
-
-
-# Obtain distribution of the UVBRates
-file_name = output_dir + 'samples_uvb_rates.pkl' 
-field_list = ['photoheating_HI', 'photoheating_HeI', 'photoheating_HeII', 'photoionization_HI', 'photoionization_HeI', 'photoionization_HeII' ]
+# Obtain distribution of the power spectrum
+file_name = output_dir + 'samples_power_spectrum.pkl'
 if load_samples:
-  samples_uvb_rates = Load_Pickle_Directory( file_name )
+  samples_ps = Load_Pickle_Directory( file_name )
 else:  
-  samples_uvb_rates = Sample_Fields_from_Trace( field_list, param_samples, data_grid, SG, hpi_sum=hpi_sum, n_samples=n_samples, params_HL=params_HL, sample_log=False )
-  Write_Pickle_Directory( samples_uvb_rates, file_name )
+  samples_ps = Sample_Power_Spectrum_from_Trace( param_samples, data_grid_power_spectrum, SG, hpi_sum=hpi_sum, n_samples=n_samples, params_HL=params_HL )
+  Write_Pickle_Directory( samples_ps, file_name )
+
+
+
+# Obtain distribution of the other fields
+file_name = output_dir + 'samples_fields.pkl' 
+field_list = ['T0', 'tau', 'tau_HeII']
+if load_samples:
+  samples_fields = Load_Pickle_Directory( file_name )
+else:  
+  samples_fields = Sample_Fields_from_Trace( field_list, param_samples, data_grid, SG, hpi_sum=hpi_sum, n_samples=n_samples, params_HL=params_HL )
+  Write_Pickle_Directory( samples_fields, file_name )
+
