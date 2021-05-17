@@ -33,6 +33,7 @@ else:
 
 n_fields = len( fields_list )
 indices_local = split_indices( range(n_fields), rank, n_procs )
+print(indices_local)
 fields_local = fields_list[indices_local] 
 
 printf( f'proc_id: {rank}  fields:{fields_local}')   
