@@ -38,16 +38,12 @@ print( f'proc_id: {rank}  fields:{fields_local}')
 
   
   
-  
+for field in fields_local:
+  command = f'python generate_ics_from_enzo_distributed.py type={type} field={field} L_MPC={L_MPC}'
+  print(f'Command: {command}')
+  process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+  for line in process.stdout:
+    print(line)
+  process.wait()
+  print(process.returncode)
 
-
-
-# for field in fields_list:
-#   command = f'python generate_ics_from_enzo_distributed.py type={type} field={field} L_MPC={L_MPC}'
-#   print(f'Command: {command}')
-#   process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-#   for line in process.stdout:
-#     print(line)
-#   process.wait()
-#   print(process.returncode)
-# 
