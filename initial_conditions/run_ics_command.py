@@ -1,4 +1,5 @@
 import subprocess
+root_dir = os.path.dirname(os.getcwd())
 tools_dir = root_dir + 'tools'
 sys.path.append( tools_dir )
 from tools import split_indices
