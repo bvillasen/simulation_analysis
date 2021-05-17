@@ -2,18 +2,14 @@ from PIL import Image
 import PIL.ImageOps    
 from tools import *
 
-data_dir = '/home/bruno/Desktop/ssd_0/data/'
-# inDir = dataDir + 'cosmo_sims/2048_hydro_50Mpc/figures/phase_diagram_black/'
-# outDir = dataDir + 'cosmo_sims/2048_hydro_50Mpc/figures/phase_diagram_black/anim/'
 
-in_dir = data_dir + '/cosmo_sims/256_hydro_50Mpc/phase_diagram_nyx_dpi200/'
-out_dir = data_dir + '/cosmo_sims/256_hydro_50Mpc/phase_diagram_nyx_dpi200_new/'
+in_dir  = '/home/bruno/Desktop/data/cosmo_sims/rescaled_P19/figures/phase_diagram_2048_100Mpc/'
+out_dir = '/home/bruno/Desktop/data/cosmo_sims/rescaled_P19/figures/phase_diagram_2048_100Mpc_new/'
 create_directory( out_dir )
 
-image_name = 'phase_diagram_nyx'
+image_name = 'phase_diagram'
 
-n_image = 0 
-for n_image in range( 500 ):
+for n_image in range( 56 ):
   in_image_name = in_dir + "{1}_{0}.png".format(n_image, image_name)
   out_image_name = out_dir + "{1}_{0}.png".format(n_image, image_name)
 

@@ -5,15 +5,15 @@ from subprocess import call
 from shutil import copyfile
 
 
-input_dir = '/home/bruno/Desktop/ssd_0/data/cosmo_sims/256_hydro_50Mpc/phase_diagram_nyx_dpi200_new/'
+input_dir = '/home/bruno/Desktop/data/cosmo_sims/rescaled_P19/figures/phase_diagram_2048_100Mpc_new/'
 
 output_dir = '/home/bruno/Desktop/'
 
-image_name = 'phase_diagram_nyx'
+image_name = 'phase_diagram'
 
-out_anim_name = 'phase_diagram_nyx_cholla_dpi200'
+out_anim_name = 'phase_diagram__rescaled_P19'
 
-cmd = 'ffmpeg -framerate 10  '
+cmd = 'ffmpeg -framerate 2  '
 # cmd += ' -start_number 20'
 cmd += ' -i {0}{1}_%d.png '.format( input_dir, image_name )
 cmd += ' -pix_fmt yuv420p '

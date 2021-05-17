@@ -8,9 +8,9 @@ fields_hydro_list = [ 'density', 'velocity_x', 'velocity_y', 'velocity_z', 'ther
 
 type = 'particles'
 # type = 'hydro'
-L_MPC = 200
+L_MPC = 50
 
-merge = True
+merge = False
 
 if type == 'particles': fields_list = fields_particles_list
 if type == 'hydro': fields_list = fields_hydro_list
