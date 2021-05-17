@@ -1,8 +1,9 @@
 import os, sys, time
 import subprocess
+#Extend path to inclide local modules
 root_dir = os.path.dirname(os.getcwd())
-tools_dir = root_dir + 'tools'
-sys.path.append( tools_dir )
+sub_directories = [x[0] for x in os.walk(root_dir)]
+sys.path.extend(sub_directories)
 from tools import split_indices
 
 fields_particles_list = [ 'mass', 'pos_x', 'pos_y', 'pos_z', 'vel_x', 'vel_y', 'vel_z' ]
