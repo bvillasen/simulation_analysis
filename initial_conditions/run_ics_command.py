@@ -7,7 +7,7 @@ sys.path.extend(sub_directories)
 from tools import split_indices
 
 # fields_particles_list = [ 'mass', 'pos_x', 'pos_y', 'pos_z', 'vel_x', 'vel_y', 'vel_z' ]
-fields_particles_list = [ 'pos_y'  ]
+fields_particles_list = [ 'pos_z'  ]
 
 fields_hydro_list = [ 'density', 'velocity_x', 'velocity_y', 'velocity_z', 'thermal_energy'  ]
 
