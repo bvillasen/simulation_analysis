@@ -6,13 +6,14 @@ sub_directories = [x[0] for x in os.walk(root_dir)]
 sys.path.extend(sub_directories)
 from tools import split_indices
 
-fields_particles_list = [ 'mass', 'pos_x', 'pos_y', 'pos_z', 'vel_x', 'vel_y', 'vel_z' ]
+# fields_particles_list = [ 'mass', 'pos_x', 'pos_y', 'pos_z', 'vel_x', 'vel_y', 'vel_z' ]
+fields_particles_list = [ 'pos_y'  ]
 
 fields_hydro_list = [ 'density', 'velocity_x', 'velocity_y', 'velocity_z', 'thermal_energy'  ]
 
 
-# type = 'particles'
-type = 'hydro'
+type = 'particles'
+# type = 'hydro'
 L_MPC = 50
 
 merge = True
