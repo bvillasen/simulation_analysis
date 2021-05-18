@@ -45,9 +45,9 @@ n_boxes  = 512
 
 # L_MPC = int(Lbox/1000)
 # data_dir = '/raid/bruno/data/'
-data_dir = '/data/groups/comp-astro/bruno/'
+# data_dir = '/data/groups/comp-astro/bruno/'
 # data_dir = '/home/bruno/Desktop/ssd_0/data/'
-# data_dir = '/gpfs/alpine/csc434/scratch/bvilasen/'
+data_dir = '/gpfs/alpine/csc434/scratch/bvilasen/'
 input_dir  = data_dir + f'cosmo_sims/ics/enzo/{n_points}_{L_MPC}Mpc/'
 output_dir = data_dir + f'cosmo_sims/ics/enzo/{n_points}_{L_MPC}Mpc/ics_{n_boxes}_z100/'
 print(f'Input Dir: {input_dir}' )
