@@ -1,5 +1,6 @@
 import sys, os, time
 import numpy as np
+  import time
 import h5py as h5
 from tools import *
 from load_data import load_snapshot_data_distributed
@@ -19,8 +20,15 @@ input_dir = data_dir + 'cosmo_sims/rescaled_P19/2048_50Mpc/snapshot_files/'
 output_dir = data_dir + 'cosmo_sims/rescaled_P19/2048_50Mpc/reduced_snapshots/'
 if rank == 0: create_directory( output_dir )
 
-n_snap = 0
 
+
+file_counter = 0
+
+n_snapshots = 1
+
+time_start = time.time()
+
+n_snap = 0
 
 type = 'hydro'
 # type = 'particles'
@@ -36,9 +44,41 @@ if type == 'particles': base_file_name = '_particles.h5.'
 
 
 files_snapshot = [f for f in listdir(input_dir) if f.find(f'{n_snap}{base_file_name}') == 0 ]
-n_files = len( files_snapshot )
+n_files_per_snap = len( files_snapshot )
 
-if rank == 0: print(f'N files per snapshot: {n_files}')
+if rank == 0: print(f'N files per snapshot: {n_files_per_snap}')
+if rank == 0: print( f'Splitting over {n_procs} processes ' )
+
+indices_local = split_indices( range(n_files_per_snap), rank, n_procs )
+n_files_local = len(indices_local)
+n_total_local = n_snapshots * n_files_local
+
+
+for file_id in indices_local:
+  file_name = files_snapshot[file_id]
+  in_file  = h5.File( input_dir + file_name, 'r' )
+  # out_file = h5.File( output_dir + file_name, 'w' )
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  in_file.close()
+  # out_file.close() 
+  
+  file_counter += 1
+  if rank == 0: print_progress( file_counter, n_total_local, time_start )
+  
+
+
+
+
 
 
 

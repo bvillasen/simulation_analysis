@@ -5,6 +5,18 @@ import numpy as np
 import h5py as h5
 import time
 
+def print_progress( i, n, time_start ):
+  import time
+  time_now = time.time()
+  time = time_now - time_start
+  remaining = time * ( n - i ) / i
+
+  hrs = remaining // 3600
+  min = (remaining - hrs*3600) // 60
+  sec = remaining - hrs*3600 - min*60
+  etr = f'{hrs:02.0f}:{min:02.0f}:{sec:02.0f}'
+  progres = f'Progress:   {i}/{n}   {i/n*100:.1f}%   ETR: {etr} '
+  print_line_flush (progres )
 
 def Get_Free_Memory( print_out=False):
   import psutil
