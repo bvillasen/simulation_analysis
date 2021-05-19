@@ -75,6 +75,8 @@ for file_id in indices_local:
   file_counter += 1
   if rank == 0: print_progress( file_counter, n_total_local, time_start )
   
+  break
+  
 
 
 
