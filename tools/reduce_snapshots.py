@@ -1,6 +1,6 @@
 import sys, os, time
 import numpy as np
-  import time
+import time
 import h5py as h5
 from tools import *
 from load_data import load_snapshot_data_distributed
