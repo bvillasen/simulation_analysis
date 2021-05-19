@@ -28,7 +28,7 @@ file_counter = 0
 time_start = time.time()
 
 
-n_snap = 0
+n_snap = 169
 
 type = 'hydro'
 # type = 'particles'
@@ -79,6 +79,9 @@ for file_id in indices_local:
   out_file.close() 
   file_counter += 1
   if rank == 0: print_progress( file_counter, n_total_local, time_start )
+  
+if rank == 0: 
+  print( 'Finised Successfully')
   
   
 
