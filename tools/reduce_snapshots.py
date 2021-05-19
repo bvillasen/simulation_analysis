@@ -64,25 +64,22 @@ for file_id in indices_local:
   file_name = files_snapshot[file_id]
   in_file  = h5.File( input_dir + file_name, 'r' )
   out_file = h5.File( output_dir + file_name, 'w' )
-    
+  
+  # Copy the header
   for key in in_file.attrs.keys():
     out_file.attrs[key] = in_file.attrs[key]
   
+  # Copy the fields
   for field in fields_list:
     data = in_file[field][...].astype( precision )
     out_file.create_dataset( field, data=data )
   
-  
-  
-  
-  
+  # Close
   in_file.close()
   out_file.close() 
-  
   file_counter += 1
   if rank == 0: print_progress( file_counter, n_total_local, time_start )
   
-  break
   
 
 
