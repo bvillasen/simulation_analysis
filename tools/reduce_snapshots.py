@@ -69,7 +69,7 @@ for file_id in indices_local:
   
   
   
-  in_file.close()
+  # in_file.close()
   # out_file.close() 
   
   file_counter += 1
