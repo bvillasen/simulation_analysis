@@ -26,7 +26,7 @@ type = 'hydro'
 # type = 'particles'
 
 
-snapshots_to_reduce = range( 330, 339 )
+snapshots_to_reduce = range( 338, 340 )
 n_snapshots = len( snapshots_to_reduce )
 
 if rank == 0: print(f'Reducing Snapshots: {snapshots_to_reduce}' )
