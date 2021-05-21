@@ -63,7 +63,7 @@ for type in types:
   pd_data['data'] = phase
   pd_data['dens_min'], pd_data['dens_max'], pd_data['n_dens'] = 10**centers_dens.min(), 10**centers_dens.max(), len( centers_dens)
   pd_data['temp_min'], pd_data['temp_max'], pd_data['n_temp'] = 10**centers_temp.min(), 10**centers_temp.max(), len( centers_temp)  
-  # values_to_fit = get_density_tyemperature_values_to_fit( pd_data, delta_min=-1, delta_max=1, n_samples_line=50, fraction_enclosed=0.70 )
+  # values_to_fit = get_density_temperature_values_to_fit( pd_data, delta_min=-1, delta_max=1, n_samples_line=50, fraction_enclosed=0.70 )
   # fit_values = fit_thermal_parameters_mcmc( None, values_to_fit, None, save_file=False )
   temp_points = temp_points.flatten()
   dens_points = dens_points.flatten()

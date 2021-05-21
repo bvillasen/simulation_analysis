@@ -28,7 +28,7 @@ file_counter = 0
 time_start = time.time()
 
 
-n_snap = 169
+n_snap = 339
 
 type = 'hydro'
 # type = 'particles'

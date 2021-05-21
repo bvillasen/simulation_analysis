@@ -10,7 +10,7 @@ from parameters_UVB_rates import param_UVB_Rates
 from submit_job_scripts import Create_Submit_Job_Script_Lux, Create_Submit_Job_Script_Summit
 from generate_grackle_uvb_file import Generate_Modified_Rates_File
 from load_data import load_analysis_data
-from phase_diagram_functions import fit_thermal_parameters_mcmc, get_density_tyemperature_values_to_fit
+from phase_diagram_functions import fit_thermal_parameters_mcmc, get_density_temperature_values_to_fit
 from simulation_parameters import system, load_reduced_files
 
 
@@ -302,7 +302,7 @@ class Simulation_Grid:
         print( f' Skiping File: {n_file} ') 
         continue
       data = load_analysis_data( n_file, input_dir )
-      values_to_fit = get_density_tyemperature_values_to_fit( data['phase_diagram'], delta_min=-1, delta_max=1, n_samples_line=50, fraction_enclosed=0.70 )
+      values_to_fit = get_density_temperature_values_to_fit( data['phase_diagram'], delta_min=-1, delta_max=1, n_samples_line=50, fraction_enclosed=0.70 )
       fit_values = fit_thermal_parameters_mcmc( n_file, values_to_fit, fit_dir )
       
   def Fit_Grid_Phase_Diagram( self ):
@@ -315,8 +315,8 @@ class Simulation_Grid:
     print( f' Fitting Simulation: {sim_id}')
     sim_dir = self.Get_Simulation_Directory( sim_id )
     input_dir = sim_dir + 'analysis_files/'
-    fit_dir = input_dir + 'fit_mcmc/'
-    create_directory( fit_dir )
+    # fit_dir = input_dir + 'fit_mcmc/'
+    # create_directory( fit_dir )
     cwd = os.getcwd()
     run_file = cwd + '/phase_diagram/fit_phase_diagram_mpi.py'
     parameters = sim_dir + 'analysis_files/'

@@ -63,7 +63,7 @@ def fit_thermal_parameters_mcmc( n_file, values_to_fit, fit_dir, save_file=True 
 
 
 
-def get_density_tyemperature_values_to_fit( pd_data, delta_min=-1, delta_max=1, n_samples_line=50, fraction_enclosed=0.70 ):
+def get_density_temperature_values_to_fit( pd_data, delta_min=-1, delta_max=1, n_samples_line=50, fraction_enclosed=0.70 ):
   pd = pd_data['data']
   n_dens = pd_data['n_dens']
   n_temp = pd_data['n_temp']

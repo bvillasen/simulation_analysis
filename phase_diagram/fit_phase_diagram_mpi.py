@@ -1,22 +1,24 @@
-import os, sys
+import os, sys, time
 from pathlib import Path
 import h5py as h5
 import numpy as np
 import matplotlib.pyplot as plt
-cosmo_dir = os.path.dirname(os.getcwd()) + '/'
-sys.path.append(cosmo_dir + 'tools')
+cwd = os.getcwd()
+cosmo_dir = cwd[: cwd.find('simulation_analysis')] + 'simulation_analysis/'
+tools_dir = cosmo_dir + 'tools'
+sys.path.append( tools_dir )
 from tools import *
 #Append analysis directories to path
 extend_path()
 from load_data import load_analysis_data
-from phase_diagram_functions import fit_thermal_parameters_mcmc, get_density_tyemperature_values_to_fit
+from phase_diagram_functions import fit_thermal_parameters_mcmc, get_density_temperature_values_to_fit
 
 #Parse Command Parameters
 args = sys.argv[1:]
 n_args = len(args)
 
 input_dir = args[0]
-fit_dir = input_dir + 'fit_mcmc/'
+fit_dir = input_dir + 'fit_mcmc_05/'
 
 use_mpi = True
 if use_mpi:
@@ -31,6 +33,11 @@ else:
 
 if rank == 0: create_directory( fit_dir )
 if use_mpi: comm.Barrier()
+
+delta_min, delta_max = -0.5, 0.5
+n_samples_line = 10
+if rank == 0: print( f'Delta: min:{delta_min}  max:{delta_max}  n:{n_samples_line}')
+time.sleep(1)
 
 
 files = [f for f in listdir(input_dir) if (isfile(join(input_dir, f)) and ( f.find('_analysis') > 0) ) ]
@@ -51,7 +58,7 @@ for n_file in indices_to_generate:
     print( f' Skiping File: {n_file} ') 
     continue
   data = load_analysis_data( n_file, input_dir )
-  values_to_fit = get_density_tyemperature_values_to_fit( data['phase_diagram'], delta_min=-1, delta_max=1, n_samples_line=50, fraction_enclosed=0.70 )
+  values_to_fit = get_density_temperature_values_to_fit( data['phase_diagram'], delta_min=delta_min, delta_max=delta_max, n_samples_line=n_samples_line, fraction_enclosed=0.70 )
   fit_values = fit_thermal_parameters_mcmc( n_file, values_to_fit, fit_dir )
 
 

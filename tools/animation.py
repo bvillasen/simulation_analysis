@@ -5,15 +5,19 @@ from subprocess import call
 from shutil import copyfile
 
 
-input_dir = '/home/bruno/Desktop/data/cosmo_sims/rescaled_P19/figures/phase_diagram_2048_100Mpc_new/'
+input_dir = '/home/bruno/Desktop/ssd_0/data/cosmo_sims/rescaled_P19/figures/phase_diagram_2048_100Mpc/fit_new/'
 
 output_dir = '/home/bruno/Desktop/'
 
-image_name = 'phase_diagram'
+image_name = 'pd_fit'
 
-out_anim_name = 'phase_diagram__rescaled_P19'
+out_anim_name = 'phase_diagram_rescaled_P19_fit'
 
-cmd = 'ffmpeg -framerate 2  '
+start_frame = 3
+frame_rate = 1
+
+
+cmd = f'ffmpeg -framerate {frame_rate} -start_number {start_frame}  '
 # cmd += ' -start_number 20'
 cmd += ' -i {0}{1}_%d.png '.format( input_dir, image_name )
 cmd += ' -pix_fmt yuv420p '

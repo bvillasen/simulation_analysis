@@ -2,146 +2,153 @@ import os, sys
 import numpy as np
 import pickle
 import matplotlib.pyplot as plt
+import pylab
+import palettable
 sys.path.append('tools')
 from tools import *
 #Append analysis directories to path
 extend_path()
-from parameters_UVB_rates import param_UVB_Rates
-from simulation_grid import Simulation_Grid
 from simulation_parameters import *
-from mcmc_functions import *
-from mcmc_data_functions import *
-from data_thermal_history import *
-from mcmc_plotting_functions import *
-from mcmc_sampling_functions import *
 
-# data_sets = [ 'Boss', 'Walther', 'Boera', 'Viel' ]
-data_ps_sets = [ 'Boss' ]
-# data_ps_sets = [ 'Walther' ]
-# data_ps_sets = [ 'Boera' ]
-# data_ps_sets = [ 'Boss', 'Walther' ]
-# data_ps_sets = [ 'Walther', 'Boera' ]
-# data_ps_sets = [ 'Walther', 'Viel' ]
-# data_ps_sets = [ 'Boss', 'Walther', 'Boera' ]
-# data_ps_sets = [ 'Boss', 'Walther', 'Viel' ]
-
-
-name = ''
-for data_set in data_ps_sets:
-  name += data_set + '_'
-name = name[:-1] 
-
-# field = 'P(k)+T0'
-# field = 'P(k)+'
-field = 'P(k)+tau_HeII'
-
-# fit_log_power_spectrum =  True
-fit_log_power_spectrum =  False
-if fit_log_power_spectrum: name += '_log'
 
 ps_data_dir = 'lya_statistics/data/'
-mcmc_dir = root_dir + 'fit_mcmc/'
-create_directory( mcmc_dir )
-output_dir = mcmc_dir + f'fit_results_{field}_{name}/'
+input_dir = root_dir + 'interpolated_observables/'
+output_dir = root_dir + 'figures/interpolated_ps/'
 create_directory( output_dir )
 
-# load_mcmc_results = False
-load_mcmc_results = True
+in_file_name = input_dir + 'interpolated_observables.pkl'
+ps_data = Load_Pickle_Directory( in_file_name )['power_spectrum']
+
+z_vals = ps_data['z_vals']
+params = ps_data['params']
+
+k_max = 2e-1
+n_to_plot = 4
+indices_to_plot = { 0:[1,2,3,4], 1:[0,1,2,3,], 2:[0,1,2,3,], 3:[1,2,3,4] }
+vary_params = [ 'scale_He', 'scale_H', 'deltaZ_He', 'deltaZ_H' ]
+
+z_vals = np.array([ 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.6, 4.4,  5.0,  5.4,   ])
+
+# for z in z_vals:
+z = 3.8
+z_index = np.where( z_vals == z )[0][0]
 
 
-SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
-SG.Load_Grid_Analysis_Data()
-ps_range = SG.Get_Power_Spectrum_Range( kmax=1e-1 )
-sim_ids = SG.sim_ids
+ps_plot = {}
+for param_indx, vary_param in enumerate(vary_params):
+  
+  ps_plot[param_indx] = { 'param_name': vary_param }
+  ps_param = ps_data[vary_param]
+  for i,indx in enumerate(indices_to_plot[param_indx]):
+    ps_plot[param_indx][i] = { 'k_vals':ps_param[indx]['ps'][z_index]['k_vals'], 'ps':ps_param[indx]['ps'][z_index]['mean'], 'p_val':ps_param[indx]['params'][param_indx] }
+    
 
-z_min = 2.0
-z_max = 5.0 
-ps_extras = { 'range':ps_range, 'data_dir':ps_data_dir, 'data_sets':data_ps_sets }
-comparable_data = Get_Comparable_Composite( field,  z_min, z_max, ps_extras=ps_extras, log_ps=fit_log_power_spectrum )
-comparable_grid = Get_Comparable_Composite_from_Grid( field, comparable_data, SG, log_ps=fit_log_power_spectrum )
-Plot_Comparable_Data( field, comparable_data, comparable_grid, output_dir, log_ps=fit_log_power_spectrum  )
-
-z_vals = [ 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.6, 5.0,  ]
-data_grid, data_grid_power_spectrum = Get_Data_Grid_Composite( ['P(k)', 'T0', 'tau', 'tau_HeII'], SG, z_vals=z_vals )
+labels = {'scale_He':' \\beta_{\mathrm{He}}', 'scale_H':' \\beta_{\mathrm{H}}', 'deltaZ_He':'\Delta z _{\mathrm{He}}', 'deltaZ_H':'\Delta z _{\mathrm{H}}' }
 
 
-stats_file = output_dir + 'fit_mcmc.pkl'
-samples_file = output_dir + 'samples_mcmc.pkl'
+fig_width = 4
+fig_width = 5
+fig_dpi = 300
+label_size = 14
+figure_text_size = 14
+legend_font_size = 10
+tick_label_size_major = 12
+tick_label_size_minor = 13
+tick_size_major = 5
+tick_size_minor = 3
+tick_width_major = 1.5
+tick_width_minor = 1
+border_width = 1
+text_color  = 'black'
+linewidth = 2
+alpha_bar = 0.5
 
 
-params = SG.parameters
+# Colors
+bright_green = pylab.cm.viridis(.7)
+light_blue = pylab.cm.cool(.3)
+dark_blue = pylab.cm.viridis(.3) 
+purple = pylab.cm.Purples(.7)
+blue = 'C0'
+orange = 'C1'
+green = 'C2'
+red = 'C3'
+purple_2 = 'C4'
 
-print( f'Loading File: {stats_file}')
-stats = pickle.load( open( stats_file, 'rb' ) )
-param_stats = {}
-for p_id in params.keys():
-  p_name = params[p_id]['name']
-  p_stats = stats[p_name]
-  params[p_id]['mean'] = p_stats['mean']
-  params[p_id]['sigma'] = p_stats['standard deviation']
-print( f'Loading File: {samples_file}')
-param_samples = pickle.load( open( samples_file, 'rb' ) )
-
-
-
-
-# Get the Highest_Likelihood parameter values 
-params_HL = Get_Highest_Likelihood_Params( param_samples, n_bins=100 )
-scale_He_HL, scale_H_HL, deltaZ_He_HL, deltaZ_H_HL = params_HL.flatten()
-
-
-scale_He_values  = params[0]['values']
-scale_H_values   = params[1]['values']
-deltaZ_He_values = params[2]['values']
-deltaZ_H_values  = params[3]['values']
-
-
-scale_He = scale_He_values[0]
+colors = palettable.cmocean.sequential.Haline_10_r.mpl_colors
+colors_1 = palettable.colorbrewer.sequential.PuBu_9.mpl_colors
+purples = palettable.colorbrewer.sequential.Purples_9.mpl_colors
+yellows = palettable.colorbrewer.sequential.YlOrRd_9.mpl_colors 
 
 
 
+c_0 = colors[-3]
+c_1 = colors[4]
+c_2 = colors_1[4]
+c_3 = purples[-1]
+c_4 = yellows[3]
+    
 
-samples_ps = {}
-for indx, scale_He in enumerate( scale_He_values  ):
-  p_vals = [ scale_He, scale_H_HL, deltaZ_He_HL, deltaZ_H_HL ]
-  ps_interp = Interpolate_Power_Spectrum( p_vals, data_grid_power_spectrum, SG )  
-  ps_interp['label'] = r'$\beta_{\mathrm{He}}:$' + f'{scale_He:.2f}' 
-  samples_ps[indx] = ps_interp
-Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='large', system=system, label=None, plot_type='multiple_lines', name='scale_He' )
-Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='small', system=system, label=None, plot_type='multiple_lines', name='scale_He' )
-Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='middle', system=system, label=None, plot_type='multiple_lines', name='scale_He' )
+colors = [ c_2, c_1, c_0, c_3  ] 
+
+import matplotlib
+matplotlib.rcParams['mathtext.fontset'] = 'cm'
+matplotlib.rcParams['mathtext.rm'] = 'serif'
+prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/bruno/fonts/Helvetica', "Helvetica.ttf"), size=11)
+  
+nrows, ncols = 2, 2
+fig, ax_l = plt.subplots(nrows=nrows, ncols=ncols, figsize=(fig_width*ncols,5*nrows))
+plt.subplots_adjust( hspace = 0.04, wspace=0.04)
+
+for indx_i in range(ncols):
+  for indx_j in range(ncols):
+    
+    id = indx_i*ncols + indx_j
+    ax = ax_l[indx_i][indx_j]
+    
+    ps_param = ps_plot[id]
+    param_name = ps_param['param_name']
+    for i in range(n_to_plot):
+      ps_d = ps_param[i]
+      k_vals = ps_d['k_vals']
+      indices = k_vals < k_max
+      k_vals = k_vals[indices]
+      ps = ps_d['ps'][indices]
+      p_val = ps_d['p_val']
+      label_param = labels[param_name]
+      color = colors[i]
+      label = r'${0} \, = \, {1:.1f}$'.format(label_param, p_val)
+      ax.plot( k_vals, ps, linewidth=1, label=label, color=colors[i] )
+    
+
+    legend_loc = 3
+    leg = ax.legend(  loc=legend_loc, frameon=False, prop=prop, fontsize=legend_font_size    )
+    
+    ax.text(0.85, 0.95, r'$z={0:.1f}$'.format(z), horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size, color=text_color) 
+    
+    ax.set_xscale('log')
+    ax.set_yscale('log')
+    
+    if indx_j > 0:ax.set_yticklabels([])
+    if indx_i != nrows-1 :ax.set_xticklabels([])
+
+    ax.tick_params(axis='both', which='major', labelsize=tick_label_size_major, size=tick_size_major, width=tick_width_major, direction='in' )
+    ax.tick_params(axis='both', which='minor', labelsize=tick_label_size_minor, size=tick_size_minor, width=tick_width_minor, direction='in')
+
+    if indx_j == 0: ax.set_ylabel( r' $\Delta_F^2(k)$', fontsize=label_size, color= text_color )
+    if indx_i == nrows-1: ax.set_xlabel( r'$ k   \,\,\,  [\mathrm{s}\,\mathrm{km}^{-1}] $',  fontsize=label_size, color= text_color )
+
+
+
   
 
 
-samples_ps = {}
-for indx, scale_H in enumerate( scale_H_values  ):
-  p_vals = [ scale_He_HL, scale_H, deltaZ_He_HL, deltaZ_H_HL ]
-  ps_interp = Interpolate_Power_Spectrum( p_vals, data_grid_power_spectrum, SG )  
-  ps_interp['label'] = r'$\beta_{\mathrm{H}}:$' + f'{scale_H:.2f}' 
-  samples_ps[indx] = ps_interp
-Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='large', system=system, label=None, plot_type='multiple_lines', name='scale_H' )
-Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='small', system=system, label=None, plot_type='multiple_lines', name='scale_H' )
-Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='middle', system=system, label=None, plot_type='multiple_lines', name='scale_H' )
 
 
-samples_ps = {}
-for indx, deltaZ_He in enumerate( deltaZ_He_values  ):
-  p_vals = [ scale_He_HL, scale_H_HL, deltaZ_He, deltaZ_H_HL ]
-  ps_interp = Interpolate_Power_Spectrum( p_vals, data_grid_power_spectrum, SG )  
-  ps_interp['label'] = r'$\Delta z_{\mathrm{He}}:$' + f'{deltaZ_He:.2f}' 
-  samples_ps[indx] = ps_interp
-Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='large', system=system, label=None, plot_type='multiple_lines', name='deltaZ_He' )
-Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='small', system=system, label=None, plot_type='multiple_lines', name='deltaZ_He' )
-Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='middle', system=system, label=None, plot_type='multiple_lines', name='deltaZ_He' )
+# file_name = output_dir + f'flux_power_spectrum_interp_{z_index}.png'
+file_name = output_dir + f'flux_power_spectrum_interp.png'
+fig.savefig( file_name,  pad_inches=0.1, bbox_inches='tight', dpi=fig_dpi)
+print('Saved Image: ', file_name )
 
 
-samples_ps = {}
-for indx, deltaZ_H in enumerate( deltaZ_H_values  ):
-  p_vals = [ scale_He_HL, scale_H_HL, deltaZ_He_HL, deltaZ_H ]
-  ps_interp = Interpolate_Power_Spectrum( p_vals, data_grid_power_spectrum, SG )  
-  ps_interp['label'] = r'$\Delta z_{\mathrm{H}}:$' + f'{deltaZ_H:.2f}' 
-  samples_ps[indx] = ps_interp
-Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='large', system=system, label=None, plot_type='multiple_lines', name='deltaZ_H' )
-Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='small', system=system, label=None, plot_type='multiple_lines', name='deltaZ_H' )
-Plot_Power_Spectrum_Sampling( samples_ps, ps_data_dir, output_dir, scales='middle', system=system, label=None, plot_type='multiple_lines', name='deltaZ_H' )
 

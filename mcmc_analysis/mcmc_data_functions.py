@@ -446,7 +446,12 @@ def Get_Comparable_Tau( z_min, z_max, factor_sigma_tau_becker=1, factor_sigma_ta
   comparable['mean']  = mean[indices]
   comparable['sigma'] = sigma[indices]
   return comparable
-  
+
+def Interpolate_Field(  p_vals, field, data_grid, SG ):
+  n_param = len( p_vals )
+  if n_param == 3: field_interp = Interpolate_3D(  p_vals[0], p_vals[1], p_vals[2], data_grid, field, 'mean', SG, clip_params=True ) 
+  if n_param == 4: field_interp = Interpolate_4D(  p_vals[0], p_vals[1], p_vals[2], p_vals[3], data_grid, field, 'mean', SG, clip_params=True ) 
+  return field_interp  
 
 def Interpolate_Power_Spectrum( p_vals, data_grid, SG ):
   ps_output = {}

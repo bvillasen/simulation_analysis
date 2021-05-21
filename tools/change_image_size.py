@@ -3,13 +3,13 @@ import PIL.ImageOps
 from tools import *
 
 
-in_dir  = '/home/bruno/Desktop/data/cosmo_sims/rescaled_P19/figures/phase_diagram_2048_100Mpc/'
-out_dir = '/home/bruno/Desktop/data/cosmo_sims/rescaled_P19/figures/phase_diagram_2048_100Mpc_new/'
+in_dir  = '/home/bruno/Desktop/ssd_0/data/cosmo_sims/rescaled_P19/figures/phase_diagram_2048_100Mpc/fit/'
+out_dir = '/home/bruno/Desktop/ssd_0/data/cosmo_sims/rescaled_P19/figures/phase_diagram_2048_100Mpc/fit_new/'
 create_directory( out_dir )
 
-image_name = 'phase_diagram'
+image_name = 'pd_fit'
 
-for n_image in range( 56 ):
+for n_image in range( 3, 56 ):
   in_image_name = in_dir + "{1}_{0}.png".format(n_image, image_name)
   out_image_name = out_dir + "{1}_{0}.png".format(n_image, image_name)
 
