@@ -26,12 +26,13 @@ type = 'hydro'
 # type = 'particles'
 
 
-snapshots_to_reduce = range( 338, 340 )
+snapshots_to_reduce = range( 330, 340 )
 n_snapshots = len( snapshots_to_reduce )
 
 if rank == 0: print(f'Reducing Snapshots: {snapshots_to_reduce}' )
 
 file_counter = 0
+files_snapshot = None
 time_start = time.time()
 
 for n_snap in snapshots_to_reduce:
@@ -49,11 +50,12 @@ for n_snap in snapshots_to_reduce:
   fields_list = fields_particles
 
 
-  files_snapshot = [f for f in listdir(input_dir) if f.find(f'{n_snap}{base_file_name}') == 0 ]
+  if not files_snapshot: files_snapshot = [f for f in listdir(input_dir) if f.find(f'{n_snap}{base_file_name}') == 0 ]
   n_files_per_snap = len( files_snapshot )
-
-  if rank == 0: print(f'N files per snapshot: {n_files_per_snap}')
-  if rank == 0: print( f'Splitting over {n_procs} processes ' )
+  
+  if file_counter = 0:
+    if rank == 0: print(f'N files per snapshot: {n_files_per_snap}')
+    if rank == 0: print( f'Splitting over {n_procs} processes ' )
 
   indices_local = split_indices( range(n_files_per_snap), rank, n_procs )
   n_files_local = len(indices_local)
