@@ -50,10 +50,11 @@ for n_snap in snapshots_to_reduce:
   fields_list = fields_particles
 
 
-  if not files_snapshot: files_snapshot = [f for f in listdir(input_dir) if f.find(f'{n_snap}{base_file_name}') == 0 ]
-  n_files_per_snap = len( files_snapshot )
+  if not files_snapshot: 
+    files_snapshot = [f for f in listdir(input_dir) if f.find(f'{n_snap}{base_file_name}') == 0 ]
+    n_files_per_snap = len( files_snapshot )
   
-  if file_counter = 0:
+  if file_counter == 0:
     if rank == 0: print(f'N files per snapshot: {n_files_per_snap}')
     if rank == 0: print( f'Splitting over {n_procs} processes ' )
 
