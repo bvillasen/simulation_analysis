@@ -22,8 +22,8 @@ if rank == 0: create_directory( output_dir )
 
 precision = np.float32
 
-type = 'hydro'
-# type = 'particles'
+# type = 'hydro'
+type = 'particles'
 
 
 snapshots_to_reduce = range( 0, 340 )
@@ -47,7 +47,7 @@ for n_snap in snapshots_to_reduce:
     
   if type == 'particles': 
     base_file_name = '_particles.h5.'
-  fields_list = fields_particles
+    fields_list = fields_particles
 
 
   files_snapshot = [f for f in listdir(input_dir) if f.find(f'{n_snap}{base_file_name}') == 0 ]
