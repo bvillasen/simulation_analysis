@@ -21,8 +21,8 @@ else:
   rank = 0
   nprocs = 1
 
-dataDir = '/data/groups/comp-astro/bruno/'
-# dataDir = '/gpfs/alpine/proj-shared/ast149/'
+# dataDir = '/data/groups/comp-astro/bruno/'
+dataDir = '/gpfs/alpine/csc434/scratch/bvilasen/'
 
 nPoints = 2048
 nx = nPoints
@@ -37,8 +37,8 @@ uvb = 'pchw18'
 cosmo_name = ''
 
 
-inDir = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/output_files_{1}/'.format(nPoints, uvb, cosmo_name )
-output_dir = dataDir + 'cosmo_sims/{0}_hydro_50Mpc/skewers_{1}_HeII_new/'.format(nPoints, uvb, cosmo_name )
+inDir = dataDir + 'cosmo_sims/rescaled_P19/2048_50Mpc/snapshot_files/'
+output_dir = dataDir + 'cosmo_sims/rescaled_P19/2048_50Mpc/skewers_HI/'
 create_directory( output_dir )
 
 # snapshots_indices_0 = [83, 86, 90, 93, 96, 99, 102, 106, 110, 114, 119, 124, 130, 136, 143, 151, 159, 169 ]
@@ -50,9 +50,6 @@ snapshots_indices = list(range( 100, 170, 1))
 
 data_type = 'hydro'
 show_progess = True
-
-
-
 
 
 block_size = 256
