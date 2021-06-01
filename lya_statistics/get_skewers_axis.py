@@ -40,6 +40,7 @@ cosmo_name = ''
 inDir = dataDir + 'cosmo_sims/rescaled_P19/2048_50Mpc/snapshot_files/'
 output_dir = dataDir + 'cosmo_sims/rescaled_P19/2048_50Mpc/skewers/'
 if rank == 0: create_directory( output_dir )
+if use_mpi: comm.Barrier()
 
 
 snapshots_indices = list(range( 74, 170, 1))
