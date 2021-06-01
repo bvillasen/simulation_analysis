@@ -222,6 +222,7 @@ class Simulation_Grid:
       self.Create_Simulation_Parameter_File( sim_id, save_file=save_file )
       self.Write_UVB_Parameters( sim_id )
   
+  
   def Get_Simulation_Parameter_Values( self, sim_id ):
     param = self.parameters
     n_param = self.n_paramters
@@ -234,6 +235,11 @@ class Simulation_Grid:
       param_values[param_name] = param[param_id]['values'][param_indx]
     return param_values
     
+  def Split_Grid_Hydro_Particles_Sanposhots( self ):
+    sim_ids = self.sim_ids
+    print( sim_ids )
+  
+  
   def Split_Hydro_Particles_Sanposhots( self, sim_id ):
     simulation = self.Grid[sim_id]
     sim_key = simulation['key']
