@@ -13,10 +13,13 @@ from plot_UVB_Rates import Plot_Grid_UVB_Rates
 create_directory( root_dir )
 create_directory( figures_dir )
 
+check_queue = True
+if system == 'Shamrock': check_queue = False
 
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
-SG.Get_Grid_Status( check_queue=True )
+SG.Get_Grid_Status( check_queue=check_queue )
 
+SG.Split_Hydro_Particles_Sanposhots( 0 )
 
 # SG.Load_Grid_Analysis_Data( )
 

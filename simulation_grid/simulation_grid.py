@@ -234,6 +234,26 @@ class Simulation_Grid:
       param_values[param_name] = param[param_id]['values'][param_indx]
     return param_values
     
+  def Split_Hydro_Particles_Sanposhots( self, sim_id ):
+    simulation = self.Grid[sim_id]
+    sim_key = simulation['key']
+    snapshots_dir = self.root_dir + 'snapshot_files/'
+    if os.path.isdir( snapshots_dir ):
+      print( f'Directory Doesnt Exists: {snapshots_dir}')
+      return None
+    snapshots_parts_dir = self.root_dir + 'snapshot_files_particles/' 
+    if os.path.isdir( snapshots_parts_dir ):
+      print( f'ERROR: Directory Doesnt Exists: {snapshots_parts_dir}')
+      return None
+    
+    snaps_dir = snapshots_dir + f'{sim_key}/'
+    parts_dir = snapshots_parts_dir + f'{sim_key}/'
+    os.mkdir( snapshots_parts_dir )
+    parts_files = [ f for f in listdir(inDir) if ( isfile(join(inDir, f)) and f.find('particles')>0 )  ]
+    print( parts_files )
+    
+    
+    
     
   def Create_UVB_Rates_File( self, sim_id, max_delta_z=0.1 ):
     simulation = self.Grid[sim_id]

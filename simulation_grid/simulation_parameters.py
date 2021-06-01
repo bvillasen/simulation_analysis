@@ -1,8 +1,8 @@
 
 
 # system = 'Lux'
-system = 'Shamrock'
-# system = 'Summit'
+# system = 'Shamrock'
+system = 'Summit'
 
 # n_points = 256
 # n_points = 512
