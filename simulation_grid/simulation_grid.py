@@ -276,6 +276,10 @@ class Simulation_Grid:
         print( f'ERROR: File already exists.')
         continue
       os.rename( src_file, dst_file )
+    
+    files = listdir(snaps_dir)
+    n_files = len( files )
+    print( 'Files in original directory: {n_files}')
       
     
     
