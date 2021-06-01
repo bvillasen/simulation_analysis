@@ -255,8 +255,11 @@ class Simulation_Grid:
     for file in parts_files:
       src_file = snaps_dir + file
       dst_file = parts_dir + file
-      print( f'{src_file} -> {dst_file}')
-    
+      if os.path.isfile( dst_file ):
+        print( f'ERROR: File already exists.')
+        continue
+      os.rename( src_file, dst_file )
+      
     
     
   def Create_UVB_Rates_File( self, sim_id, max_delta_z=0.1 ):
