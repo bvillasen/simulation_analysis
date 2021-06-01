@@ -239,6 +239,7 @@ class Simulation_Grid:
     sim_ids = self.sim_ids
     print( sim_ids )
     for sim_id in sim_ids:
+      print( f'Sim ID: {sim_id}' )
       self.Split_Hydro_Particles_Sanpshots( sim_id )
   
   def Split_Hydro_Particles_Sanpshots( self, sim_id ):
