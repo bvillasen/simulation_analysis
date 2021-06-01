@@ -46,7 +46,14 @@ indices_local = split_indices( range(n_sims), rank, n_procs  )
 sims_local =  sim_ids[indices_local]
 print( sims_local )
 
-# simulation = SG.Grid[sim_id]
+
+sim_id = sims_local[0]
+simulation = SG.Grid[sim_id]
+sim_key = simulation['key']
+
+input_dir  = snaps_dir + f'{sim_key}/'
+output_dir = reduced_dir + f'{sim_key}/'
+create_directory( output_dir )
 
  
 
