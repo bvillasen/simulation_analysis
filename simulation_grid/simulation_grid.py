@@ -249,7 +249,7 @@ class Simulation_Grid:
     snaps_dir = snapshots_dir + f'{sim_key}/'
     parts_dir = snapshots_parts_dir + f'{sim_key}/'
     if not os.path.isdir( parts_dir ): os.mkdir( parts_dir )
-    parts_files = [ f for f in listdir(snaps_dir) if ( isfile(join(snaps_dir, f)) and f.find('particles')>0 )  ]
+    parts_files = [ f for f in listdir(snaps_dir) if ( isfile(join(snaps_dir, f))  )  ]
     print( parts_files )
     
     
