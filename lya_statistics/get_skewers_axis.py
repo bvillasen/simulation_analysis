@@ -177,3 +177,4 @@ for axis in ['x', 'y', 'z']:
   outFile.attrs['n'] = n_skewers
   outFile.close()
   print("Saved File: ", out_file_name) 
+  if use_mpi: comm.Barrier()
