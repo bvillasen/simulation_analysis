@@ -40,7 +40,7 @@ reduced_dir = SG.root_dir + f'snapshot_files_{type}_reduced/'
 if rank == 0: create_directory( reduced_dir )
 if use_mpi: coMM.Barrier() 
 
-sim_ids = np.array( sim_ids )
+sim_ids = np.array( list(sim_ids) )
 n_sims = len( sim_ids )
 indices_local = split_indices( range(n_sims), rank, n_procs  )
 sims_local =  sim_ids[indices_local]
