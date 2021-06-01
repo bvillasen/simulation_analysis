@@ -238,13 +238,13 @@ class Simulation_Grid:
     simulation = self.Grid[sim_id]
     sim_key = simulation['key']
     snapshots_dir = self.root_dir + 'snapshot_files/'
-    if os.path.isdir( snapshots_dir ):
+    if not os.path.isdir( snapshots_dir ):
       print( f'Directory Doesnt Exists: {snapshots_dir}')
       return None
     snapshots_parts_dir = self.root_dir + 'snapshot_files_particles/' 
-    if os.path.isdir( snapshots_parts_dir ):
-      print( f'ERROR: Directory Doesnt Exists: {snapshots_parts_dir}')
-      return None
+    if not os.path.isdir( snapshots_parts_dir ):
+      os.mkdir( snapshots_parts_dir )
+      print( f'Created Directory: {snapshots_parts_dir}')
     
     snaps_dir = snapshots_dir + f'{sim_key}/'
     parts_dir = snapshots_parts_dir + f'{sim_key}/'
