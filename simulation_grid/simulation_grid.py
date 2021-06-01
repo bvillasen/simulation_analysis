@@ -251,7 +251,7 @@ class Simulation_Grid:
     if not os.path.isdir( parts_dir ): os.mkdir( parts_dir )
     parts_files = [ f for f in listdir(snaps_dir) if ( isfile(join(snaps_dir, f)) and f.find('particles')>0 )  ]
     n_files = len( parts_files )
-    print( f'Moving {n_files} particles fiels. )
+    print( f'Moving {n_files} particles fiels.' )
     
     
     
