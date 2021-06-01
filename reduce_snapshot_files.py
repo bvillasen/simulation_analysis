@@ -32,8 +32,8 @@ type = 'hydro'
 fields_hydro = [ 'density', 'temperature', 'HI_density', 'HeI_density', 'HeII_density' ]
 fields_particles = [ 'density' ]
 
-if type == 'hydro': fields = fields_hydro
-if type == 'particles': fields = fields_particles
+if type == 'hydro': fields_list = fields_hydro
+if type == 'particles': fields_list = fields_particles
 
 snaps_dir = SG.root_dir + f'snapshot_files_{type}/'
 reduced_dir = SG.root_dir + f'reduced_files_{type}/'
@@ -77,9 +77,12 @@ for file_name in files:
   # Copy the header
   for key in in_file.attrs.keys():
     out_file.attrs[key] = in_file.attrs[key]
- 
- 
- 
+    
+  # Copy the fields
+  for field in fields_list:
+    data = in_file[field][...].astype( precision )
+    out_file.create_dataset( field, data=data )
+
   # Close
   in_file.close()
   out_file.close() 
