@@ -38,7 +38,7 @@ if type == 'particles': fields_list = fields_particles
 snaps_dir = SG.root_dir + f'snapshot_files_{type}/'
 reduced_dir = SG.root_dir + f'reduced_snapshot_files/'
 if rank == 0: create_directory( reduced_dir )
-if use_mpi: coMM.Barrier() 
+if use_mpi: comm.Barrier() 
 
 sim_ids = np.array( list(sim_ids) )
 n_sims = len( sim_ids )
