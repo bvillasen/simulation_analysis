@@ -36,7 +36,7 @@ if type == 'hydro': fields_list = fields_hydro
 if type == 'particles': fields_list = fields_particles
 
 snaps_dir = SG.root_dir + f'snapshot_files_{type}/'
-reduced_dir = SG.root_dir + f'reduced_files_{type}/'
+reduced_dir = SG.root_dir + f'reduced_snapshot_files/'
 if rank == 0: create_directory( reduced_dir )
 if use_mpi: coMM.Barrier() 
 
