@@ -278,8 +278,15 @@ class Simulation_Grid:
       os.rename( src_file, dst_file )
     
     files = listdir(snaps_dir)
-    n_files = len( files )
-    print( 'Files in original directory: {n_files}')
+    files_p = listdir(parts_dir)
+    files_h = listdir(hydro_dir)
+    n_files_0 = len( files )
+    n_files_p = len( files_p )
+    n_files_h = len( files_h )
+    
+    print( f' Files in original directory: {n_files_0}')
+    print( f' Files in particles directory: {n_files_p}')
+    print( f' Files in hydro directory: {n_files_h}')
       
     
     
