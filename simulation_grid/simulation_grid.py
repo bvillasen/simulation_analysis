@@ -244,8 +244,12 @@ class Simulation_Grid:
     snapshots_parts_dir = self.root_dir + 'snapshot_files_particles/' 
     if not os.path.isdir( snapshots_parts_dir ):
       os.mkdir( snapshots_parts_dir )
-      print( f'Created Directory: {snapshots_parts_dir}')
-    
+      print( f'Created Directory: {snapshots_parts_dir}')    
+    snapshots_hydro_dir = self.root_dir + 'snapshot_files_hydro/' 
+    if not os.path.isdir( snapshots_hydro_dir ):
+      os.mkdir( snapshots_hydro_dir )
+      print( f'Created Directory: {snapshots_hydro_dir}')
+
     snaps_dir = snapshots_dir + f'{sim_key}/'
     parts_dir = snapshots_parts_dir + f'{sim_key}/'
     if not os.path.isdir( parts_dir ): os.mkdir( parts_dir )
@@ -255,6 +259,19 @@ class Simulation_Grid:
     for file in parts_files:
       src_file = snaps_dir + file
       dst_file = parts_dir + file
+      if os.path.isfile( dst_file ):
+        print( f'ERROR: File already exists.')
+        continue
+      os.rename( src_file, dst_file )
+      
+    hydro_dir = snapshots_hydro_dir + f'{sim_key}/'
+    if not os.path.isdir( hydro_dir ): os.mkdir( hydro_dir )
+    hydro_files = [ f for f in listdir(snaps_dir) if ( isfile(join(snaps_dir, f)) and f.find('particles')<0 )  ]
+    n_files = len( hydro_files )
+    print( f'Moving {n_files} hydro fiels.' )
+    for file in hydro_files:
+      src_file = snaps_dir + file
+      dst_file = hydro_dir + file
       if os.path.isfile( dst_file ):
         print( f'ERROR: File already exists.')
         continue
