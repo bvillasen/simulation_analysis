@@ -235,12 +235,13 @@ class Simulation_Grid:
       param_values[param_name] = param[param_id]['values'][param_indx]
     return param_values
     
-  def Split_Grid_Hydro_Particles_Sanposhots( self ):
+  def Split_Grid_Hydro_Particles_Sanpshots( self ):
     sim_ids = self.sim_ids
     print( sim_ids )
+    for sim_id in sim_ids:
+      self.Split_Hydro_Particles_Sanpshots( sim_id )
   
-  
-  def Split_Hydro_Particles_Sanposhots( self, sim_id ):
+  def Split_Hydro_Particles_Sanpshots( self, sim_id ):
     simulation = self.Grid[sim_id]
     sim_key = simulation['key']
     snapshots_dir = self.root_dir + 'snapshot_files/'

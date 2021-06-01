@@ -19,7 +19,7 @@ if system == 'Shamrock': check_queue = False
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
 SG.Get_Grid_Status( check_queue=check_queue )
 
-SG.Split_Grid_Hydro_Particles_Sanposhots( )
+SG.Split_Grid_Hydro_Particles_Sanpshots( )
 
 # SG.Load_Grid_Analysis_Data( )
 
