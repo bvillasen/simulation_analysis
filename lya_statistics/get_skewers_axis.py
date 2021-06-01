@@ -37,7 +37,8 @@ if rank == 0: create_directory( output_dir )
 if use_mpi: comm.Barrier()
 
 
-snapshots_indices = list(range( 74, 170, 1))
+# snapshots_indices = list(range( 74, 170, 1))
+snapshots_indices = list(range( 124, 170, 1))
 
 
 data_type = 'hydro'
