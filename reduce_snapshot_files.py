@@ -41,7 +41,6 @@ if rank == 0: create_directory( reduced_dir )
 if use_mpi: coMM.Barrier() 
 
 
-sim_ids = sim_ids[0]
 n_sims = len( sim_ids )
 indices_local = split_indices( range(n_sims), rank, n_procs  )
 sims_local =  sim_ids[indices_local]
