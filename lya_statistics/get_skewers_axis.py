@@ -30,12 +30,6 @@ ny = nPoints
 nz = nPoints
 ncells = nx * ny * nz
 
-uvb = 'pchw18'
-# uvb = 'hm12'
-
-# cosmo_name = 'cosmo_3'
-cosmo_name = ''
-
 
 inDir = dataDir + 'cosmo_sims/rescaled_P19/2048_50Mpc/snapshot_files/'
 output_dir = dataDir + 'cosmo_sims/rescaled_P19/2048_50Mpc/skewers/'
