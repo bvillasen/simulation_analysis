@@ -49,7 +49,7 @@ print( sims_local )
 
 n_sims_local = len( sims_local )
 file_counter = 0
-
+time_start = time.time()
 
 
 sim_id = sims_local[0]
@@ -84,7 +84,7 @@ for file_name in files:
   in_file.close()
   out_file.close() 
   file_counter += 1
-  if rank == 0: print_progress( file_counter, n_total_local, time_start )
+  if rank == 0: print_progress( file_counter, n_files_local, time_start )
 
 
 if rank == 0: 
