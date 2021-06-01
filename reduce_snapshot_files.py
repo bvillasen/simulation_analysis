@@ -36,7 +36,7 @@ if type == 'hydro': fields = fields_hydro
 if type == 'particles': fields = fields_particles
 
 snaps_dir = SG.root_dir + f'snapshot_files_{type}/'
-reduced_dir = SG.root_dir + f'snapshot_files_{type}_reduced/'
+reduced_dir = SG.root_dir + f'reduced_files_{type}/'
 if rank == 0: create_directory( reduced_dir )
 if use_mpi: coMM.Barrier() 
 
@@ -47,6 +47,11 @@ sims_local =  sim_ids[indices_local]
 print( sims_local )
 
 
+n_sims_local = len( sims_local )
+file_counter = 0
+
+
+
 sim_id = sims_local[0]
 simulation = SG.Grid[sim_id]
 sim_key = simulation['key']
@@ -55,7 +60,32 @@ input_dir  = snaps_dir + f'{sim_key}/'
 output_dir = reduced_dir + f'{sim_key}/'
 create_directory( output_dir )
 
+
+files = listdir( input_dir )
+n_files_per_sim = len( files )
+n_files_local = n_sims_local * n_files_per_sim
+
+if file_counter == 0:
+  if rank == 0: print(f'N files per snapshot: {n_files_per_sim}')
+  if rank == 0: print( f'Splitting over {n_procs} processes ' )
+  
+  
+for file_name in files:
+  in_file  = h5.File( input_dir + file_name, 'r' )
+  out_file = h5.File( output_dir + file_name, 'w' )
+  
+  # Copy the header
+  for key in in_file.attrs.keys():
+    out_file.attrs[key] = in_file.attrs[key]
  
+ 
+ 
+  # Close
+  in_file.close()
+  out_file.close() 
+  file_counter += 1
+  if rank == 0: print_progress( file_counter, n_total_local, time_start )
 
 
-
+if rank == 0: 
+  print( '\nFinised Successfully')
