@@ -14,7 +14,7 @@ def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_ra
   
   if type(ids_to_load) == np.ndarray:
     skewer_ids = ids_to_load
-    print( f' Loading: {skewer_axis} {skewer_ids}')
+    if print_out: print( f' Loading: {skewer_axis} {skewer_ids}')
     if n_skewers != len(skewer_ids):
       print("ERROR: List of skewer ids sont match n_skewres"      )
       exit(-1)
@@ -29,6 +29,7 @@ def load_skewers_single_axis(  n_skewers, skewer_axis,  nSnap, input_dir, set_ra
 
   skewers_dens, skewers_temp, skewers_HI, skewers_vel, skewers_HeII = [], [], [], [], []
   for skewer_id in skewer_ids:
+    if str(skewer_id) not in inFile.keys(): skewer_id = float(skewer_id)
     skewer_data = inFile[str(skewer_id)]
     density = skewer_data['density'][...]
     HI_density = skewer_data['HI_density'][...]
