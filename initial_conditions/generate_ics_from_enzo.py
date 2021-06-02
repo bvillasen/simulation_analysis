@@ -21,7 +21,7 @@ nBoxes  = 128
 # data_dir = '/raid/bruno/data/'
 data_dir = '/data/groups/comp-astro/bruno/'
 # data_dir = '/home/bruno/Desktop/ssd_0/data/'
-input_dir = data_dir + f'cosmo_sims/enzo/wdm/1024_hydro_50Mpc_wdm_m0.5kev/raw/'
+input_dir = data_dir + f'cosmo_sims/ics/enzo/wdm/1024_hydro_50Mpc_wdm_m0.5kev/raw/'
 output_dir = data_dir + f'cosmo_sims/wdm/{nPoints}_50Mpc_wdm_m0.5kev/ics_{nBoxes}_z100/'
 print(f'Input Dir: {input_dir}' )
 print(f'Output Dir: {output_dir}' )
