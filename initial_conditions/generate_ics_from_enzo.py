@@ -21,17 +21,17 @@ nBoxes  = 128
 # data_dir = '/raid/bruno/data/'
 data_dir = '/data/groups/comp-astro/bruno/'
 # data_dir = '/home/bruno/Desktop/ssd_0/data/'
-input_dir = data_dir + f'cosmo_sims/ics/enzo/wdm/1024_hydro_50Mpc_wdm_m1.0kev/raw/'
-output_dir = data_dir + f'cosmo_sims/wdm/{nPoints}_50Mpc_wdm_m1.0kev/ics_{nBoxes}_z100/'
+input_dir = data_dir + f'cosmo_sims/ics/enzo/wdm/1024_hydro_50Mpc_wdm_m3.0kev/raw/'
+output_dir = data_dir + f'cosmo_sims/wdm/{nPoints}_50Mpc_wdm_m3.0kev/ics_{nBoxes}_z100/'
 print(f'Input Dir: {input_dir}' )
 print(f'Output Dir: {output_dir}' )
 create_directory( output_dir )
 
-# hydro = False
-# particles = True
+hydro = False
+particles = True
 
-hydro = True
-particles = False
+# hydro = True
+# particles = False
 
 
 nSnap = 0
