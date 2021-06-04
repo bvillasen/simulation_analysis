@@ -12,7 +12,7 @@ root_dir = os.path.dirname(os.getcwd()) + '/'
 subDirectories = [x[0] for x in os.walk(root_dir)]
 sys.path.extend(subDirectories)
 from tools import *
-from load_tabulated_data import load_power_spectrum_table, load_tabulated_data_boera, load_tabulated_data_viel, load_data_boss
+from load_tabulated_data import load_power_spectrum_table, load_data_irsic, load_tabulated_data_boera, load_tabulated_data_viel, load_data_boss
 
 
 import matplotlib
@@ -26,7 +26,7 @@ matplotlib.rcParams['mathtext.rm'] = 'serif'
 
 
 
-def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_sets=None, system=None, high_z_only=False, plot_ps_normalized=False  ):
+def plot_power_spectrum_grid( ps_data_dir, output_dir, ps_data=None, scales='large', sim_data_sets=None, system=None, high_z_only=False, plot_ps_normalized=False  ):
   
   if system == 'Lux' or system == 'Summit': matplotlib.use('Agg')
   import matplotlib.pyplot as plt
@@ -68,18 +68,28 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
   data_dir_viel = ps_data_dir + 'data_power_spectrum_viel_2013/'
   data_viel = load_tabulated_data_viel( data_dir_viel)
   data_z_v = data_viel['z_vals']
+  
+  dir_irsic = ps_data_dir + 'data_power_spectrum_irsic_2017/'
+  data_filename = dir_irsic + 'data_table.py'
+  data_irsic = load_data_irsic( data_filename )
+  data_z_irsic = data_irsic['z_vals']
 
   z_vals_small_scale  = [ 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 4.2, 4.6, 5.0, 5.4 ]
-  z_vals_large_scale  = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.6 ]
-  z_vals_middle_scale = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 4.2, 4.6 ]
+  z_vals_large_scale  = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.4 ]
+  z_vals_middle_scale = [   3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.4  ]
   z_vals_small_scale_walther  = [ 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4,  ]
+  z_vals_all = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.4,   ]
+  z_vals_small_highz  = [ 4.2, 4.6, 5.0,  ]
   z_high = [ 5.0, 5.4 ]
+  
   
   
   if scales == 'large': z_vals = z_vals_large_scale
   elif scales == 'small': z_vals = z_vals_small_scale
   elif scales == 'middle': z_vals = z_vals_middle_scale
   elif scales == 'small_walther': z_vals = z_vals_small_scale_walther
+  elif scales == 'small_highz': z_vals = z_vals_small_highz
+  elif scales == 'all': z_vals = z_vals_all
   else: 
     print( "ERROR: Scales = large,  small of middle ")
     return
@@ -90,12 +100,23 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
   ncols = 4
   
   if scales == 'small_walther': nrows = 2
-  
   if high_z_only:    nrows, ncols = 1, 2
+
   
-  if scales == 'middle':flags = np.zeros( (nrows, ncols ))
+  if scales == 'middle':
+    nrows = 2
+    flags = np.zeros( (nrows, ncols ))
   
-  # if scales == 'middle': nrows = 2
+  if scales == 'small_highz':
+    nrows, ncols = 1, 3
+  
+  plot_boss, plot_walther, plot_boera, plot_viel, plot_irsic = False, False, False, False, False
+  
+  
+  if scales == 'large': plot_boss = True
+  if scales == 'all': plot_boss, plot_boera, plot_irsic = True, True, True
+  if scales == 'middle': plot_boss, plot_irsic = True, True,
+  if scales == 'small_highz': plot_boss, plot_boera = True, True,
   
   
   fig, ax_l = plt.subplots(nrows=nrows, ncols=ncols, figsize=(2*fig_width,fig_height*nrows))
@@ -109,9 +130,13 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
   c_walther = pylab.cm.viridis(.3)
   c_viel = 'C1'
   c_boera = pylab.cm.Purples(.7)
-
+  c_irsic = pylab.cm.Purples(.7)
+  
+  
   text_color  = 'black'
   color_line = c_pchw18
+  
+  
   
   if scales == 'middle':
     c_walther = 'C3'
@@ -129,6 +154,22 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
     
     
     if scales == 'middle': flags[indx_i,  indx_j] = 1
+    
+    if ps_data:
+      for sim_id in ps_data:
+        data_sim = ps_data[sim_id]
+        label = data_sim['label']
+        sim_z_vals = data_sim['z_vals']
+        diff = np.abs( sim_z_vals - current_z )
+        diff_min = diff.min()
+        index = np.where( diff == diff_min )[0][0]
+        data = data_sim[index]
+        k = data['k_vals']
+        ps = data['ps_mean']
+        delta = ps * k / np.pi 
+        ax.plot( k, delta, linewidth=3, label=label, zorder=1  )
+        
+      
 
     if sim_data_sets:
       for sim_data in sim_data_sets:
@@ -164,58 +205,66 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
     ax.text(0.85, 0.95, r'$z={0:.1f}$'.format(current_z), horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size, color=text_color) 
 
     
-    if scales == 'large' or scales == 'middle':
-
+    if plot_boss:
       # Add Boss data
       z_diff = np.abs( data_z_boss - current_z )
       diff_min = z_diff.min()
       if diff_min < 1e-1:
         data_index = np.where( z_diff == diff_min )[0][0]
         data_z_local = data_z_boss[data_index]
-
         data_k = data_boss[data_index]['k_vals']
         data_delta_power = data_boss[data_index]['delta_power']
         data_delta_power_error = data_boss[data_index]['delta_power_error']
         label_boss = 'eBOSS (2019)'
         d_boss = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boss, label=label_boss, zorder=2)
-
-    if scales == 'small' or scales == 'middle' or scales == 'small_walther':
-      
+    
+    if plot_walther:
       # Add Walther data
       z_diff = np.abs( data_z_w - current_z )
       diff_min = z_diff.min()
       if diff_min < 1e-1:
         data_index = np.where( z_diff == diff_min )[0][0]
         data_z_local = data_z_w[data_index]
-
         data_k = data_walther[data_index]['k_vals']
         data_delta_power = data_walther[data_index]['delta_power']
         data_delta_power_error = data_walther[data_index]['delta_power_error']
         label_walther ='Walther et al. (2018)' 
         d_walther = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_walther, label=label_walther, zorder=2)
 
+    # Add Irsic data
+    if plot_irsic:
+      z_diff = np.abs( data_z_irsic - current_z )
+      diff_min = z_diff.min()
+      if diff_min < 1e-1:
+        data_index = np.where( z_diff == diff_min )[0][0]
+        data_z_local = data_z_irsic[data_index]
 
+        data_k = data_irsic[data_index]['k_vals']
+        data_delta_power = data_irsic[data_index]['delta_power']
+        data_delta_power_error = data_irsic[data_index]['delta_power_error']
+        label_irsic = 'Irsic et al. (2017)'
+        d_irsic = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_irsic, label=label_irsic, zorder=2)
+
+    if plot_boera:
       # Add Boera data
       z_diff = np.abs( data_z_b - current_z )
       diff_min = z_diff.min()
       if diff_min < 1e-1:
         data_index = np.where( z_diff == diff_min )[0][0]
         data_z_local = data_z_b[data_index]
-
         data_k = data_boera[data_index]['k_vals']
         data_delta_power = data_boera[data_index]['delta_power']
         data_delta_power_error = data_boera[data_index]['delta_power_error']
         label_boera ='Boera et al. (2019)'
         d_boera = ax.errorbar( data_k, data_delta_power, yerr=data_delta_power_error, fmt='o', c=c_boera, label=label_boera, zorder=2 )
 
-
+    if plot_viel:
       # Add Viel data
       z_diff = np.abs( data_z_v - current_z )
       diff_min = z_diff.min()
       if diff_min < 1e-1:
         data_index = np.where( z_diff == diff_min )[0][0]
         data_z_local = data_z_v[data_index]
-
         data_k = data_viel[data_index]['k_vals']
         data_delta_power = data_viel[data_index]['delta_power']
         data_delta_power_error = data_viel[data_index]['delta_power_error']
@@ -225,14 +274,19 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
 
     legend_loc = 3
     if indx_i == nrows-1 and nrows!=2: legend_loc = 2
+    
 
     if scales == 'large': legend_loc = 2
+    if scales == 'middle': legend_loc = 2
+    if scales == 'small_highz': legend_loc = 3
+    
     label_bars =  r'1$\sigma$ skewers $P\,(\Delta_F^2)$'
 
     add_legend = False
     if indx_j == 0: add_legend = True
     
-    if scales == 'middle' and indx_i == nrows-1 and indx_j == ncols-1: add_legend = True
+    # if scales == 'middle' and indx_i == nrows-1 and indx_j == ncols-1: add_legend = True
+    
       
       
     if add_legend:
@@ -257,11 +311,24 @@ def plot_power_spectrum_grid( ps_data_dir, output_dir, scales='large', sim_data_
       if indx_i == 2: y_min, y_max = 5e-2, 7e-1
 
     if scales == 'middle':
-      x_min, x_max = 5e-3, 1e-1
-      if indx_i == 0: y_min, y_max = 4e-3, 9e-2
-      if indx_i == 1: y_min, y_max = 1e-2, 5e-1
+      x_min, x_max = 2e-3, 7e-2
+      if indx_i == 0: y_min, y_max = 1.8e-2, 2.5e-1
+      if indx_i == 1: y_min, y_max = 5e-2, 7e-1
+    
+    if scales == 'all':
+      x_min, x_max = 4e-3, 2.5e-1
+      if indx_i == 0: y_min, y_max = 1e-3, 9e-2
+      if indx_i == 1: y_min, y_max = 5e-3, 2e-1
+      if indx_i == 2: y_min, y_max = 5e-2, 3
+
+    if scales == 'small_highz':
+      x_min, x_max = 2e-3, 3e-1
+      if indx_i == 0: y_min, y_max = 5e-3, 1e0
+      
       
     if high_z_only: y_min, y_max = 5e-2, 3
+    
+    
       
       
 

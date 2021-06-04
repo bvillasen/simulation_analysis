@@ -18,7 +18,8 @@ args = sys.argv[1:]
 n_args = len(args)
 
 input_dir = args[0]
-fit_dir = input_dir + 'fit_mcmc_05/'
+# fit_dir = input_dir + 'fit_mcmc_05/'
+fit_dir = input_dir + 'fit_mcmc/'
 
 use_mpi = True
 if use_mpi:
@@ -34,8 +35,9 @@ else:
 if rank == 0: create_directory( fit_dir )
 if use_mpi: comm.Barrier()
 
-delta_min, delta_max = -0.5, 0.5
-n_samples_line = 10
+# delta_min, delta_max = -0.5, 0.5
+delta_min, delta_max = -1.0, 1.0
+n_samples_line = 100
 if rank == 0: print( f'Delta: min:{delta_min}  max:{delta_max}  n:{n_samples_line}')
 time.sleep(1)
 
@@ -54,9 +56,9 @@ if len(indices_to_generate) == 0: exit()
 for n_file in indices_to_generate:
   fit_file = fit_dir + f'fit_{n_file}.pkl'
   file_path = Path(fit_file)
-  if file_path.is_file():
-    print( f' Skiping File: {n_file} ') 
-    continue
+  # if file_path.is_file():
+  #   print( f' Skiping File: {n_file} ') 
+  #   continue
   data = load_analysis_data( n_file, input_dir )
   values_to_fit = get_density_temperature_values_to_fit( data['phase_diagram'], delta_min=delta_min, delta_max=delta_max, n_samples_line=n_samples_line, fraction_enclosed=0.70 )
   fit_values = fit_thermal_parameters_mcmc( n_file, values_to_fit, fit_dir )

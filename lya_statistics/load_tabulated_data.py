@@ -17,7 +17,8 @@ def load_data_irsic( data_filename ):
     sigma_2 = data_z[:,4]
     power = power_1
     power[z>3.7]  = power_2[z>3.7]
-    power_error = sigma_1 + sigma_2
+    # power_error = sigma_1 + sigma_2
+    power_error = np.sqrt( sigma_1**2 + sigma_2**2 )
     data_out[i] = {}
     data_out[i]['z'] = z
     data_out[i]['k_vals'] = k_vals

@@ -338,7 +338,8 @@ def Plot_T0_Sampling( samples, output_dir, system='Shamrock', label='', plot_spl
   color_data = c_boss
   
 
-  fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,8*nrows))
+  # fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,8*nrows))
+  fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(12*ncols,6*nrows))
   
   for data_id in samples_multiple:
     colormap = color_map_list[data_id]
@@ -396,10 +397,13 @@ def Plot_T0_Sampling( samples, output_dir, system='Shamrock', label='', plot_spl
   ax.set_ylabel( r'$T_0   \,\,\,\, [10^4 \,\,\,\mathrm{K}\,]$', fontsize=font_size  )
   ax.set_xlabel( r'$z$', fontsize=font_size )
   leg = ax.legend(loc=1, frameon=False, fontsize=font_size, prop=prop)
-  ax.set_xlim( 1.8, 8 )
+  # ax.set_xlim( 1.8, 8 )
   ax.set_ylim( 6000/1e4, 18000/1e4)
+  ax.set_xlim( 3.0, 5.5 )
+  ax.set_ylim( 0, 3)
+  
 
-  figure_name = output_dir + f'fig_T0_sampling.png'
+  figure_name = output_dir + f'fig_T0_sampling_new.png'
   fig.savefig( figure_name, bbox_inches='tight', dpi=300 )
   print( f'Saved Figure: {figure_name}' )
 

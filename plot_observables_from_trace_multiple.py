@@ -74,8 +74,8 @@ for data_id, data_name in enumerate(data_sets):
     samples_all[field][data_id] = samples_fields[field] 
 
 
-corner_labels = { 'scale_He':r'$\beta_{\mathrm{He}}$', 'scale_H':r'$\beta_{\mathrm{H}}$', 'deltaZ_He':r'$\Delta z_{\mathrm{He}}$', 'deltaZ_H':r'$\Delta z_{\mathrm{H}}$'    }
-Plot_Corner( samples_all['param'], data_labels, corner_labels, output_dir, n_bins_1D=40, n_bins_2D=40, lower_mask_factor=500, multiple=True  )
+# corner_labels = { 'scale_He':r'$\beta_{\mathrm{He}}$', 'scale_H':r'$\beta_{\mathrm{H}}$', 'deltaZ_He':r'$\Delta z_{\mathrm{He}}$', 'deltaZ_H':r'$\Delta z_{\mathrm{H}}$'    }
+# Plot_Corner( samples_all['param'], data_labels, corner_labels, output_dir, n_bins_1D=40, n_bins_2D=40, lower_mask_factor=500, multiple=True  )
 
 
 # Plot_Power_Spectrum_Sampling( samples_all['P(k)'], ps_data_dir, output_dir, scales='large', linewidth=2, system=system, label=data_labels,  multiple=True )
@@ -84,5 +84,5 @@ Plot_Corner( samples_all['param'], data_labels, corner_labels, output_dir, n_bin
 # 
 Plot_T0_Sampling( samples_all['T0'], output_dir, system=system, label=data_labels, plot_splines=True, multiple=True)
 
-
-Plot_tau_HeII_Sampling( samples_all['tau'], samples_all['tau_HeII'], output_dir, system=system, label=data_labels, multiple=True )
+# 
+# Plot_tau_HeII_Sampling( samples_all['tau'], samples_all['tau_HeII'], output_dir, system=system, label=data_labels, multiple=True )
