@@ -52,6 +52,7 @@ file_counter = 0
 time_start = time.time()
 
 # sim_id = sims_local[0]
+if use_mpi:  comm.Barrier()
 for sim_id in sims_local:
   simulation = SG.Grid[sim_id]
   sim_key = simulation['key']
@@ -89,6 +90,6 @@ for sim_id in sims_local:
     file_counter += 1
     if rank == 0: print_progress( file_counter, n_files_local, time_start )
 
-
+if use_mpi: comm.Barrier()
 if rank == 0: 
   print( '\nFinised Successfully')
