@@ -18,8 +18,8 @@ load_reduced_files = True
 # grid_name = f'{n_points}_P19m_np3_nsim8'
 # grid_name = f'{n_points}_P19m_np3_nsim8_v2'
 # grid_name = f'{n_points}_P19m_np4_nsim16'
-grid_name = f'{n_points}_P19m_np4_nsim256'
-# grid_name = f'{n_points}_P19m_np4_nsim320'
+# grid_name = f'{n_points}_P19m_np4_nsim256'
+grid_name = f'{n_points}_P19m_np4_nsim320'
 # grid_name = f'{n_points}_P19m_np4_nsim400'
 
 
