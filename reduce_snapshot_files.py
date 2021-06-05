@@ -72,7 +72,7 @@ for sim_id in sims_local:
 
   input_dir  = snaps_dir + f'{sim_key}/'
   output_dir = reduced_dir + f'{sim_key}/'
-  create_directory( output_dir )
+  create_directory( output_dir, print_out=False )
 
 
   files = listdir( input_dir )
