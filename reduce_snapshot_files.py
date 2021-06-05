@@ -51,61 +51,58 @@ for sim_id in sim_ids:
   n_files = len( files )
   if n_files > 0: sim_ids_real.append( sim_id )
   
-print( sim_ids_real )
-  
+sim_ids = sim_ids_real
+n_sims = len( sim_ids )
+if rank == 0: print(f'N simulations: {n_sims}')
+
+indices_local = split_indices( range(n_sims), rank, n_procs  )
+sims_local =  sim_ids[indices_local]
+print( sims_local )
 
 
-# n_sims = len( sim_ids )
-# indices_local = split_indices( range(n_sims), rank, n_procs  )
-# sims_local =  sim_ids[indices_local]
-# print( sims_local )
-# 
+n_sims_local = len( sims_local )
+file_counter = 0
+time_start = time.time()
+
+# sim_id = sims_local[0]
+if use_mpi:  comm.Barrier()
+for sim_id in sims_local:
+  simulation = SG.Grid[sim_id]
+  sim_key = simulation['key']
+
+  input_dir  = snaps_dir + f'{sim_key}/'
+  output_dir = reduced_dir + f'{sim_key}/'
+  create_directory( output_dir )
 
 
-# 
-# n_sims_local = len( sims_local )
-# file_counter = 0
-# time_start = time.time()
-# 
-# # sim_id = sims_local[0]
-# if use_mpi:  comm.Barrier()
-# for sim_id in sims_local:
-#   simulation = SG.Grid[sim_id]
-#   sim_key = simulation['key']
-# 
-#   input_dir  = snaps_dir + f'{sim_key}/'
-#   output_dir = reduced_dir + f'{sim_key}/'
-#   create_directory( output_dir )
-# 
-# 
-#   files = listdir( input_dir )
-#   n_files_per_sim = len( files )
-#   n_files_local = n_sims_local * n_files_per_sim
-# 
-#   if file_counter == 0:
-#     if rank == 0: print(f'N files per snapshot: {n_files_per_sim}')
-#     if rank == 0: print( f'Splitting over {n_procs} processes ' )
-# 
-# 
-#   for file_name in files:
-#     in_file  = h5.File( input_dir + file_name, 'r' )
-#     out_file = h5.File( output_dir + file_name, 'w' )
-# 
-#     # Copy the header
-#     for key in in_file.attrs.keys():
-#       out_file.attrs[key] = in_file.attrs[key]
-# 
-#     # Copy the fields
-#     for field in fields_list:
-#       data = in_file[field][...].astype( precision )
-#       out_file.create_dataset( field, data=data )
-# 
-#     # Close
-#     in_file.close()
-#     out_file.close() 
-#     file_counter += 1
-#     if rank == 0: print_progress( file_counter, n_files_local, time_start )
-# 
-# if use_mpi: comm.Barrier()
-# if rank == 0: 
-#   print( '\nFinised Successfully')
+  files = listdir( input_dir )
+  n_files_per_sim = len( files )
+  n_files_local = n_sims_local * n_files_per_sim
+
+  if file_counter == 0:
+    if rank == 0: print(f'N files per snapshot: {n_files_per_sim}')
+    if rank == 0: print( f'Splitting over {n_procs} processes ' )
+
+
+  for file_name in files:
+    in_file  = h5.File( input_dir + file_name, 'r' )
+    out_file = h5.File( output_dir + file_name, 'w' )
+
+    # Copy the header
+    for key in in_file.attrs.keys():
+      out_file.attrs[key] = in_file.attrs[key]
+
+    # Copy the fields
+    for field in fields_list:
+      data = in_file[field][...].astype( precision )
+      out_file.create_dataset( field, data=data )
+
+    # Close
+    in_file.close()
+    out_file.close() 
+    file_counter += 1
+    if rank == 0: print_progress( file_counter, n_files_local, time_start )
+
+if use_mpi: comm.Barrier()
+if rank == 0: 
+  print( '\nFinised Successfully')
