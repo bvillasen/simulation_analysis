@@ -51,7 +51,7 @@ for sim_id in sim_ids:
   n_files = len( files )
   if n_files > 0: sim_ids_real.append( sim_id )
   
-sim_ids = sim_ids_real
+sim_ids = np.array(sim_ids_real)
 n_sims = len( sim_ids )
 if rank == 0: print(f'N simulations: {n_sims}')
 
