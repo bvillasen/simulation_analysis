@@ -13,11 +13,11 @@ data_dir = '/data/groups/comp-astro/bruno/cosmo_sims/sim_grid/'
 # data_dir = '/raid/bruno/data/cosmo_sims/sim_grid/'
 
 
-src_grid_dir = data_dir + '1024_P19m_np4_nsim256/' 
-dst_grid_dir = data_dir + '1024_P19m_np4_nsim320/'
+# src_grid_dir = data_dir + '1024_P19m_np4_nsim256/' 
+# dst_grid_dir = data_dir + '1024_P19m_np4_nsim320/'
  
-# src_grid_dir = data_dir + '1024_P19m_np4_nsim320/' 
-# dst_grid_dir = data_dir + '1024_P19m_np4_nsim400/'
+src_grid_dir = data_dir + '1024_P19m_np4_nsim320/' 
+dst_grid_dir = data_dir + '1024_P19m_np4_nsim400/'
 
 
 copy_reduced_files = False
@@ -123,14 +123,14 @@ for sim_id in dst_ids_to_transfer:
       if n_files != 1920:
         print( 'ERROR: n_files != 1920 ')
         break
-      move( src_red_dir, dst_red_dir )
-      # print ( f'{src_red_dir} -> {dst_red_dir} ')
-      files = os.listdir( dst_red_dir )
-      n_files = len(files)
-      print( f' N Files in dst dir: {n_files} ' )
-      if n_files != 1920:
-        print( 'ERROR: n_files != 1920 ')
-        break
+      # move( src_red_dir, dst_red_dir )
+      # # print ( f'{src_red_dir} -> {dst_red_dir} ')
+      # files = os.listdir( dst_red_dir )
+      # n_files = len(files)
+      # print( f' N Files in dst dir: {n_files} ' )
+      # if n_files != 1920:
+      #   print( 'ERROR: n_files != 1920 ')
+      #   break
   
     if copy_reduced_files:
       src_red_dir = src_reduced + src_sim['name']
