@@ -117,7 +117,8 @@ for sim_id in dst_ids_to_transfer:
       if dst_exits: 
         print( f'ERROR: Directory Exists: {dst_red_dir} ')
         continue
-      n_files = os.listdir( src_red_dir )
+      files = os.listdir( src_red_dir )
+      n_files = len(files)
       print( f' N Files in dir: {n_files} ' )
       # shutil.move( src_red_dir, dst_red_dir )
       
