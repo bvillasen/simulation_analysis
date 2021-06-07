@@ -39,7 +39,7 @@ move_reduced_snapshots = True
 if move_reduced_snapshots:
   src_reduced_snapshots = src_grid_dir + 'reduced_snapshot_files/'
   dst_reduced_snapshots = dst_grid_dir + 'reduced_snapshot_files/'
-  create_directory( dst_reduced )
+  create_directory( dst_reduced_snapshots )
 
 
 
