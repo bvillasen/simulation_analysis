@@ -108,7 +108,7 @@ for sim_id in dst_ids_to_transfer:
       dst_red_dir = dst_reduced_snapshots + dst_sim['name']
       src_red_short = src_red_dir[src_red_dir.find('sim_grid')+9:]+'/'
       dst_red_short = dst_red_dir[dst_red_dir.find('sim_grid')+9:]+'/'
-      print( f' Moving  {src_red_dir} -> {dst_red_dir} ' ) 
+      print( f' Moving  {src_red_dir_short} -> {dst_red_dir_short} ' ) 
       dst_exits = os.path.isdir( dst_red_dir)
       if dst_exits: 
         print( f'ERROR: Directory Exists: {dst_red_dir} ')
