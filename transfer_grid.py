@@ -120,6 +120,9 @@ for sim_id in dst_ids_to_transfer:
       files = os.listdir( src_red_dir )
       n_files = len(files)
       print( f' N Files in dir: {n_files} ' )
+      if n_files != 1920:
+        print( 'ERROR: n_files != 1920 ')
+        break
       # shutil.move( src_red_dir, dst_red_dir )
       
   
