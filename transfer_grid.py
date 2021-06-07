@@ -1,6 +1,6 @@
 import sys, os, time
 import numpy
-from shutil import copyfile, copytree
+from shutil import copyfile, copytree, move
 sys.path.append('tools')
 from tools import *
 #Append analysis directories to path
@@ -109,10 +109,15 @@ for sim_id in dst_ids_to_transfer:
       src_red_short = src_red_dir[src_red_dir.find('sim_grid')+9:]+'/'
       dst_red_short = dst_red_dir[dst_red_dir.find('sim_grid')+9:]+'/'
       print( f' Moving  {src_red_short} -> {dst_red_short} ' ) 
+      src_exits = os.path.isdir( src_red_dir)
+      if not src_exits: 
+        print( f'ERROR: Directory Doesnt Exists: {dst_src_dir} ')
+        continue      
       dst_exits = os.path.isdir( dst_red_dir)
       if dst_exits: 
         print( f'ERROR: Directory Exists: {dst_red_dir} ')
         continue
+      # shutil.move( src_red_dir, dst_red_dir )
       
   
     if copy_reduced_files:
