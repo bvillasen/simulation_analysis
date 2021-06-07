@@ -43,10 +43,12 @@ Link_Simulation_dirctories( src_params, dst_params )
 
 
 files_to_copy = []
-directories_to_copy = [ ]
-files_to_copy = ['run_output.log', 'param.txt', 'uvb_params.txt']
-directories_to_copy = [ 'analysis_files' ]
 
+# files_to_copy = ['run_output.log', 'param.txt', 'uvb_params.txt']
+# directories_to_copy = [ 'analysis_files' ]
+
+files_to_copy = []
+directories_to_copy = [ ]
 
 copy_simulation_directory = False
 
@@ -74,11 +76,11 @@ for sim_id in dst_ids_to_transfer:
     print( f"\nCopying: {src_sim['parameters']} ->  {dst_sim['parameters']}  ")
       
       
-  #   src_dir_short = src_dir[src_dir.find('sim_grid')+9:]+'/'
-  #   dst_dir_short = dst_dir[dst_dir.find('sim_grid')+9:]+'/' 
-  #   for file in files_to_copy:
-  #     copyfile(src_dir + '/' + file, dst_dir + '/' + file )
-  #     print( f' Copied  {src_dir_short+file} -> {dst_dir_short+file} ' )
+    src_dir_short = src_dir[src_dir.find('sim_grid')+9:]+'/'
+    dst_dir_short = dst_dir[dst_dir.find('sim_grid')+9:]+'/' 
+    for file in files_to_copy:
+      copyfile(src_dir + '/' + file, dst_dir + '/' + file )
+      print( f' Copied  {src_dir_short+file} -> {dst_dir_short+file} ' )
   # 
   # 
   #   for dir in directories_to_copy:
