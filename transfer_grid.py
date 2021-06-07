@@ -21,6 +21,7 @@ dst_grid_dir = data_dir + '1024_P19m_np4_nsim320/'
 
 
 copy_reduced_files = False
+
 if copy_reduced_files:
   src_reduced = src_grid_dir + 'reduced_files/'
   dst_reduced = dst_grid_dir + 'reduced_files/'
@@ -81,41 +82,41 @@ for sim_id in dst_ids_to_transfer:
     for file in files_to_copy:
       copyfile(src_dir + '/' + file, dst_dir + '/' + file )
       print( f' Copied  {src_dir_short+file} -> {dst_dir_short+file} ' )
-  # 
-  # 
-  #   for dir in directories_to_copy:
-  #     dst_indir = dst_dir + '/' + dir 
-  #     dst_dir_content = os.listdir(dst_indir)
-  #     if len(dst_dir_content) == 0:
-  #       print( f' Deleting Empty: {dst_indir}')
-  #       os.rmdir( dst_dir + '/' + dir )
-  #       print( f' Copying  {src_dir_short+dir} -> {dst_dir_short+dir} ' )  
-  #       copytree(src_dir + '/' + dir, dst_indir )
-  #       print( f' Copied   {src_dir_short+dir} -> {dst_dir_short+dir} ' )  
-  # 
-  # 
-  #   if copy_reduced_files:
-  #     src_red_dir = src_reduced + src_sim['name']
-  #     dst_red_dir = dst_reduced + dst_sim['name']
-  #     src_red_short = src_red_dir[src_red_dir.find('sim_grid')+9:]+'/'
-  #     dst_red_short = dst_red_dir[dst_red_dir.find('sim_grid')+9:]+'/' 
-  #     dst_dir_content = os.listdir(dst_red_dir)
-  #     # print(dst_dir_content )
-  #     dst_analysis = dst_red_dir + '/analysis_files'
-  #     dst_mcmc = dst_red_dir + "/analysis_files/fit_mcmc"
-  #     copy_directory = False
-  #     empty_mcmc = False
-  #     if os.path.isdir( dst_analysis ):
-  #       if os.path.isdir( dst_mcmc ):
-  #         if len( os.listdir(dst_mcmc) ) == 0:
-  #           empty_mcmc = True
-  #           print( f' Deleting Empty: {dst_red_dir + "/analysis_files/fit_mcmc"}')
-  #           os.rmdir( dst_red_dir + '/analysis_files/fit_mcmc' )
-  #           copy_directory = True
-  #       if len( os.listdir(dst_analysis) ) == 0:
-  #         print( f' Deleting Empty: {dst_red_dir + "/analysis_files"}')
-  #         os.rmdir( dst_red_dir + '/analysis_files' )
-  #         copy_directory = True
+  
+  
+    for dir in directories_to_copy:
+      dst_indir = dst_dir + '/' + dir 
+      dst_dir_content = os.listdir(dst_indir)
+      if len(dst_dir_content) == 0:
+        print( f' Deleting Empty: {dst_indir}')
+        os.rmdir( dst_dir + '/' + dir )
+        print( f' Copying  {src_dir_short+dir} -> {dst_dir_short+dir} ' )  
+        copytree(src_dir + '/' + dir, dst_indir )
+        print( f' Copied   {src_dir_short+dir} -> {dst_dir_short+dir} ' )  
+  
+  
+    if copy_reduced_files:
+      src_red_dir = src_reduced + src_sim['name']
+      dst_red_dir = dst_reduced + dst_sim['name']
+      src_red_short = src_red_dir[src_red_dir.find('sim_grid')+9:]+'/'
+      dst_red_short = dst_red_dir[dst_red_dir.find('sim_grid')+9:]+'/' 
+      dst_dir_content = os.listdir(dst_red_dir)
+      # print(dst_dir_content )
+      dst_analysis = dst_red_dir + '/analysis_files'
+      dst_mcmc = dst_red_dir + "/analysis_files/fit_mcmc"
+      copy_directory = False
+      empty_mcmc = False
+      if os.path.isdir( dst_analysis ):
+        if os.path.isdir( dst_mcmc ):
+          if len( os.listdir(dst_mcmc) ) == 0:
+            empty_mcmc = True
+            print( f' Deleting Empty: {dst_red_dir + "/analysis_files/fit_mcmc"}')
+            os.rmdir( dst_red_dir + '/analysis_files/fit_mcmc' )
+            copy_directory = True
+        if len( os.listdir(dst_analysis) ) == 0:
+          print( f' Deleting Empty: {dst_red_dir + "/analysis_files"}')
+          os.rmdir( dst_red_dir + '/analysis_files' )
+          copy_directory = True
   # 
   #     if copy_directory:
   #       print( f' Deleting Empty: { dst_red_dir }')
