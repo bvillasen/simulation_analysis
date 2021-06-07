@@ -112,6 +112,7 @@ for sim_id in dst_ids_to_transfer:
       dst_exits = os.path.isdir( dst_red_dir)
       if dst_exits: 
         print( f'ERROR: Directory Exists: {dst_red_dir} ')
+        continue
       
   
     if copy_reduced_files:
@@ -159,9 +160,9 @@ for sim_id in dst_ids_to_transfer:
   
   
   
-  #   n_copied += 1
-  # else:
-  #   n_skipped += 1
+    n_copied += 1
+  else:
+    n_skipped += 1
 
 
 
