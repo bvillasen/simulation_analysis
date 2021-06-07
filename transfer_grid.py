@@ -37,8 +37,8 @@ if copy_power_spectrum_files:
 
 move_reduced_snapshots = True
 if move_reduced_snapshots:
-  src_reduced = src_grid_dir + 'reduced_snapshot_files/'
-  dst_reduced = dst_grid_dir + 'reduced_snapshot_files/'
+  src_reduced_snapshots = src_grid_dir + 'reduced_snapshot_files/'
+  dst_reduced_snapshots = dst_grid_dir + 'reduced_snapshot_files/'
   create_directory( dst_reduced )
 
 
@@ -102,6 +102,17 @@ for sim_id in dst_ids_to_transfer:
         copytree(src_dir + '/' + dir, dst_indir )
         print( f' Copied   {src_dir_short+dir} -> {dst_dir_short+dir} ' )  
   
+
+    if move_reduced_snapshots:
+      src_red_dir = src_reduced_snapshots + src_sim['name']
+      dst_red_dir = dst_reduced_snapshots + dst_sim['name']
+      src_red_short = src_red_dir[src_red_dir.find('sim_grid')+9:]+'/'
+      dst_red_short = dst_red_dir[dst_red_dir.find('sim_grid')+9:]+'/'
+      print( f' Moving  {src_red_dir} -> {dst_red_dir} ' ) 
+      dst_exits = os.path.isdir( dst_red_dir)
+      if dst_exits: 
+        print( f'ERROR: Directory Exists: {dst_red_dir} ')
+      
   
     if copy_reduced_files:
       src_red_dir = src_reduced + src_sim['name']
