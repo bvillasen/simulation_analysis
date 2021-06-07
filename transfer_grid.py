@@ -35,6 +35,14 @@ if copy_power_spectrum_files:
 
 
 
+move_reduced_snapshots = True
+if move_reduced_snapshots:
+  src_reduced = src_grid_dir + 'reduced_snapshot_files/'
+  dst_reduced = dst_grid_dir + 'reduced_snapshot_files/'
+  create_directory( dst_reduced )
+
+
+
   # params_default = {'deltaZ_H':0.0, 'deltaZ_He':0.2 }
 src_params = Get_Grid_Parameter_Values( src_grid_dir )
 dst_params = Get_Grid_Parameter_Values( dst_grid_dir )
@@ -118,28 +126,28 @@ for sim_id in dst_ids_to_transfer:
           os.rmdir( dst_red_dir + '/analysis_files' )
           copy_directory = True
   # 
-  #     if copy_directory:
-  #       print( f' Deleting Empty: { dst_red_dir }')
-  #       os.rmdir( dst_red_dir )
-  #       copytree(src_red_dir, dst_red_dir )
-  #       print( f' Copied  {src_red_short} -> {dst_red_short} ' )
-  #     else: print( f'Skipped: {dst_red_dir}' )
-  #     # time.sleep(0.1)
-  # 
-  #   if copy_power_spectrum_files:
-  #     src_ps_dir = src_ps + src_sim['name']
-  #     dst_ps_dir = dst_ps + dst_sim['name']
-  #     src_ps_short = src_ps_dir[src_ps_dir.find('sim_grid')+9:]+'/'
-  #     dst_ps_short = dst_ps_dir[dst_ps_dir.find('sim_grid')+9:]+'/' 
-  #     dst_dir_content = os.listdir(dst_ps_dir)
-  #     if len(dst_dir_content) == 0:
-  #       os.rmdir( dst_ps_dir )
-  #       copytree(src_ps_dir, dst_ps_dir )
-  #       print( f' Copied  {src_ps_short} -> {dst_ps_short} ' )
-  #       time.sleep( 0.1 )
-  # 
-  # 
-  # 
+      if copy_directory:
+        print( f' Deleting Empty: { dst_red_dir }')
+        os.rmdir( dst_red_dir )
+        copytree(src_red_dir, dst_red_dir )
+        print( f' Copied  {src_red_short} -> {dst_red_short} ' )
+      else: print( f'Skipped: {dst_red_dir}' )
+      # time.sleep(0.1)
+  
+    if copy_power_spectrum_files:
+      src_ps_dir = src_ps + src_sim['name']
+      dst_ps_dir = dst_ps + dst_sim['name']
+      src_ps_short = src_ps_dir[src_ps_dir.find('sim_grid')+9:]+'/'
+      dst_ps_short = dst_ps_dir[dst_ps_dir.find('sim_grid')+9:]+'/' 
+      dst_dir_content = os.listdir(dst_ps_dir)
+      if len(dst_dir_content) == 0:
+        os.rmdir( dst_ps_dir )
+        copytree(src_ps_dir, dst_ps_dir )
+        print( f' Copied  {src_ps_short} -> {dst_ps_short} ' )
+        time.sleep( 0.1 )
+  
+  
+  
   #   n_copied += 1
   # else:
   #   n_skipped += 1
