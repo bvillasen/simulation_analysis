@@ -68,10 +68,12 @@ input_dir = reduced_snaps_dir + f'{sim_key}/'
 
 output_dir = output_root_dir + f'sim_{sim_indx}/'
 create_directory( output_dir )
+Write_Pickle_Directory(  data_sim, output_dir + 'data_sim.pkl' )
 
 for box in boxes:
   in_file_name = input_dir + f'{snap}.h5.{box}'
   out_file_name = output_dir + f'{snap}.h5.{box}'
+  
   
 
      
