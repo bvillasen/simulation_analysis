@@ -10,12 +10,11 @@ from simulation_parameters import *
 from plot_UVB_Rates import Plot_Grid_UVB_Rates
 
 
+SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
+
 reduced_snaps_dir = SG.root_dir + 'reduced_snapshot_files/'
 output_root_dir = SG.root_dir + 'selected_snapshot_files/'
 create_directory( output_root_dir )
-
-SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
-
 
 params = { 'scale_He':None, 'deltaZ_He':None, 'scale_H':0.86, 'deltaZ_H':0.0 }
 print( f'Selecting: {params} ' )
