@@ -79,7 +79,7 @@ for box in boxes:
   outfile = h5.File( out_file_name, 'w' )
   
   for key in infile.attrs:
-    outfile.attrs[key] = infile[key]
+    outfile.attrs[key] = infile.attrs[key]
     
   for field in fields:
     data = infile[field][...]
