@@ -36,8 +36,8 @@ if not snapshot_files:
   boxes = [ file.split('.')[-1] for file in in_dir_files  ]
   snaps = list( set( snaps ) )
   boxes = list( set( boxes ) )
-  print( f' N Snapshots: {len(snaps)})
-  print( f' N Boxes: {len(boxes)})
+  print( f' N Snapshots: {len(snaps)} ')
+  print( f' N Boxes: {len(boxes)} ' )
 
 
 
