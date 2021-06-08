@@ -118,6 +118,24 @@ class Simulation_Grid:
     self.sim_ids = self.Grid.keys()
     self.coords = coords
     
+  
+  def Select_Simulations( self,  params, sim_ids=None, tolerance=5e-3):
+
+    if not sim_ids: sim_ids = self.sim_ids
+    vals_to_find = { key:params[key] for key in params if params[key] != None }
+
+    selected_sims = []
+    for sim_id in sim_ids: 
+      sim_data = self.Grid[sim_id]
+      sim_parameters = sim_data['parameters']
+      sim_vals = { key:sim_parameters[key] for key in vals_to_find }
+      same_vals = True
+      for key in sim_vals:
+        if np.abs( sim_vals[key] - vals_to_find[key] ) > tolerance: same_vals = False
+      if same_vals: selected_sims.append( sim_id )
+    return selected_sims
+
+
   def Find_Closest_Simulation( self, params_search ):
     diff_min = np.inf
     id_max = None 
