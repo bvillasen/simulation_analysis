@@ -32,10 +32,12 @@ input_dir = reduced_snaps_dir + f'{sim_key}/'
 
 if not snapshot_files:
   in_dir_files = os.listdir( input_dir)
-  files = listdir( in_dir_files )
-  snaps = [ file.split('.')[0] for file in files  ]
-  boxes = [ file.split('.')[-1] for file in files  ]
-    
+  snaps = [ file.split('.')[0] for file in in_dir_files  ]
+  boxes = [ file.split('.')[-1] for file in in_dir_files  ]
+  snaps = list( set( snaps ) )
+  boxes = list( set( boxes ) )
+  print( f' N Snapshots: {len(snaps)})
+  print( f' N Boxes: {len(boxes)})
 
 
 
