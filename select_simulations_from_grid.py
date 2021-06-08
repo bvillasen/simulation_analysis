@@ -67,6 +67,7 @@ for sim_indx, sim_id in enumerate(selected_sims):
   data_sim = SG.Grid[sim_id]
   sim_key = data_sim['key']
   input_dir = reduced_snaps_dir + f'{sim_key}/'
+  print( f'Input Dir: {input_dir}' )
 
   output_dir = output_root_dir + f'sim_{sim_indx}/'
   create_directory( output_dir )
