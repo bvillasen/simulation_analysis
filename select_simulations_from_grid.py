@@ -24,25 +24,30 @@ print( f'N Selected Sims: {n_sims} ' )
 sim_id = selected_sims[0]
 data_sim = SG.Grid[sim_id]
 sim_key = data_sim['key']
-
-snapshot_files = None
-
 reduced_snaps_dir = SG.root_dir + 'reduced_snapshot_files/'
 input_dir = reduced_snaps_dir + f'{sim_key}/'
 
-if not snapshot_files:
-  in_dir_files = os.listdir( input_dir)
-  snaps = [ file.split('.')[0] for file in in_dir_files  ]
-  boxes = [ file.split('.')[-1] for file in in_dir_files  ]
-  snaps = list( set( snaps ) )
-  boxes = list( set( boxes ) )
-  snaps = [ int(snap) for snap in snaps ]
-  boxes = [ int(box) for box in boxes ]
-  
-  print( f' N Snapshots: {len(snaps)} ')
-  print( f' N Boxes: {len(boxes)} ' )
+in_dir_files = os.listdir( input_dir)
+snaps = [ file.split('.')[0] for file in in_dir_files  ]
+boxes = [ file.split('.')[-1] for file in in_dir_files  ]
+snaps = list( set( snaps ) )
+boxes = list( set( boxes ) )
+snaps = [ int(snap) for snap in snaps ].sort()
+boxes = [ int(box) for box in boxes ].sort()
 
-  # box = bo
+print( f' N Snapshots: {len(snaps)} ')
+print( f' N Boxes: {len(boxes)} ' )
+
+box = boxes[0]
+z_vals = []
+for snap in snaps: 
+  file_name = input_dir + f'{snap}.h5.{box}'
+  file = h5.File( file_name, 'r' )
+  z = file.attrs['Current_z'][0]
+  z_vals.append( z )
+  file.close()
+     
+  
 
   
 
