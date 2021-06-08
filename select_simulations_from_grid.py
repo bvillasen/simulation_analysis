@@ -27,7 +27,7 @@ sim_key = data_sim['key']
 
 snapshot_files = None
 
-reduced_snaps_dir = SG.root_dir + 'reduced_snapshots_files/'
+reduced_snaps_dir = SG.root_dir + 'reduced_snapshot_files/'
 input_dir = reduced_snaps_dir + f'{sim_key}/'
 
 if not snapshot_files:
