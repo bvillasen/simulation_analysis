@@ -10,6 +10,10 @@ from simulation_parameters import *
 from plot_UVB_Rates import Plot_Grid_UVB_Rates
 
 
+reduced_snaps_dir = SG.root_dir + 'reduced_snapshot_files/'
+output_root_dir = SG.root_dir + 'selected_snapshot_files/'
+create_directory( output_root_dir )
+
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
 
 
@@ -24,7 +28,6 @@ print( f'N Selected Sims: {n_sims} ' )
 sim_id = selected_sims[0]
 data_sim = SG.Grid[sim_id]
 sim_key = data_sim['key']
-reduced_snaps_dir = SG.root_dir + 'reduced_snapshot_files/'
 input_dir = reduced_snaps_dir + f'{sim_key}/'
 
 in_dir_files = os.listdir( input_dir)
@@ -48,6 +51,30 @@ for snap in snaps:
   z = file.attrs['Current_z'][0]
   z_vals.append( z )
   file.close()
+z_vals = np.array( z_vals )
+
+
+z_val = 2.8 
+z_diff = np.abs( z_vals - z_val )
+z_indx = np.where( z_diff == z_diff.min() )[0][0]
+
+snap = snaps[z_indx]
+
+
+sim_indx = 0
+sim_id = selected_sims[sim_indx]
+data_sim = SG.Grid[sim_id]
+sim_key = data_sim['key']
+input_dir = reduced_snaps_dir + f'{sim_key}/'
+
+output_dir = output_root_dir + f'sim_{sim_indx}/'
+create_directory( output_dir )
+
+for box in boxes:
+  in_file_name = input_dir + f'{snap}.h5.{box}'
+  out_file_name = output_dir + f'{snap}.h5.{box}'
+  
+
      
   
 
