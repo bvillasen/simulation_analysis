@@ -9,12 +9,13 @@ from simulation_grid import Simulation_Grid
 from simulation_parameters import *
 from plot_UVB_Rates import Plot_Grid_UVB_Rates
 
-
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
 
 reduced_snaps_dir = SG.root_dir + 'reduced_snapshot_files/'
 output_root_dir = SG.root_dir + 'selected_snapshot_files/'
 create_directory( output_root_dir )
+
+fields = [ 'temperature' ]
 
 params = { 'scale_He':None, 'deltaZ_He':None, 'scale_H':0.86, 'deltaZ_H':0.0 }
 print( f'Selecting: {params} ' )
@@ -75,12 +76,17 @@ for box in boxes:
   out_file_name = output_dir + f'{snap}.h5.{box}'
   
   infile  = h5.File( in_file_name,  'r' )
-  # outfile = h5.File( out_file_name, 'w' )
+  outfile = h5.File( out_file_name, 'w' )
   
-  
+  for key in infile.attrs:
+    outfile.attrs[key] = infile[key]
+    
+  for field in fields:
+    data = infile[field][...]
+    outfile.create_dataset( field, data=data )
   
   infile.close()
-  # outfile.close()
+  outfile.close()
   print( f'Saved File: {out_file_name}' )
   
   
