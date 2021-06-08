@@ -32,8 +32,10 @@ snaps = [ file.split('.')[0] for file in in_dir_files  ]
 boxes = [ file.split('.')[-1] for file in in_dir_files  ]
 snaps = list( set( snaps ) )
 boxes = list( set( boxes ) )
-snaps = [ int(snap) for snap in snaps ].sort()
-boxes = [ int(box) for box in boxes ].sort()
+snaps = [ int(snap) for snap in snaps ]
+boxes = [ int(box) for box in boxes ]
+snaps.sort()
+boxes.sort()
 
 print( f' N Snapshots: {len(snaps)} ')
 print( f' N Boxes: {len(boxes)} ' )
