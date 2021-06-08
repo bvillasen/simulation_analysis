@@ -74,6 +74,16 @@ for box in boxes:
   in_file_name = input_dir + f'{snap}.h5.{box}'
   out_file_name = output_dir + f'{snap}.h5.{box}'
   
+  infile  = h5.File( in_file_name,  'r' )
+  # outfile = h5.File( out_file_name, 'w' )
+  
+  
+  
+  infile.close()
+  # outfile.close()
+  print( f'Saved File: {out_file_name}' )
+  
+  
   
 
      
