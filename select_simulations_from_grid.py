@@ -37,11 +37,12 @@ if not snapshot_files:
   snaps = list( set( snaps ) )
   boxes = list( set( boxes ) )
   snaps = [ int(snap) for snap in snaps ]
-  boxes = [ int(snap) for snap in boxes ]
+  boxes = [ int(box) for box in boxes ]
+  
   print( f' N Snapshots: {len(snaps)} ')
   print( f' N Boxes: {len(boxes)} ' )
 
-  box = bo
+  # box = bo
 
   
 
