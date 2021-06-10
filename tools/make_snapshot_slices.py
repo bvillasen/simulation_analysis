@@ -1,6 +1,7 @@
 import os, sys
 from os import listdir
 from os.path import isfile, join
+from shutil import copyfile
 import h5py as h5
 import numpy as np
 import matplotlib.pyplot as plt
@@ -67,6 +68,20 @@ outfile.attrs['current_z'] = current_z
 outfile.create_dataset( field, data=data_slice )
 outfile.close()
 print( f'Saved File: {out_file_name}' )
+
+
+src = input_dir  + 'data_sim.pkl'
+dst = output_dir + 'data_sim.pkl'
+copyfile(src, dst)
+
+
+
+
+
+
+
+
+
 
 
 
