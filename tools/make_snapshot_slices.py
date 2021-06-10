@@ -32,6 +32,7 @@ sim_id = rank
 data_dir = '/data/groups/comp-astro/bruno/'
 input_dir  = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/selected_snapshot_files/sim_{sim_id}/'
 output_dir = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/selected_snapshot_files/slices/sim_{sim_id}/'
+create_directory( output_dir )
 
 n_points = 1024
 Lbox = 50000.0 #kpc/h
