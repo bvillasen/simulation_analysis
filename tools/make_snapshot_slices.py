@@ -29,10 +29,13 @@ if rank == 0: show_progess = True
 
 sim_id = rank
 
+params_type = 'He'
+params_type = 'H'
+
 # data_dir = '/raid/bruno/data/'
 data_dir = '/data/groups/comp-astro/bruno/'
-input_dir  = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/selected_snapshot_files/sim_{sim_id}/'
-output_dir = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/selected_snapshot_files/slices/sim_{sim_id}/'
+input_dir  = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/selected_snapshot_files_params_{params_type}/sim_{sim_id}/'
+output_dir = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/selected_snapshot_files_params_{params_type}/slices/sim_{sim_id}/'
 create_directory( output_dir )
 
 n_points = 1024
@@ -43,10 +46,10 @@ precision = np.float32
 
 n_snap = 7
 
-field =  'temperature'  
-data_gas = load_snapshot_data_distributed( 'hydro', [field], n_snap, input_dir, box_size, grid_size,  precision, show_progess=show_progess )
+if params_type == 'He': fields =  ['temperature']  
+if params_type == 'H': fields =  ['density', 'HI_density']  
+data_gas = load_snapshot_data_distributed( 'hydro', fields, n_snap, input_dir, box_size, grid_size,  precision, show_progess=show_progess )
 current_z = data_gas['Current_z']
-data = data_gas['temperature']
 
 slice_depth = 64
 n_slices = n_points // slice_depth
@@ -60,12 +63,16 @@ slice_start = slice_id * slice_depth
 start = max( 0, slice_start )
 end   = min( n_points, slice_start+slice_depth )
 print( f' Slice:  start:{start}   end:{end}' )
-data_slice = data[slice_start:end, :, :] 
 
 out_file_name = output_dir + f'slice_{n_snap}_start{slice_start}_depth{slice_depth}.h5'
 outfile = h5.File( out_file_name, 'w' )
 outfile.attrs['current_z'] = current_z
-outfile.create_dataset( field, data=data_slice )
+
+for field in fields:
+  data = data_gas['temperature']
+  data_slice = data[slice_start:end, :, :] 
+  outfile.create_dataset( field, data=data_slice )
+
 outfile.close()
 print( f'Saved File: {out_file_name}' )
 
