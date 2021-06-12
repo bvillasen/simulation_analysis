@@ -18,7 +18,7 @@ from tools import *
 data_dir = '/raid/bruno/data/' 
 # data_dir = '/data/groups/comp-astro/bruno/'
 root_dir  = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/selected_snapshot_files_params_H/slices/'
-output_dir = input_dir
+output_dir = root_dir
 create_directory( output_dir )
 
 scale_He_vals = []
