@@ -15,8 +15,8 @@ from load_data import load_snapshot_data_distributed
 from tools import *
 
 
-# data_dir = '/data/groups/comp-astro/bruno/'
-data_dir = '/raid/bruno/data/' 
+# data_dir = '/raid/bruno/data/' 
+data_dir = '/data/groups/comp-astro/bruno/'
 root_dir  = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/selected_snapshot_files/slices/'
 output_dir = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/selected_snapshot_files/slices/'
 create_directory( output_dir )
@@ -24,7 +24,7 @@ create_directory( output_dir )
 scale_He_vals = []
 deltaZ_He_vals = []
 
-n_snap = 8
+n_snap = 7
 slice_depth = 64
 slice_start = 192
 
