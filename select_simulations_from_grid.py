@@ -57,44 +57,44 @@ z_vals = np.array( z_vals )
 print( f'z vals: {z_vals}' )
 
 
-# z_val = 3.8
-# z_diff = np.abs( z_vals - z_val )
-# z_indx = np.where( z_diff == z_diff.min() )[0][0]
+z_val = 5.4
+z_diff = np.abs( z_vals - z_val )
+z_indx = np.where( z_diff == z_diff.min() )[0][0]
+
+snap = snaps[z_indx]
+
 # 
-# snap = snaps[z_indx]
-# 
-# # 
-# # sim_indx = 0
-# # sim_id = selected_sims[sim_indx]
-# for sim_indx, sim_id in enumerate(selected_sims):
-#   data_sim = SG.Grid[sim_id]
-#   sim_key = data_sim['key']
-#   input_dir = reduced_snaps_dir + f'{sim_key}/'
-#   print( f'Input Dir: {input_dir}' )
-# 
-#   output_dir = output_root_dir + f'sim_{sim_indx}/'
-#   create_directory( output_dir )
-#   Write_Pickle_Directory(  data_sim, output_dir + 'data_sim.pkl' )
-# 
-#   for box in boxes:
-#     in_file_name = input_dir + f'{snap}.h5.{box}'
-#     out_file_name = output_dir + f'{snap}.h5.{box}'
-# 
-#     infile  = h5.File( in_file_name,  'r' )
-#     outfile = h5.File( out_file_name, 'w' )
-# 
-#     for key in infile.attrs:
-#       outfile.attrs[key] = infile.attrs[key]
-# 
-#     for field in fields:
-#       data = infile[field][...]
-#       outfile.create_dataset( field, data=data )
-# 
-#     infile.close()
-#     outfile.close()
-#     print( f'Saved File: {out_file_name}' )
-# 
-# 
+# sim_indx = 0
+# sim_id = selected_sims[sim_indx]
+for sim_indx, sim_id in enumerate(selected_sims):
+  data_sim = SG.Grid[sim_id]
+  sim_key = data_sim['key']
+  input_dir = reduced_snaps_dir + f'{sim_key}/'
+  print( f'Input Dir: {input_dir}' )
+
+  output_dir = output_root_dir + f'sim_{sim_indx}/'
+  create_directory( output_dir )
+  Write_Pickle_Directory(  data_sim, output_dir + 'data_sim.pkl' )
+
+  for box in boxes:
+    in_file_name = input_dir + f'{snap}.h5.{box}'
+    out_file_name = output_dir + f'{snap}.h5.{box}'
+
+    infile  = h5.File( in_file_name,  'r' )
+    outfile = h5.File( out_file_name, 'w' )
+
+    for key in infile.attrs:
+      outfile.attrs[key] = infile.attrs[key]
+
+    for field in fields:
+      data = infile[field][...]
+      outfile.create_dataset( field, data=data )
+
+    infile.close()
+    outfile.close()
+    print( f'Saved File: {out_file_name}' )
+
+
   
 
      
