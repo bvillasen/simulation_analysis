@@ -54,7 +54,7 @@ for snap in snaps:
 z_vals = np.array( z_vals )
 
 
-z_val = 3.6
+z_val = 3.8
 z_diff = np.abs( z_vals - z_val )
 z_indx = np.where( z_diff == z_diff.min() )[0][0]
 
