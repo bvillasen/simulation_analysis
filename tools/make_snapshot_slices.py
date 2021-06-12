@@ -41,7 +41,7 @@ box_size = [ Lbox, Lbox, Lbox ]
 grid_size = [ n_points, n_points, n_points ]
 precision = np.float32
 
-n_snap = 8
+n_snap = 6
 
 field =  'temperature'  
 data_gas = load_snapshot_data_distributed( 'hydro', [field], n_snap, input_dir, box_size, grid_size,  precision, show_progess=show_progess )
