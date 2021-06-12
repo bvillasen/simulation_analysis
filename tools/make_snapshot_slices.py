@@ -69,7 +69,7 @@ outfile = h5.File( out_file_name, 'w' )
 outfile.attrs['current_z'] = current_z
 
 for field in fields:
-  data = data_gas['temperature']
+  data = data_gas[field]
   data_slice = data[slice_start:end, :, :] 
   outfile.create_dataset( field, data=data_slice )
 
