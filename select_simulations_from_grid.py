@@ -15,7 +15,8 @@ reduced_snaps_dir = SG.root_dir + 'reduced_snapshot_files/'
 output_root_dir = SG.root_dir + 'selected_snapshot_files_params_H/'
 create_directory( output_root_dir )
 
-fields = [ 'temperature' ]
+# fields = [ 'temperature' ]
+fields = [ 'density', 'HI_density' ]
 
 # params = { 'scale_He':None, 'deltaZ_He':None, 'scale_H':0.86, 'deltaZ_H':0.0 }
 params = { 'scale_He':0.3, 'deltaZ_He':0.2, 'scale_H':0.86, 'deltaZ_H':0.0 }
