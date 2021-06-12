@@ -19,7 +19,7 @@ create_directory( output_root_dir )
 fields = [ 'density', 'HI_density' ]
 
 # params = { 'scale_He':None, 'deltaZ_He':None, 'scale_H':0.86, 'deltaZ_H':0.0 }
-params = { 'scale_He':0.3, 'deltaZ_He':0.2, 'scale_H':0.86, 'deltaZ_H':0.0 }
+params = { 'scale_He':0.3, 'deltaZ_He':0.2, 'scale_H':None, 'deltaZ_H':None }
 print( f'Selecting: {params} ' )
 selected_sims = SG.Select_Simulations( params, tolerance=5e-3 )
 n_sims = len( selected_sims )
