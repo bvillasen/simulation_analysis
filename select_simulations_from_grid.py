@@ -54,6 +54,7 @@ for snap in snaps:
   z_vals.append( z )
   file.close()
 z_vals = np.array( z_vals )
+print( f'z vals: {z_vals}' )
 
 
 # z_val = 3.8
