@@ -35,6 +35,6 @@ params = { 'nx':nx, 'ny':ny, 'nz':nz,
 
 parameters_file_str = Generate_Parameter_File( params )
 
-create_directoty( simulation_dir )
+create_directory( simulation_dir )
 
 
