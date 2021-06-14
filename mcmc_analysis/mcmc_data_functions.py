@@ -42,9 +42,10 @@ def Get_Data_Grid_Composite( fields_list,  SG, z_vals=None, load_normalized_ps=F
   # fields_list = fields.split('+')
   data_grid_all = {}
   for field in fields_list:
-    if field == 'T0':   data_grid_all[field] = Get_Data_Grid( [field], SG, sim_ids=sim_ids ) 
-    if field == 'tau':  data_grid_all[field] = Get_Data_Grid( [field], SG, sim_ids=sim_ids ) 
-    if field == 'P(k)': data_grid_all[field] = Get_Data_Grid_Power_spectrum( z_vals, SG, normalized_ps=load_normalized_ps, sim_ids=sim_ids )
+    if field == 'T0':    data_grid_all[field] = Get_Data_Grid( [field], SG, sim_ids=sim_ids ) 
+    if field == 'gamma': data_grid_all[field] = Get_Data_Grid( [field], SG, sim_ids=sim_ids ) 
+    if field == 'tau':   data_grid_all[field] = Get_Data_Grid( [field], SG, sim_ids=sim_ids ) 
+    if field == 'P(k)':  data_grid_all[field] = Get_Data_Grid_Power_spectrum( z_vals, SG, normalized_ps=load_normalized_ps, sim_ids=sim_ids )
     if field == 'tau_HeII':  data_grid_all[field] = Get_Data_Grid( [field], SG, sim_ids=sim_ids ) 
 
   data_grid = {}

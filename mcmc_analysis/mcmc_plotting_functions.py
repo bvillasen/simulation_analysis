@@ -35,7 +35,405 @@ color_lines_list = [ c_0, c_1, c_2, c_3  ]
 
 use_color_from_colormap = False
 
-def Plot_tau_HeII_Sampling( samples_tau_H, samples_tau_HeII, output_dir, system='Shamrock', label='', multiple=False ):
+blues = palettable.colorbrewer.sequential.Blues_9_r
+color_map_list_balck =  [ blues ]
+
+data_sets = [   data_thermal_history_Hiss_2018,   data_thermal_history_Walther_2019, data_thermal_history_Boera_2019 ]
+
+c_err_0 = 'C9'
+c_err_1 = 'C3'
+c_err_2 = 'C4'
+error_colors = [ c_err_0, c_err_1, c_err_2 ]
+
+def Plot_TO_gamma_sampling( samples_T0, samples_gamma, output_dir, system='Shamrock', label='', multiple=False ):
+  
+  if not multiple:
+    labels_multiple = [label]
+    samples_T0_multiple = {}
+    samples_T0_multiple[0] = samples_T0
+    samples_gamma_multiple = {}
+    samples_gamma_multiple[0] = samples_gamma
+  else:
+    labels_multiple = label
+    samples_T0_multiple = samples_T0  
+    samples_gamma_multiple = samples_gamma  
+    
+  from scipy import interpolate as interp 
+  import matplotlib
+  matplotlib.rcParams['mathtext.fontset'] = 'cm'
+  matplotlib.rcParams['mathtext.rm'] = 'serif'
+
+  if system == 'Lux':      prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/brvillas/fonts', "Helvetica.ttf"), size=14 )
+  if system == 'Shamrock': prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/bruno/fonts/Helvetica', "Helvetica.ttf"), size=14 )
+
+  nrows = 1
+  ncols = 2
+
+  tick_size_major, tick_size_minor = 6, 4
+  tick_label_size_major, tick_label_size_minor = 14, 12
+  tick_width_major, tick_width_minor = 1.5, 1
+
+  font_size = 20
+  label_size = 16
+  alpha = 0.7
+  
+  border_width = 1.5
+
+  c_pchw18 = pylab.cm.viridis(.7)
+  c_hm12 = pylab.cm.cool(.3)
+
+  c_boss = pylab.cm.viridis(.3)
+  c_walther = pylab.cm.viridis(.3)
+  c_viel = 'C1'
+  c_boera = pylab.cm.Purples(.7)
+
+
+  purples = palettable.colorbrewer.sequential.Purples_9.mpl_colors
+  purple = purples[-1]
+
+  oranges = palettable.colorbrewer.sequential.YlOrBr_9.mpl_colors
+  orange = oranges[4]
+
+
+  blues = palettable.colorbrewer.sequential.Blues_9.mpl_colors
+  blue = blues[-2]
+
+  greens = palettable.colorbrewer.sequential.BuGn_9.mpl_colors
+  green = greens[-2]
+
+
+  text_color  = 'black'
+  color_line = c_pchw18
+  color_data = c_boss
+
+  black_background = True
+  if black_background:
+    text_color = 'white'
+    color_data_0 = orange
+    color_data_1 = 'C3'
+    
+    
+
+  fig, ax_l = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,8*nrows))
+  plt.subplots_adjust( hspace = 0.1, wspace=0.1)
+ 
+  ax = ax_l[0]
+  for data_id in samples_T0_multiple:
+    colormap = color_map_list[data_id]
+    colors = colormap.mpl_colors
+    n_colors = len( colors )
+    if use_color_from_colormap: color_line = colors[n_colors//2]
+    else:color_line = color_lines_list[data_id]
+    if black_background:
+      colormap = color_map_list_balck[data_id]
+      colors = colormap.mpl_colors
+      color_line = colors[4]
+      color_bar  = colors[4]
+        
+      
+    label = labels_multiple[data_id]
+    samples = samples_T0_multiple[data_id]
+    z = samples['z']
+    mean = samples['mean']
+    high = samples['higher']
+    low = samples['lower']
+    if 'Highest_Likelihood' in samples:
+      print( 'Plotting Highest_Likelihood T0')
+      mean = samples['Highest_Likelihood']
+    # ax.plot( z, mean, color=color_line, zorder=1, label=label )
+    # ax.fill_between( z, high, low, color=color_line, alpha=alpha, zorder=1 )  
+    sort_indices = np.argsort( z )
+    z = z[sort_indices]
+    mean = mean[sort_indices]
+    high = high[sort_indices]
+    low  = low[sort_indices]
+    n_samples_intgerp = 10000
+    z_interp = np.linspace( z[0], z[-1], n_samples_intgerp )  
+    f_mean = interp.interp1d( z, mean, kind='cubic' )
+    f_high = interp.interp1d( z, high, kind='cubic' )
+    f_low  = interp.interp1d( z, low,  kind='cubic' )
+    ax.plot( z_interp, f_mean(z_interp) / 1e4, color=color_line, zorder=1, label=label )
+    ax.fill_between( z_interp, f_high(z_interp) / 1e4, f_low(z_interp) / 1e4, color=color_bar, alpha=alpha, zorder=1 )  
+
+  data_set = data_thermal_history_Gaikwad_2020a
+  data_z = data_set['z']
+  data_mean = data_set['T0'] 
+  data_error = 0.5 * ( data_set['T0_sigma_plus'] + data_set['T0_sigma_minus'] )
+  name = data_set['name']   
+  ax.errorbar( data_z, data_mean/1e4, yerr=data_error/1e4, label=name, fmt='o', color= color_data_1, zorder=2)
+  # ax.scatter( data_z, data_mean/1e4, label=name, alpha=0.8, color= color_data_1, zorder=2) 
+
+  data_set = data_thermal_history_Gaikwad_2020b
+  data_z = data_set['z']
+  data_mean = data_set['T0'] 
+  data_error = 0.5 * ( data_set['T0_sigma_plus'] + data_set['T0_sigma_minus'] )
+  name = data_set['name']   
+  ax.errorbar( data_z, data_mean/1e4, yerr=data_error/1e4, label=name, fmt='o', color= color_data_0, zorder=2)
+  # ax.scatter( data_z, data_mean/1e4, label=name, alpha=0.8, color= color_data_0, zorder=2) 
+
+  # 
+  # for i,data_set in enumerate(data_sets):
+  #   data_x = data_set['z']
+  #   data_mean = data_set['T0']
+  #   data_error_p = data_set['T0_sigma_plus']
+  #   data_error_m = data_set['T0_sigma_minus']
+  #   data_error = np.array([ data_error_m, data_error_p ])
+  #   data_name = data_set['name']
+  #   # ax.errorbar( data_x, data_mean, yerr=data_error, fmt=data_fmt, label=data_name, alpha=0.5)
+  #   ax.errorbar( data_x, data_mean/1e4, yerr=data_error/1e4, fmt='o',  alpha=0.8, color= error_colors[i], label=data_name)
+  # 
+  # 
+    
+  
+  ax.tick_params(axis='both', which='major', direction='in', color=text_color, labelcolor=text_color, labelsize=tick_label_size_major, size=tick_size_major, width=tick_width_major  )
+  ax.tick_params(axis='both', which='minor', direction='in', color=text_color, labelcolor=text_color, labelsize=tick_label_size_minor, size=tick_size_minor, width=tick_width_minor  )
+  ax.set_ylabel( r'$T_0   \,\,\,\, [10^4 \,\,\,\mathrm{K}\,]$', fontsize=font_size, color=text_color  )
+  ax.set_xlabel( r'$z$', fontsize=font_size, color=text_color )
+  ax.set_xlim( 1.8, 6.1 )
+  ax.set_ylim( 6000/1e4, 18000/1e4)
+  leg = ax.legend(loc=1, frameon=False, fontsize=22, prop=prop)
+  for text in leg.get_texts():
+    plt.setp(text, color = text_color)
+
+  if black_background: 
+    fig.patch.set_facecolor('black') 
+    ax.set_facecolor('k')
+    [ spine.set_edgecolor(text_color) for spine in list(ax.spines.values()) ]
+      
+  [sp.set_linewidth(border_width) for sp in ax.spines.values()]
+    
+    
+  ax = ax_l[1]
+
+  for data_id in samples_gamma_multiple:
+    colormap = color_map_list[data_id]
+    colors = colormap.mpl_colors
+    n_colors = len( colors )
+    if use_color_from_colormap: color_line = colors[n_colors//2]
+    else:color_line = color_lines_list[data_id]
+    if black_background:
+      colormap = color_map_list_balck[data_id]
+      colors = colormap.mpl_colors
+      color_line = colors[4]
+      color_bar  = colors[4]
+        
+      
+    label = labels_multiple[data_id]
+    samples = samples_gamma_multiple[data_id]
+    z = samples['z']
+    mean = samples['mean'] + 1
+    high = samples['higher'] + 1
+    low = samples['lower'] + 1
+    if 'Highest_Likelihood' in samples:
+      print( 'Plotting Highest_Likelihood T0')
+      mean = samples['Highest_Likelihood'] +1
+    # ax.plot( z, mean, color=color_line, zorder=1, label=label )
+    # ax.fill_between( z, high, low, color=color_line, alpha=alpha, zorder=1 )  
+    sort_indices = np.argsort( z )
+    z = z[sort_indices]
+    mean = mean[sort_indices]
+    high = high[sort_indices]
+    low  = low[sort_indices]
+    n_samples_intgerp = 10000
+    z_interp = np.linspace( z[0], z[-1], n_samples_intgerp )  
+    f_mean = interp.interp1d( z, mean, kind='cubic' )
+    f_high = interp.interp1d( z, high, kind='cubic' )
+    f_low  = interp.interp1d( z, low,  kind='cubic' )
+    ax.plot( z_interp, f_mean(z_interp) , color=color_line, zorder=1, label=label )
+    ax.fill_between( z_interp, f_high(z_interp) , f_low(z_interp) , color=color_bar, alpha=alpha, zorder=1 )  
+
+    
+  data_set = data_thermal_history_Gaikwad_2020a
+  data_z = data_set['z']
+  data_mean = data_set['gamma'] 
+  data_error = 0.5 * ( data_set['gamma_sigma_plus'] + data_set['gamma_sigma_minus'] )
+  name = data_set['name']   
+  ax.errorbar( data_z, data_mean, yerr=data_error, label=name, fmt='o', color= color_data_1, zorder=2)
+  # ax.scatter( data_z, data_mean/1e4, label=name, alpha=0.8, color= color_data_1, zorder=2) 
+
+  data_set = data_thermal_history_Gaikwad_2020b
+  data_z = data_set['z']
+  data_mean = data_set['gamma'] 
+  data_error = 0.5 * ( data_set['gamma_sigma_plus'] + data_set['gamma_sigma_minus'] )
+  name = data_set['name']   
+  ax.errorbar( data_z, data_mean, yerr=data_error, label=name, fmt='o', color= color_data_0, zorder=2)
+  # ax.scatter( data_z, data_mean/1e4, label=name, alpha=0.8, color= color_data_0, zorder=2) 
+
+  ax.tick_params(axis='both', which='major', direction='in', color=text_color, labelcolor=text_color, labelsize=tick_label_size_major, size=tick_size_major, width=tick_width_major  )
+  ax.tick_params(axis='both', which='minor', direction='in', color=text_color, labelcolor=text_color, labelsize=tick_label_size_minor, size=tick_size_minor, width=tick_width_minor  )
+  ax.set_ylabel( r'$\gamma$', fontsize=font_size, color=text_color  )
+  ax.set_xlabel( r'$z$', fontsize=font_size, color=text_color )
+  ax.set_xlim( 1.8, 6.1)
+  # ax.set_ylim( 6000/1e4, 18000/1e4)
+  leg = ax.legend(loc=1, frameon=False, fontsize=22, prop=prop)
+  for text in leg.get_texts():
+    plt.setp(text, color = text_color)
+
+  if black_background: 
+    fig.patch.set_facecolor('black') 
+    ax.set_facecolor('k')
+    [ spine.set_edgecolor(text_color) for spine in list(ax.spines.values()) ]
+      
+  [sp.set_linewidth(border_width) for sp in ax.spines.values()]
+    
+    
+    
+  figure_name = output_dir + f'fig_T0_gamma_sampling.png'
+  fig.savefig( figure_name, bbox_inches='tight', dpi=300, facecolor=fig.get_facecolor() )
+  print( f'Saved Figure: {figure_name}' )
+  
+
+def Plot_tau_HeII_Sampling( samples_tau_HeII, output_dir, system='Shamrock', label='', multiple=False,  ):
+
+  if not multiple:
+    labels_multiple = [label]
+    samples_tau_HeII_multiple = {}
+    samples_tau_HeII_multiple[0] = samples_tau_HeII
+  else:
+    labels_multiple = label
+    samples_tau_HeII_multiple = samples_tau_HeII
+    
+  
+    from data_optical_depth_HeII import data_tau_HeII_Worserc_2019 
+    
+    from scipy import interpolate as interp 
+    import matplotlib
+    import matplotlib.font_manager
+    matplotlib.rcParams['mathtext.fontset'] = 'cm'
+    matplotlib.rcParams['mathtext.rm'] = 'serif'
+
+    if system == 'Lux':      prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/brvillas/fonts', "Helvetica.ttf"), size=12)
+    if system == 'Shamrock': prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/bruno/fonts/Helvetica', "Helvetica.ttf"), size=12)
+
+    nrows = 1
+    ncols = 1
+    
+    tick_size_major, tick_size_minor = 6, 4
+    tick_label_size_major, tick_label_size_minor = 14, 12
+    tick_width_major, tick_width_minor = 1.5, 1
+
+    font_size = 18
+    label_size = 16
+    alpha = 0.7
+    
+    line_width = 0.6
+    
+    border_width = 1.5
+      
+    c_pchw18 = pylab.cm.viridis(.7)
+    c_hm12 = pylab.cm.cool(.3)
+
+    c_boss = pylab.cm.viridis(.3)
+    c_walther = pylab.cm.viridis(.3)
+    c_viel = 'C1'
+    c_boera = pylab.cm.Purples(.7)
+
+    text_color  = 'black'
+    color_line = c_pchw18
+    color_data = c_boss
+    
+
+    oranges = palettable.colorbrewer.sequential.YlOrBr_9.mpl_colors
+    orange = oranges[4]
+    
+    black_background = True
+    if black_background:
+      text_color = 'white'
+      color_data = orange
+      
+    
+    fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10*ncols,5*nrows))
+
+    for data_id in samples_tau_HeII_multiple:
+      colormap = color_map_list[data_id]
+      colors = colormap.mpl_colors
+      n_colors = len( colors )
+      if use_color_from_colormap: color_line = colors[n_colors//2]
+      else:color_line = color_lines_list[data_id]
+      if black_background:
+        colormap = color_map_list_balck[data_id]
+        colors = colormap.mpl_colors
+        color_line = colors[4]
+        color_bar  = colors[4]
+          
+        
+      label = labels_multiple[data_id]
+      samples = samples_tau_HeII_multiple[data_id]
+      z = samples['z']
+      mean = samples['mean']
+      high = samples['higher']
+      low = samples['lower']
+      if 'Highest_Likelihood' in samples:
+        print( 'Plotting Highest_Likelihood T0')
+        mean = samples['Highest_Likelihood']
+      # ax.plot( z, mean, color=color_line, zorder=1, label=label )
+      # ax.fill_between( z, high, low, color=color_line, alpha=alpha, zorder=1 )  
+      sort_indices = np.argsort( z )
+      z = z[sort_indices]
+      mean = mean[sort_indices]
+      high = high[sort_indices]
+      low  = low[sort_indices]
+      n_samples_intgerp = 10000
+      z_interp = np.linspace( z[0], z[-1], n_samples_intgerp )  
+      f_mean = interp.interp1d( z, mean, kind='cubic' )
+      f_high = interp.interp1d( z, high, kind='cubic' )
+      f_low  = interp.interp1d( z, low,  kind='cubic' )
+      ax.plot( z_interp, f_mean(z_interp), color=color_line, zorder=1, label=label )
+      ax.fill_between( z_interp, f_high(z_interp), f_low(z_interp), color=color_bar, alpha=alpha, zorder=1 )  
+    
+    data_set = data_tau_HeII_Worserc_2019
+    data_name = data_set['name']
+    data_z = data_set['z']
+    data_tau = data_set['tau'] 
+    data_tau_sigma = data_set['tau_sigma'] 
+    tau_p = data_set['tau_sigma_p']
+    tau_m = data_set['tau_sigma_m']
+    tau_error = [ data_tau - tau_m , tau_p - data_tau  ]
+    ax.errorbar( data_z, data_tau, yerr=tau_error, fmt='o', color=color_data, label=data_name, zorder=2 )
+    
+    lower_lims = [  [3.16, 5.2] ]
+    x_lenght = 0.025/4
+    for lower_lim in lower_lims:
+      lim_x, lim_y = lower_lim
+      ax.plot( [lim_x-x_lenght, lim_x+x_lenght], [lim_y, lim_y], color=color_data,  zorder=2  )
+      dx, dy = 0, 1
+      ax.arrow( lim_x, lim_y, dx, dy,  color=color_data, head_width=0.01, head_length=0.08,  zorder=2   )
+      
+
+    ax.tick_params(axis='both', which='major', direction='in', color=text_color, labelcolor=text_color, labelsize=tick_label_size_major, size=tick_size_major, width=tick_width_major  )
+    ax.tick_params(axis='both', which='minor', direction='in', color=text_color, labelcolor=text_color, labelsize=tick_label_size_minor, size=tick_size_minor, width=tick_width_minor  )
+
+    ax.set_ylabel( r'$\tau_{eff} \,\, \mathrm{HeII}$', fontsize=font_size, color=text_color  )
+    ax.set_xlabel( r'$z$', fontsize=font_size, color=text_color )
+    ax.set_xlim( 2, 3.4 )
+    ax.set_ylim( 0, 8 )
+
+    leg = ax.legend(loc=2, frameon=False, fontsize=22, prop=prop)
+    for text in leg.get_texts():
+      plt.setp(text, color = text_color)
+
+    if black_background: 
+      fig.patch.set_facecolor('black') 
+      ax.set_facecolor('k')
+      [ spine.set_edgecolor(text_color) for spine in list(ax.spines.values()) ]
+        
+    [sp.set_linewidth(border_width) for sp in ax.spines.values()]
+
+
+
+    figure_name = output_dir + f'fig_tau_HeII_sampling.png'
+    fig.savefig( figure_name, bbox_inches='tight', dpi=300, facecolor=fig.get_facecolor() )
+    print( f'Saved Figure: {figure_name}' )
+
+
+
+    
+  
+  
+    
+  
+
+def Plot_tau_H_HeII_Sampling( samples_tau_H, samples_tau_HeII, output_dir, system='Shamrock', label='', multiple=False ):
   
   if not multiple:
     labels_multiple = [label]
@@ -447,8 +845,8 @@ def Plot_Corner( samples, data_label, labels, output_dir, n_bins_1D=20, n_bins_2
   import matplotlib
   matplotlib.rcParams['mathtext.fontset'] = 'cm'
   matplotlib.rcParams['mathtext.rm'] = 'serif'
-  if system == 'Lux':      prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/brvillas/fonts', "Helvetica.ttf"), size=12)
-  if system == 'Shamrock': prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/bruno/fonts/Helvetica', "Helvetica.ttf"), size=12)
+  if system == 'Lux':      prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/brvillas/fonts', "Helvetica.ttf"), size=16)
+  if system == 'Shamrock': prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/bruno/fonts/Helvetica', "Helvetica.ttf"), size=16)
 
 
   
@@ -467,19 +865,19 @@ def Plot_Corner( samples, data_label, labels, output_dir, n_bins_1D=20, n_bins_2
       
   color = 'C0'
   data_color = 'C9'
-  font_size = 16
-  label_size = 26
+  font_size = 22
+  label_size = 30
   alpha = 0.6
   fig_size = 5
   space = 0.05
   
   n_tricks = 6
   
-  tick_label_size = 14
+  tick_label_size = 16
   tick_length = 7
   tick_width = 2
   border_width = 2.0
-  hist_1D_line_width = 2
+  hist_1D_line_width = 3.09
   hist_1D_line_color = 'C0'
   hist_2D_colormap = palettable.cmocean.sequential.Ice_20_r.mpl_colormap
   
@@ -490,6 +888,14 @@ def Plot_Corner( samples, data_label, labels, output_dir, n_bins_1D=20, n_bins_2
   color_map_4 = palettable.cmocean.sequential.Algae_20
   color_map_list = [ color_map_0, color_map_1, color_map_2, color_map_3, color_map_4 ]
   
+  text_color = 'black'
+  
+  black_background = True
+  if black_background:
+    color_map_0 = palettable.cmocean.sequential.Ice_20
+    # color_map_0 = palettable.matplotlib.Inferno_20
+    color_map_list = [ color_map_0, color_map_1, color_map_2, color_map_3, color_map_4 ]
+    text_color = 'white'
 
   fig, ax_l = plt.subplots(nrows=n_param, ncols=n_param, figsize=(fig_size*n_param,fig_size*n_param),  sharex='col' )
   fig.subplots_adjust( wspace=space, hspace=space )
@@ -513,20 +919,20 @@ def Plot_Corner( samples, data_label, labels, output_dir, n_bins_1D=20, n_bins_2
         ax.axis("off")
         continue
 
-      if plot_x_lables: ax.tick_params(axis='x', which='major', direction='in', labelsize=tick_label_size, length=tick_length, width=tick_width )
-      else:             ax.tick_params(axis='x', which='major', direction='in', labelsize=0, length=tick_length, width=tick_width )
-      if plot_y_lables: ax.tick_params(axis='y', which='major', direction='in', labelsize=tick_label_size, length=tick_length, width=tick_width )
-      else:             ax.tick_params(axis='y', which='major', direction='in', labelsize=0, length=tick_length, width=tick_width )
+      if plot_x_lables: ax.tick_params(axis='x', which='major', direction='in', labelsize=tick_label_size, length=tick_length, width=tick_width, color=text_color, labelcolor=text_color )
+      else:             ax.tick_params(axis='x', which='major', direction='in', labelsize=0, length=tick_length, width=tick_width, color=text_color, labelcolor=text_color )
+      if plot_y_lables: ax.tick_params(axis='y', which='major', direction='in', labelsize=tick_label_size, length=tick_length, width=tick_width, color=text_color, labelcolor=text_color )
+      else:             ax.tick_params(axis='y', which='major', direction='in', labelsize=0, length=tick_length, width=tick_width, color=text_color, labelcolor=text_color )
       if not plot_y_ticks: ax.tick_params(axis='y', which='major', length=0 )
 
       if plot_y_lables:
         if j == 0: y_label = ''
         else: y_label = labels[samples[j]['name']]  
-        ax.set_ylabel( y_label, fontsize=label_size )
+        ax.set_ylabel( y_label, fontsize=label_size, color=text_color )
 
       if plot_x_lables:
         x_label = labels[samples[i]['name']]  
-        ax.set_xlabel( x_label, fontsize=label_size )
+        ax.set_xlabel( x_label, fontsize=label_size, color=text_color )
 
       if i == j: plot_type = '1D'
       if i < j:  plot_type = '2D'
@@ -540,6 +946,7 @@ def Plot_Corner( samples, data_label, labels, output_dir, n_bins_1D=20, n_bins_2
         contour_colormap = colormap.mpl_colors
         n_colors = len( contour_colormap )
         line_color = contour_colormap[n_colors//2]
+        if black_background: line_color = palettable.colorbrewer.sequential.Blues_9_r.mpl_colors[4]
         contour_colors = [contour_colormap[n_colors//2], contour_colormap[-1]]
         
         if plot_type == '1D':
@@ -551,9 +958,10 @@ def Plot_Corner( samples, data_label, labels, output_dir, n_bins_1D=20, n_bins_2
           bin_width = bin_centers[0] - bin_centers[1]  
           bin_centers_interp = np.linspace( bin_centers[0], bin_centers[-1], 10000 )
           f_interp  = interp.interp1d( bin_centers, hist,  kind='cubic' )
-          if add_data_label: data_label = data_labels[data_id] 
-          else: data_label = ''
-          ax.plot( bin_centers_interp, f_interp(bin_centers_interp),   color=line_color, linewidth=hist_1D_line_width, label=data_label  )
+          data_label = data_labels[data_id]
+          if add_data_label: label = f'Fit to {data_label}' 
+          else: label = ''
+          ax.plot( bin_centers_interp, f_interp(bin_centers_interp),   color=line_color, linewidth=hist_1D_line_width, label=label  )
           # ax.plot( bin_centers, hist,   color=line_color, linewidth=hist_1D_line_width  ), 
           # ax.step( bin_centers, hist, where='mid',  color=line_color, linewidth=hist_1D_line_width  )
 
@@ -574,15 +982,23 @@ def Plot_Corner( samples, data_label, labels, output_dir, n_bins_1D=20, n_bins_2
           ax.contour( hist, [hist_sigma, 2* hist_sigma], extent=extent, colors= contour_colors, linewidths=2 )
         
         if add_data_label:
-          ax.legend( loc=0, frameon=False, fontsize=font_size, prop=prop )
-
+          leg = ax.legend( loc=0, frameon=False, fontsize=font_size, prop=prop )
+          for text in leg.get_texts():
+            plt.setp(text, color = text_color)
+            
       [sp.set_linewidth(border_width) for sp in ax.spines.values()]
+      
+      if black_background: 
+        fig.patch.set_facecolor('black') 
+        ax.set_facecolor('k')
+        [ spine.set_edgecolor(text_color) for spine in list(ax.spines.values()) ]
+          
       
       ax.xaxis.set_major_locator(plt.MaxNLocator(n_tricks))
       ax.yaxis.set_major_locator(plt.MaxNLocator(n_tricks))
 
   figure_name = output_dir + 'corner.png'
-  fig.savefig( figure_name, bbox_inches='tight', dpi=300 )
+  fig.savefig( figure_name, bbox_inches='tight', dpi=300, facecolor=fig.get_facecolor() )
   print( f'Saved Figure: {figure_name}' )
 
 
@@ -757,8 +1173,8 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
   label_size = 18
   figure_text_size = 18
   legend_font_size = 16
-  tick_label_size_major = 15
-  tick_label_size_minor = 13
+  tick_label_size_major = 16
+  tick_label_size_minor = 14
   tick_size_major = 5
   tick_size_minor = 3
   tick_width_major = 1.5
@@ -792,6 +1208,7 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
   z_vals_middle_scale = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4,   ]
   z_vals_all_scale    = z_vals_large_scale
   z_high = [ 5.0, 5.4 ]
+  z_vals_large_reduced  = [ 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0,  ]
 
 
 
@@ -800,6 +1217,7 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
   elif scales == 'small':  z_vals = z_vals_small_scale
   elif scales == 'middle': z_vals = z_vals_middle_scale
   elif scales == 'all':    z_vals = z_vals_all_scale
+  elif scales == 'large_reduced': z_vals = z_vals_large_reduced
   else: 
     print( "ERROR: Scales = large,  small, middle or all ")
     # return
@@ -807,11 +1225,13 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
 
   nrows = 3
   ncols = 4
+  
 
 
   if scales == 'middle':flags = np.zeros( (nrows, ncols ))
-
   if scales == 'middle': nrows = 2
+  if scales == 'large_reduced': nrows = 2
+
 
 
   fig, ax_l = plt.subplots(nrows=nrows, ncols=ncols, figsize=(2*fig_width,fig_height*nrows))
@@ -828,6 +1248,20 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
 
   text_color  = 'black'
   color_line = c_pchw18
+  
+  oranges = palettable.colorbrewer.sequential.YlOrBr_9.mpl_colors
+  orange = oranges[4]
+
+  
+  black_background = True
+  
+  if black_background:
+    text_color = 'white'
+    c_boss = orange
+    colormap = color_map_list_balck[0]
+    colors = colormap.mpl_colors
+    color_line = colors[4]
+    color_bar  = colors[4]
 
   if scales == 'middle' or scales == 'all':
     c_walther = 'C1'
@@ -876,6 +1310,12 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
         if use_color_from_colormap: color_line = colors[n_colors//2]
         else:color_line = color_lines_list[data_id]
         
+        if black_background:
+          colormap = color_map_list_balck[0]
+          colors = colormap.mpl_colors
+          color_line = colors[4]
+          color_bar  = colors[4]
+        
         ps_samples = ps_samples_multiple[data_id]
         label = labels_multiple[data_id]
         
@@ -905,10 +1345,10 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
 
     
     
-    ax.text(0.85, 0.95, r'$z={0:.1f}$'.format(current_z), horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size, color=text_color) 
+    ax.text(0.15, 0.95, r'$z={0:.1f}$'.format(current_z), horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size, color=text_color) 
 
 
-    if scales == 'large' or scales == 'middle' or scales == 'all':
+    if scales == 'large' or scales == 'middle' or scales == 'all' or scales == 'large_reduced':
 
       # Add Boss data
       z_diff = np.abs( data_z_boss - current_z )
@@ -979,6 +1419,9 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
     
 
     if scales == 'large': legend_loc = 2
+    if scales == 'large_reduced': legend_loc = 4
+    
+    
     label_bars =  r'1$\sigma$ skewers $P\,(\Delta_F^2)$'
 
     add_legend = False
@@ -999,7 +1442,7 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
 
     if add_legend:
       leg = ax.legend(  loc=legend_loc, frameon=False, prop=prop    )
-
+    
       for text in leg.get_texts():
           plt.setp(text, color = text_color)
 
@@ -1016,6 +1459,11 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
       if indx_i == 0: y_min, y_max = 1e-2, 1.2e-1
       if indx_i == 1: y_min, y_max = 2e-2, 2.5e-1
       if indx_i == 2: y_min, y_max = 5e-2, 7e-1
+      
+    if scales == 'large_reduced':
+      x_min, x_max = 1.5e-3, 2.5e-2
+      if indx_i == 0: y_min, y_max = 1.2e-2, 1.3e-1
+      if indx_i == 1: y_min, y_max = 2.5e-2, 4e-1
 
     if scales == 'middle':
       x_min, x_max = 2e-3, 1e-1
@@ -1033,6 +1481,11 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
     ax.set_ylim( y_min, y_max )
     ax.set_xscale('log')
     ax.set_yscale('log')
+    
+    if black_background: 
+      fig.patch.set_facecolor('black') 
+      ax.set_facecolor('k')
+      [ spine.set_edgecolor(text_color) for spine in list(ax.spines.values()) ]
 
 
     [sp.set_linewidth(border_width) for sp in ax.spines.values()]
@@ -1040,8 +1493,8 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
     if indx_j > 0:ax.set_yticklabels([])
     if indx_i != nrows-1 :ax.set_xticklabels([])
 
-    ax.tick_params(axis='both', which='major', labelsize=tick_label_size_major, size=tick_size_major, width=tick_width_major, direction='in' )
-    ax.tick_params(axis='both', which='minor', labelsize=tick_label_size_minor, size=tick_size_minor, width=tick_width_minor, direction='in')
+    ax.tick_params(axis='both', which='major', labelsize=tick_label_size_major, size=tick_size_major, width=tick_width_major, direction='in', color=text_color, labelcolor=text_color )
+    ax.tick_params(axis='both', which='minor', labelsize=tick_label_size_minor, size=tick_size_minor, width=tick_width_minor, direction='in', color=text_color, labelcolor=text_color)
 
     if indx_j == 0: ax.set_ylabel( r' $\Delta_F^2(k)$', fontsize=label_size, color= text_color )
     if indx_i == nrows-1: ax.set_xlabel( r'$ k   \,\,\,  [\mathrm{s}\,\mathrm{km}^{-1}] $',  fontsize=label_size, color= text_color )
@@ -1059,5 +1512,5 @@ def Plot_Power_Spectrum_Sampling( ps_samples, ps_data_dir, output_dir, scales='s
   if name != '': fileName += f'_{name}'
   fileName += '.png'
   # fileName += '.pdf'
-  fig.savefig( fileName,  pad_inches=0.1, bbox_inches='tight', dpi=fig_dpi)
+  fig.savefig( fileName,  pad_inches=0.1, bbox_inches='tight', dpi=fig_dpi, facecolor=fig.get_facecolor() )
   print('Saved Image: ', fileName)

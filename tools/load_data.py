@@ -7,7 +7,7 @@ import pickle
 
 
 
-def load_analysis_data( n_file, input_dir, phase_diagram=True, lya_statistics=True, load_skewer=False, load_fit=False, load_flux_Pk=True):
+def load_analysis_data( n_file, input_dir, phase_diagram=True, lya_statistics=True, load_skewer=False, load_fit=False, load_flux_Pk=True, mcmc_fit_dir=None):
   file_name = input_dir + f'{n_file}_analysis.h5'
   file = h5.File( file_name, 'r' ) 
 
@@ -35,7 +35,10 @@ def load_analysis_data( n_file, input_dir, phase_diagram=True, lya_statistics=Tr
     data_out['phase_diagram']['data'] = phase_diagram['data'][...] 
     
   if load_fit:
-    fit_dir = input_dir + 'fit_mcmc/'
+    fit_dir_name = 'fit_mcmc'
+    if mcmc_fit_dir: fit_dir_name = mcmc_fit_dir
+    fit_dir = input_dir + f'{fit_dir_name}/'
+    # print(f'Loading Fit: {fit_dir}' )
     fit_file_name = fit_dir + f'fit_{n_file}.pkl'
     fit_file = open(fit_file_name, 'rb')
     mcmc_stats = pickle.load(fit_file)

@@ -411,7 +411,7 @@ class Simulation_Grid:
     for sim_id in self.Grid.keys():
       self.Fit_Simulation_Phase_Diagram_MPI( sim_id, n_mpi=n_mpi, n_nodes=n_nodes )
       
-  def Load_Simulation_Analysis_Data( self, sim_id, load_fit=True  ):
+  def Load_Simulation_Analysis_Data( self, sim_id, load_fit=True, mcmc_fit_dir=None  ):
     str = f' Loading Simulation Analysis: {sim_id}' 
     print_line_flush( str )
     
@@ -440,7 +440,7 @@ class Simulation_Grid:
     
     for n_file in indices:
       n_file = int(n_file)
-      data = load_analysis_data( n_file, input_dir, phase_diagram=False, lya_statistics=True, load_skewer=False, load_fit=load_fit )
+      data = load_analysis_data( n_file, input_dir, phase_diagram=False, lya_statistics=True, load_skewer=False, load_fit=load_fit, mcmc_fit_dir=mcmc_fit_dir )
       z = data['cosmology']['current_z']
       if load_fit:
         T0 =    data['phase_diagram']['fit']['T0']
@@ -547,14 +547,14 @@ class Simulation_Grid:
       
   
 
-  def Load_Grid_Analysis_Data( self, sim_ids=None, load_fit=True, load_normalized_ps=False, ps_norm=None  ):
+  def Load_Grid_Analysis_Data( self, sim_ids=None, load_fit=True, load_normalized_ps=False, ps_norm=None, mcmc_fit_dir=None  ):
     if sim_ids == None:  
       sim_ids = self.Grid.keys()
       indx_0 = list( sim_ids )[0]
     else: indx_0 = sim_ids[0]
     
     for sim_id in sim_ids:
-      self.Load_Simulation_Analysis_Data( sim_id, load_fit=load_fit  )
+      self.Load_Simulation_Analysis_Data( sim_id, load_fit=load_fit, mcmc_fit_dir=mcmc_fit_dir  )
        
     indices = self.Grid[indx_0]['analysis']['ps_available_indices']
     available_indices = []

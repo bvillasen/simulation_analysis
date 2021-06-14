@@ -17,9 +17,14 @@ from phase_diagram_functions import fit_thermal_parameters_mcmc, get_density_tem
 args = sys.argv[1:]
 n_args = len(args)
 
+# delta_min, delta_max = -1.0, 1.0
+# delta_min, delta_max = 0, 1.0
+delta_min, delta_max = -0.5, 1.0
+n_samples_line = 75
+
 input_dir = args[0]
 # fit_dir = input_dir + 'fit_mcmc_05/'
-fit_dir = input_dir + 'fit_mcmc/'
+fit_dir = input_dir + f'fit_mcmc_delta_{delta_min}_{delta_max}/'
 
 use_mpi = True
 if use_mpi:
@@ -35,9 +40,6 @@ else:
 if rank == 0: create_directory( fit_dir )
 if use_mpi: comm.Barrier()
 
-# delta_min, delta_max = -0.5, 0.5
-delta_min, delta_max = -1.0, 1.0
-n_samples_line = 100
 if rank == 0: print( f'Delta: min:{delta_min}  max:{delta_max}  n:{n_samples_line}')
 time.sleep(1)
 

@@ -115,6 +115,7 @@ def Sample_Fields_from_Trace( fields_list, param_samples, data_grid, SG, hpi_sum
       distribution, bin_centers = compute_distribution( values, n_bins, log=False )
       fill_sum = hpi_sum
       log_hpi = True
+      if field in  ['gamma', 'T0' ] : log_hpi = False
       if sample_log: log_hpi = False
       v_l, v_r, v_max, sum = get_highest_probability_interval( bin_centers, distribution, fill_sum, log=log_hpi, n_interpolate=1000)
       lower.append( v_l )

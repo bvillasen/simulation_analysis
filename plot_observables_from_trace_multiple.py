@@ -27,13 +27,16 @@ data_boss_irsic = 'fit_results_P(k)+tau_HeII_Boss_Irsic'
 data_boss_boera = 'fit_results_P(k)+tau_HeII_Boss_Boera'
 data_boss_irsic_boera = 'fit_results_P(k)+tau_HeII_Boss_Irsic_Boera'
 
-data_sets = [ data_boss, data_boss_irsic, data_boss_boera, data_boss_irsic_boera ]
-data_labels = [ 'BOSS', 'BOSS + Irsic', 'BOSS + Boera', 'BOSS + Irsic + Boera'  ]
+# data_sets = [ data_boss, data_boss_irsic, data_boss_boera, data_boss_irsic_boera ]
+# data_labels = [ 'BOSS', 'BOSS + Irsic', 'BOSS + Boera', 'BOSS + Irsic + Boera'  ]
+
+data_sets = [ data_boss ]
+data_labels = [ 'BOSS' ]
 
 samples_all = {}
 samples_all['param'] = {}
 samples_all['P(k)'] = {}
-field_list = ['T0', 'tau', 'tau_HeII']
+field_list = ['T0', 'gamma', 'tau', 'tau_HeII']
 for field in field_list:
   samples_all[field] = {}
 
@@ -74,15 +77,20 @@ for data_id, data_name in enumerate(data_sets):
     samples_all[field][data_id] = samples_fields[field] 
 
 
-# corner_labels = { 'scale_He':r'$\beta_{\mathrm{He}}$', 'scale_H':r'$\beta_{\mathrm{H}}$', 'deltaZ_He':r'$\Delta z_{\mathrm{He}}$', 'deltaZ_H':r'$\Delta z_{\mathrm{H}}$'    }
-# Plot_Corner( samples_all['param'], data_labels, corner_labels, output_dir, n_bins_1D=40, n_bins_2D=40, lower_mask_factor=500, multiple=True  )
+corner_labels = { 'scale_He':r'$\beta_{\mathrm{He}}$', 'scale_H':r'$\beta_{\mathrm{H}}$', 'deltaZ_He':r'$\Delta z_{\mathrm{He}}$', 'deltaZ_H':r'$\Delta z_{\mathrm{H}}$'    }
+Plot_Corner( samples_all['param'], data_labels, corner_labels, output_dir, n_bins_1D=40, n_bins_2D=40, lower_mask_factor=500, multiple=True  )
 
 
-# Plot_Power_Spectrum_Sampling( samples_all['P(k)'], ps_data_dir, output_dir, scales='large', linewidth=2, system=system, label=data_labels,  multiple=True )
+data_labels = [ 'This Work' ]
+
+Plot_Power_Spectrum_Sampling( samples_all['P(k)'], ps_data_dir, output_dir, scales='large_reduced', linewidth=2.5, system=system, label=data_labels,  multiple=True )
 # Plot_Power_Spectrum_Sampling( samples_all['P(k)'], ps_data_dir, output_dir, scales='middle', linewidth=2, system=system, label=data_labels, rescaled_walther=True, rescale_walter_file=rescale_walter_file, multiple=True )
 # Plot_Power_Spectrum_Sampling( samples_all['P(k)'], ps_data_dir, output_dir, scales='all', linewidth=2, system=system, label=data_labels, rescaled_walther=True, rescale_walter_file=rescale_walter_file, multiple=True )
 # 
-Plot_T0_Sampling( samples_all['T0'], output_dir, system=system, label=data_labels, plot_splines=True, multiple=True)
+# Plot_T0_Sampling( samples_all['T0'], output_dir, system=system, label=data_labels, plot_splines=True, multiple=True)
 
-# 
-# Plot_tau_HeII_Sampling( samples_all['tau'], samples_all['tau_HeII'], output_dir, system=system, label=data_labels, multiple=True )
+
+Plot_tau_HeII_Sampling(  samples_all['tau_HeII'], output_dir, system=system, label=data_labels, multiple=True )
+
+
+Plot_TO_gamma_sampling( samples_all['T0'], samples_all['gamma'], output_dir, label=data_labels, system=system, multiple=True )

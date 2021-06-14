@@ -16,15 +16,15 @@ from mcmc_plotting_functions import *
 from mcmc_sampling_functions import *
 
 
-# data_name = 'fit_results_P(k)+tau_HeII_Boss'
+data_name = 'fit_results_P(k)+tau_HeII_Boss'
 # data_name = 'fit_results_P(k)+tau_HeII_Boss_Irsic'
 # data_name = 'fit_results_P(k)+tau_HeII_Boss_Boera'
-data_name = 'fit_results_P(k)+tau_HeII_Boss_Irsic_Boera'
+# data_name = 'fit_results_P(k)+tau_HeII_Boss_Irsic_Boera'
 
-# data_labels = 'BOSS'
+data_labels = 'BOSS'
 # data_labels = 'BOSS + Irsic'
 # data_labels = 'BOSS + Boera'
-data_labels = 'BOSS + Irsic + Boera'
+# data_labels = 'BOSS + Irsic + Boera'
 
 ps_data_dir = 'lya_statistics/data/'
 mcmc_dir = root_dir + 'fit_mcmc/'
@@ -38,14 +38,14 @@ kmax = 0.2
 sim_ids = None
 SG = Simulation_Grid( parameters=param_UVB_Rates, sim_params=sim_params, job_params=job_params, dir=root_dir )
 SG.Load_Grid_UVB_Rates()
-SG.Load_Grid_Analysis_Data( sim_ids=sim_ids )
+SG.Load_Grid_Analysis_Data( sim_ids=sim_ids, mcmc_fit_dir='fit_mcmc_delta_0_1.0'  )
 sim_ids = SG.sim_ids
 ps_range = SG.Get_Power_Spectrum_Range( kmax=kmax )
 
 
 
 z_vals = [ 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.4,  4.6, 5.0   ]
-data_grid, data_grid_power_spectrum = Get_Data_Grid_Composite(  ['P(k)', 'T0', 'tau', 'tau_HeII'], SG, z_vals=z_vals, sim_ids=sim_ids, load_uvb_rates=True )
+data_grid, data_grid_power_spectrum = Get_Data_Grid_Composite(  ['P(k)', 'T0', 'gamma', 'tau', 'tau_HeII'], SG, z_vals=z_vals, sim_ids=sim_ids, load_uvb_rates=True )
 
 
 stats_file = input_dir + 'fit_mcmc.pkl'
@@ -99,6 +99,8 @@ Plot_Corner( param_samples, data_labels, labels, output_dir, n_bins_1D=40, n_bin
 hpi_sum = 0.95
 n_samples = 400000
 
+
+
 load_samples = False
 
 
@@ -114,7 +116,7 @@ else:
 
 # Obtain distribution of the other fields
 file_name = output_dir + 'samples_fields.pkl' 
-field_list = ['T0', 'tau', 'tau_HeII']
+field_list = ['T0', 'gamma', 'tau', 'tau_HeII']
 if load_samples:
   samples_fields = Load_Pickle_Directory( file_name )
 else:  
