@@ -28,7 +28,7 @@ module load cuda/10.1.243
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/ccs/home/bvilasen/code/fftw/lib
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/ccs/home/bvilasen/code/grackle/lib
 
-export CHOLLA_HOME=/ccs/home/bvilasen/cholla
+export CHOLLA_HOME=/ccs/home/bvilasen/cholla/bin
 export WORK_DIR={sim_directory}
 cd {sim_directory}
 
