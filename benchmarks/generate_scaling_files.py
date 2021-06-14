@@ -55,7 +55,7 @@ params_job =  {
 create_directory( simulation_dir )
 
 parameter_file_str = Generate_Parameter_File( params )
-params_file_name = f'{simulation_dir}/params.txt'
+params_file_name = f'{simulation_dir}/param.txt'
 params_file = open( params_file_name, 'w' )
 params_file.write( parameter_file_str )
 params_file.close()
