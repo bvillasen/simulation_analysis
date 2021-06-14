@@ -21,7 +21,7 @@ def Create_Submit_Job_Script_Summit( job_params, save_file=True, file_name='subm
 #BSUB -e log_error.txt
 #BSUB -alloc_flags "smt4"
 
-module load gcc cuda fftw hdf5
+module load gcc/10.2.0 cuda/11.2.0 fftw hdf5
 
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/ccs/home/bvilasen/code/fftw/lib
