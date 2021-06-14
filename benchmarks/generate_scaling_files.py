@@ -6,7 +6,8 @@ sys.path.append(analysis_dir + 'tools')
 from tools import *
 
 n_per_gpu = 128
-n_mpi_total = 16
+
+n_mpi_total = 8
 
 
 n_mpi_x, n_mpi_y, n_mpi_z = Get_Configuration( n_mpi_total )
@@ -33,8 +34,13 @@ params = { 'nx':nx, 'ny':ny, 'nz':nz,
   'indir': input_dir, 'outdir':output_dir
 }
 
-parameters_file_str = Generate_Parameter_File( params )
 
 create_directory( simulation_dir )
 
+parameter_file_str = Generate_Parameter_File( params )
+params_file_name = f'{simulation_dir}/params.txt'
+params_file = open( params_file_name, 'w' )
+params_file.write( parameter_file_str )
+params_file.close()
+print( f'Saved File: {params_file_name}' )
 
