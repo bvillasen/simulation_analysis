@@ -3,12 +3,18 @@ from scaling_parameter_file import Generate_Parameter_File
 from configurations import Get_Configuration
 analysis_dir = os.path.dirname(os.getcwd()) + '/'
 sys.path.append(analysis_dir + 'tools')
+sys.path.append(analysis_dir + 'simulation_grid')
 from tools import *
+from submit_job_scripts import Create_Submit_Job_Script_Summit
+
+GPUS_PER_NODE = 6
 
 n_per_gpu = 128
 
 n_mpi_total = 8
+n_nodes = ( n_mpi_total - 1 ) // GPUS_PER_NODE + 1
 
+time = '0:05'
 
 n_mpi_x, n_mpi_y, n_mpi_z = Get_Configuration( n_mpi_total )
 nx, ny, nz = n_mpi_x * n_per_gpu, n_mpi_y * n_per_gpu, n_mpi_z * n_per_gpu
@@ -34,6 +40,17 @@ params = { 'nx':nx, 'ny':ny, 'nz':nz,
   'indir': input_dir, 'outdir':output_dir
 }
 
+job_name = f'S_{n_per_gpu}_{n_mpi_total}
+
+params_job =  {
+  'summit_project': 'CSC434,
+  'name': job_name,
+  'n_mpi': n_mpi_total,
+  'n_nodes': n_nodes,
+  'time': time,
+  'sim_directory': simulation_dir
+}
+
 
 create_directory( simulation_dir )
 
@@ -44,3 +61,5 @@ params_file.write( parameter_file_str )
 params_file.close()
 print( f'Saved File: {params_file_name}' )
 
+
+Create_Submit_Job_Script_Summit( params_job, save_file=True, file_name='submit_job_summit.lsf' )
