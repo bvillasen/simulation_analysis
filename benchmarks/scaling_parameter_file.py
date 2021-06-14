@@ -5,6 +5,9 @@ def Generate_Parameter_File( params ):
   params_str = f"""nx={params['nx']}
 ny={params['ny']}
 nz={params['nz']}
+n_proc_x={params['n_mpi_x']}
+n_proc_y={params['n_mpi_y']}
+n_proc_z={params['n_mpi_z']}
 tout=1000
 outstep=1000
 gamma=1.66666667
@@ -33,6 +36,3 @@ outdir={params['outdir']}
   return params_str
 
 
-# n_proc_x={params['n_mpi_x']}
-# n_proc_y={params['n_mpi_y']}
-# n_proc_z={params['n_mpi_z']}

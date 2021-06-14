@@ -14,32 +14,47 @@ matplotlib.rcParams['mathtext.rm'] = 'serif'
 # hfont = {'fontname':'Helvetica'}
 # 
 
+# n_per_gpu = np.array([ 128, 128, 128, 128, 128, 128, 256, 256, 256, 256, 256, 256, 128, 256, 128, 256, 128, 256])
 
 data = np.array([
-  [ 128, 8,   256,  256,  256,  7, 25, 0.61058, 13.5332, 4.37364, 20.8606, 0.57814, 0.23009, 2.70891, 0.386009, 0.0103664, 0.0313950, 43.323  ],
-  [ 128, 64,  512,  512,  512,  7, 25, 0.61211, 14.2115, 9.45942, 43.2449, 1.31321, 0.23378, 3.68409, 0.639925, 0.0147057, 0.0329208, 73.4466 ], 
-  [ 128, 512, 1024, 1024, 1024, 7, 25, 0.57550, 14.3294, 14.0297, 72.5421, 1.91953, 0.24733, 5.06349, 0.753593, 0.0143433, 0.0409985, 109.516 ],
-  [ 256, 8,   512,  512,  512,  7, 25, 5.30103, 98.4441, 16.9867, 164.173, 1.85945, 1.88611, 10.7939, 0.882177, 0.0176144, 0.0294209, 300.374 ], 
-  [ 256, 64,  1024, 1024, 1024, 7, 25, 5.47482, 98.5077, 40.2253, 343.83,  4.68699, 3.11683, 16.1255, 1.914600, 0.0217533, 0.0384808, 513.942 ], 
-  [ 256, 512, 2048, 2048, 2048, 7, 25, 8.62242, 98.7881, 51.2002, 553.771, 6.14125, 22.6115, 22.4021, 2.403140, 0.0201893, 0.0444412, 766.005 ], 
+  [ 128, 8,   1.1818, 23.1254, 56.6562, 20.8797, 1.8413, 18.4394, 6.7600, 1.9790, 5.8552, 24.2021, 160.9201 ],
+  [ 128, 64,  1.7316, 23.1922, 64.3767, 48.1668, 2.9874, 19.6179, 7.7369, 3.4818, 5.9325, 24.2031, 201.4269 ],  
+  [ 128, 512, 1.3185, 23.3673, 60.5880, 60.5973, 2.7962, 25.5622, 7.5729, 2.6228, 6.0585, 24.6224, 215.1060 ],
+  [ 128, 3200, 1.2890, 23.2860, 61.4687, 80.4616, 2.5899, 29.8438, 8.6247, 2.3741, 7.1176, 24.7209, 241.7764 ],
+  
+  [ 256, 8,   10.0350, 155.0377, 256.4958, 151.6344, 6.0427, 142.4932, 47.7105, 12.0546, 56.6890, 212.0130, 1050.2059 ],
+  [ 256, 64,  10.2310, 159.9418, 273.4025, 356.5160, 9.9410, 165.7627, 48.6920, 15.5484, 61.1596, 215.4906, 1316.6857 ],
+  [ 256, 512, 11.2375, 161.7378, 301.4388, 419.7490, 11.5137, 215.4528, 49.9467, 17.9309, 63.6284, 221.7305, 1474.3661 ],
+  [ 256, 4096, 10.9263, 159.9426, 315.9755, 541.0830, 11.3657, 250.4510, 52.2199, 17.1238, 62.6047, 224.7435, 1646.4360 ]
 ]).T
 
 
 
-#size nproc  
+
+
+
+
+
+
+
+
+
+
+
+#size nproc  dt  hydo  bound  grav_pot  pot_bound  part_dens  part_bound  part_dens_boud  part_adv_1  part_adv_2  total  
 n_per_gpu = data[0]
 n_procs = data[1]
-t_dt = data[7]
-t_hydro = data[8]
-t_bound = data[9]
-t_pot = data[10]
-t_pot_bound = data[11]
-t_part_dens = data[12]
-t_part_bound = data[13]
-t_part_dens_bound = data[14]
-t_part_adv1 = data[15]
-t_part_adv2 = data[16]
-t_total = data[17]
+t_dt = data[2]
+t_hydro = data[3]
+t_bound = data[4]
+t_pot = data[5]
+t_pot_bound = data[6]
+t_part_dens = data[7]
+t_part_bound = data[8]
+t_part_dens_bound = data[9]
+t_part_adv1 = data[10]
+t_part_adv2 = data[11]
+t_total = data[12]
 
 
 t_hydro = t_hydro + t_dt
@@ -106,13 +121,9 @@ ax.text(0.05, 0.18, 'Particles', fontsize=fs, color=c_particles, horizontalalign
 ax.text(0.05, 0.15, 'Poisson', fontsize=fs, color=c_grav, horizontalalignment='left', verticalalignment='center', transform=ax.transAxes)
 ax.text(0.05, 0.32, 'Total', fontsize=fs, color=c_total, horizontalalignment='left', verticalalignment='center', transform=ax.transAxes)
 
-ax.text(0.4, 0.93, 'Cholla Weak Scaling on Summit 2021', fontsize=12, color=c_total, horizontalalignment='left', verticalalignment='center', transform=ax.transAxes)
+ax.text(0.4, 0.93, 'Cholla Weak Scaling on Summit 2020', fontsize=12, color=c_total, horizontalalignment='left', verticalalignment='center', transform=ax.transAxes)
 
 
-# ax.set_ylim(0, 280)
-# ax.set_ylim(0, 300)
-
-ax.set_xlim(6, 16200)
 ax.set_ylim(0.1, 400)
 ax.set_yscale('log')
 
@@ -123,6 +134,6 @@ ax.set_xscale('log')
 
 output_dir = '/home/bruno/Desktop/'
 
-fileName = output_dir + 'scaling_summit_adiabatic_2021_log.png'
+fileName = output_dir + 'scaling_summit_adiabatic_2020_log.png'
 fig.savefig(  fileName ,  bbox_inches='tight', dpi=300)
 
