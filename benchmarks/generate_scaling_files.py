@@ -40,7 +40,7 @@ params = { 'nx':nx, 'ny':ny, 'nz':nz,
   'indir': input_dir, 'outdir':output_dir
 }
 
-job_name = f'S_{n_per_gpu}_{n_mpi_total}
+job_name = f'S_{n_per_gpu}_{n_mpi_total}'
 
 params_job =  {
   'summit_project': 'CSC434,
