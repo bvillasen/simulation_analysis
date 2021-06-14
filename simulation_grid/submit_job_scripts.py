@@ -11,6 +11,7 @@ def Create_Submit_Job_Script_Summit( job_params, save_file=True, file_name='subm
   n_nodes = job_params['n_nodes']
   time = job_params['time']
   sim_directory = job_params['sim_directory']
+  root_dir = job_params['root_dir']
   
   submit_str = f"""#!/bin/bash          
 #BSUB -P {summit_project}       
@@ -27,13 +28,13 @@ module load gcc/10.2.0 cuda/11.2.0 fftw hdf5
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/ccs/home/bvilasen/code/fftw/lib
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/ccs/home/bvilasen/code/grackle/lib
 
-export CHOLLA_HOME=/ccs/home/bvilasen/cholla/bin
+export CHOLLA_HOME=/ccs/home/bvilasen/cholla_reuben/bin
 export WORK_DIR={sim_directory}
-cd /gpfs/alpine/csc434/scratch/bvilasen/scaling_2021/
+cd {root_dir}
 
 date
 export OMP_NUM_THREADS=7
-jsrun --smpiargs="-gpu" -n{n_mpi_tasks} -a1 -c7 -g1 --bind packed:7 $CHOLLA_HOME/cholla.paris.summit $WORK_DIR/param.txt > $WORK_DIR/run_output.log |sort
+jsrun --smpiargs="-gpu" -n{n_mpi_tasks} -a1 -c7 -g1 --bind packed:7 $CHOLLA_HOME/cholla.FOM.summit $WORK_DIR/param.txt > $WORK_DIR/run_output.log |sort
 """
 # jsrun -n {n_mpi_tasks} -a 1 -c 7 -g 1 -l CPU-CPU -d packed -b packed:7 $CHOLLA_HOME/cholla $WORK_DIR/param.txt > $WORK_DIR/output.log |sort
 # module load xl cuda fftw hdf5
