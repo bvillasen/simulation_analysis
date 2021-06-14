@@ -14,6 +14,8 @@ n_per_gpu = 128
 n_mpi_list = [ 64, 512, 2048  ]
 
 for n_mpi_total in n_mpi_list:
+  
+  print( f'\nN MPI: {n_mpi_total} ' )
 
   n_nodes = ( n_mpi_total - 1 ) // GPUS_PER_NODE + 1
 
