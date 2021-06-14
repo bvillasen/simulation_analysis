@@ -21,7 +21,8 @@ def Create_Submit_Job_Script_Summit( job_params, save_file=True, file_name='subm
 #BSUB -e log_error.txt
 #BSUB -alloc_flags "smt4"
 
-module load xl cuda fftw hdf5
+module load gcc cuda fftw hdf5
+
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/ccs/home/bvilasen/code/fftw/lib
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/ccs/home/bvilasen/code/grackle/lib
@@ -35,6 +36,7 @@ export OMP_NUM_THREADS=7
 jsrun --smpiargs="-gpu" -n{n_mpi_tasks} -a1 -c7 -g1 --bind packed:7 $CHOLLA_HOME/cholla.FOM.summit $WORK_DIR/param.txt > $WORK_DIR/run_output.log |sort
 """
 # jsrun -n {n_mpi_tasks} -a 1 -c 7 -g 1 -l CPU-CPU -d packed -b packed:7 $CHOLLA_HOME/cholla $WORK_DIR/param.txt > $WORK_DIR/output.log |sort
+# module load xl cuda fftw hdf5
 # module load gcc/6.4.0
 # module load hdf5/1.10.4
 # module load cuda/10.1.243
