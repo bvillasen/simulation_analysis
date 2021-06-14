@@ -28,14 +28,14 @@ module load cuda/10.1.243
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/ccs/home/bvilasen/code/fftw/lib
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/ccs/home/bvilasen/code/grackle/lib
 
-export CHOLLA_HOME=/ccs/home/bvilasen/cholla/bin
+export CHOLLA_HOME=/ccs/home/bvilasen/cholla
 export WORK_DIR={sim_directory}
-cd {sim_directory}
+cd {CHOLLA_HOME}
 
 
 date
 export OMP_NUM_THREADS=7
-jsrun --smpiargs="-gpu" -n8 -a1 -c7 -g1 --bind packed:7 $CHOLLA_DIR/cholla.FOM.summit $WORK_DIR/param.txt > $WORK_DIR/run_output.log |sort
+jsrun --smpiargs="-gpu" -n8 -a1 -c7 -g1 --bind packed:7 cholla.FOM.summit $WORK_DIR/param.txt > $WORK_DIR/run_output.log |sort
 """
 # jsrun -n {n_mpi_tasks} -a 1 -c 7 -g 1 -l CPU-CPU -d packed -b packed:7 $CHOLLA_HOME/cholla $WORK_DIR/param.txt > $WORK_DIR/output.log |sort
   
