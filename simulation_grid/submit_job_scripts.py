@@ -30,7 +30,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/ccs/home/bvilasen/code/grackle/lib
 
 export CHOLLA_HOME=/ccs/home/bvilasen/cholla
 export WORK_DIR={sim_directory}
-cd {CHOLLA_HOME}
+cd $CHOLLA_HOME
 
 
 date
