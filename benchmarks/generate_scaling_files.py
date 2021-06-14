@@ -18,7 +18,7 @@ tile_length = 25000.0   #Lenght of box for tiling 25Mpc/h
 xlen, ylen, zlen = n_mpi_x*tile_length, n_mpi_y*tile_length, n_mpi_z*tile_length  
 
 # Directories
-simulation_dir = f'/gpfs/alpine/csc434/scratch/bvilasen/scaling_2021/scale_{n_per_gpu}/n_gpus_{n_mpi_total}/'
+simulation_dir = f'/gpfs/alpine/csc434/scratch/bvilasen/scaling_2021/scale_{n_per_gpu}/n_gpus_{n_mpi_total}'
 input_dir  = f'/gpfs/alpine/csc434/scratch/bvilasen/scaling_2021/scale_{n_per_gpu}/ics/'
 output_dir = f'/gpfs/alpine/csc434/scratch/bvilasen/scaling_2021/scale_{n_per_gpu}/output_files/'
 
