@@ -30,7 +30,7 @@ cd /gpfs/alpine/csc434/scratch/bvilasen/scaling_2021/
 
 date
 export OMP_NUM_THREADS=7
-jsrun --smpiargs="-gpu" -n8 -a1 -c7 -g1 --bind packed:7 $CHOLLA_HOME/cholla.paris.summit $WORK_DIR/param.txt > $WORK_DIR/run_output.log |sort
+jsrun --smpiargs="-gpu" -n{n_mpi_tasks} -a1 -c7 -g1 --bind packed:7 $CHOLLA_HOME/cholla.paris.summit $WORK_DIR/param.txt > $WORK_DIR/run_output.log |sort
 
 """
 # export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/ccs/home/bvilasen/code/fftw/lib
