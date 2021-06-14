@@ -43,7 +43,7 @@ params = { 'nx':nx, 'ny':ny, 'nz':nz,
 job_name = f'S_{n_per_gpu}_{n_mpi_total}'
 
 params_job =  {
-  'summit_project': 'CSC434,
+  'summit_project': 'CSC434',
   'name': job_name,
   'n_mpi': n_mpi_total,
   'n_nodes': n_nodes,
