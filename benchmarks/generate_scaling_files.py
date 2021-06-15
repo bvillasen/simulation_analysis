@@ -16,7 +16,8 @@ n_per_gpu = 256
 # n_mpi_list = [ 8, 64, 512, 1024  ]
 # n_mpi_list = [ 1024 ]
 n_mpi_list = [   ]
-n_mpi_list = [ 4096, 8192, 16384  ]
+# n_mpi_list = [ 4096, 8192, 16384  ]
+n_mpi_list = [ 16384 ]
 
 for n_mpi_total in n_mpi_list:
   
@@ -55,7 +56,8 @@ for n_mpi_total in n_mpi_list:
   job_name = f'S_{n_per_gpu}_{n_mpi_total}'
 
   params_job =  {
-    'summit_project': 'CSC434',
+    # 'summit_project': 'CSC434',
+    'summit_project': 'AST169',
     'name': job_name,
     'n_mpi': n_mpi_total,
     'n_nodes': n_nodes,

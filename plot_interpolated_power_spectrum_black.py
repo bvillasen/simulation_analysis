@@ -9,6 +9,7 @@ from tools import *
 #Append analysis directories to path
 extend_path()
 from simulation_parameters import *
+from colors import *
 
 
 ps_data_dir = 'lya_statistics/data/'
@@ -49,10 +50,10 @@ labels = {'scale_He':' \\beta_{\mathrm{He}}', 'scale_H':' \\beta_{\mathrm{H}}', 
 # fig_width = 3.5
 fig_width = 4.5
 fig_dpi = 300
-label_size = 14
+label_size = 18
 figure_text_size = 16
-legend_font_size = 13
-tick_label_size_major = 12
+legend_font_size = 14
+tick_label_size_major = 14
 tick_label_size_minor = 13
 tick_size_major = 5
 tick_size_minor = 3
@@ -64,39 +65,38 @@ linewidth = 2
 alpha_bar = 0.5
 
 
-# Colors
-bright_green = pylab.cm.viridis(.7)
-light_blue = pylab.cm.cool(.3)
-dark_blue = pylab.cm.viridis(.3) 
-purple = pylab.cm.Purples(.7)
-blue = 'C0'
-orange = 'C1'
-green = 'C2'
-red = 'C3'
-purple_2 = 'C4'
-
-colors = palettable.cmocean.sequential.Haline_10_r.mpl_colors
-colors_1 = palettable.colorbrewer.sequential.PuBu_9.mpl_colors
-purples = palettable.colorbrewer.sequential.Purples_9.mpl_colors
-yellows = palettable.colorbrewer.sequential.YlOrRd_9.mpl_colors 
 
 
-
-c_0 = colors[-3]
-c_1 = colors[4]
-c_2 = colors_1[4]
+c_0 = haline[-3]
+c_1 = haline[4]
+c_2 = haline[4]
 c_3 = purples[-1]
 c_4 = yellows[3]
     
 
 colors = [ c_2, c_1, c_0, c_3  ] 
 
+text_color = 'black'
+
+black_background = True
+if black_background:
+  text_color = 'white'
+  c_0 = yellows[5]
+  c_1 = yellows[2]
+  c_2 = greens[5]
+  c_3 = blues[5]
+  c_0 = matter[0]
+  c_1 = matter[4]
+  c_2 = greens[4]
+  c_3 = blues[4]
+  colors = [ c_0, c_1, c_2, c_3  ] 
+
 import matplotlib
 matplotlib.rcParams['mathtext.fontset'] = 'cm'
 matplotlib.rcParams['mathtext.rm'] = 'serif'
-prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/bruno/fonts/Helvetica', "Helvetica.ttf"), size=13)
   
 nrows, ncols = 1, 4
+prop = matplotlib.font_manager.FontProperties( fname=os.path.join('/home/bruno/fonts/Helvetica', "Helvetica.ttf"), size=legend_font_size)
 fig, ax_l = plt.subplots(nrows=nrows, ncols=ncols, figsize=(fig_width*ncols,6*nrows))
 plt.subplots_adjust( hspace = 0.02, wspace=0.02)
 
@@ -120,11 +120,13 @@ for indx_i in range(nrows):
       label_param = labels[param_name]
       color = colors[i]
       label = r'${0} \, = \, {1:.1f}$'.format(label_param, p_val)
-      ax.plot( k_vals, ps, linewidth=1, label=label, color=colors[i] )
+      ax.plot( k_vals, ps, linewidth=1.5, label=label, color=colors[i] )
     
 
     legend_loc = 3
     leg = ax.legend(  loc=legend_loc, frameon=False, prop=prop, fontsize=legend_font_size    )
+    for text in leg.get_texts():
+      plt.setp(text, color = text_color)
     
     ax.text(0.87, 0.95, r'$z={0:.1f}$'.format(z), horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=figure_text_size, color=text_color) 
     
@@ -134,17 +136,23 @@ for indx_i in range(nrows):
     if indx_j > 0:ax.set_yticklabels([])
     if indx_i != nrows-1 :ax.set_xticklabels([])
 
-    ax.tick_params(axis='both', which='major', labelsize=tick_label_size_major, size=tick_size_major, width=tick_width_major, direction='in' )
-    ax.tick_params(axis='both', which='minor', labelsize=tick_label_size_minor, size=tick_size_minor, width=tick_width_minor, direction='in')
+    ax.tick_params(axis='both', which='major', labelsize=tick_label_size_major, size=tick_size_major, width=tick_width_major, direction='in', color=text_color, labelcolor=text_color )
+    ax.tick_params(axis='both', which='minor', labelsize=tick_label_size_minor, size=tick_size_minor, width=tick_width_minor, direction='in', color=text_color, labelcolor=text_color)
 
     if indx_j == 0: ax.set_ylabel( r' $\Delta_F^2(k)$', fontsize=label_size, color= text_color )
     if indx_i == nrows-1: ax.set_xlabel( r'$ k   \,\,\,  [\mathrm{s}\,\mathrm{km}^{-1}] $',  fontsize=label_size, color= text_color )
 
     x_min, x_max = 2e-3, 1e-1
-    y_min, y_max = 1.5e-2, 2e-1
+    y_min, y_max = 2e-2, 2.01e-1
     ax.set_xlim( x_min, x_max )
     ax.set_ylim( y_min, y_max )
 
+    if black_background: 
+      fig.patch.set_facecolor('black') 
+      ax.set_facecolor('k')
+      [ spine.set_edgecolor(text_color) for spine in list(ax.spines.values()) ]
+        
+    [sp.set_linewidth(border_width) for sp in ax.spines.values()]
     
      
 
@@ -155,7 +163,7 @@ for indx_i in range(nrows):
 
 # file_name = output_dir + f'flux_power_spectrum_interp_{z_index}.png'
 file_name = output_dir + f'flux_power_spectrum_interp.png'
-fig.savefig( file_name,  pad_inches=0.1, bbox_inches='tight', dpi=fig_dpi)
+fig.savefig( file_name,  pad_inches=0.1, bbox_inches='tight', dpi=fig_dpi, facecolor=fig.get_facecolor() )
 print('Saved Image: ', file_name )
 
 
