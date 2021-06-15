@@ -9,12 +9,12 @@ from submit_job_scripts import Create_Submit_Job_Script_Summit
 
 GPUS_PER_NODE = 6
 
-# n_per_gpu = 128
-n_per_gpu = 256
+n_per_gpu = 128
+# n_per_gpu = 256
 
 
-# n_mpi_list = [ 8, 64, 512,  ]
-n_mpi_list = [ 1024 ]
+n_mpi_list = [ 8, 64, 512, 1024  ]
+# n_mpi_list = [ 1024 ]
 # n_mpi_list = [ 2048, 4096  ]
 # n_mpi_list = [ 8192, 16384  ]
 
