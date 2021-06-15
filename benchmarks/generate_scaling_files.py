@@ -13,10 +13,10 @@ n_per_gpu = 128
 # n_per_gpu = 256
 
 
-n_mpi_list = [ 8, 64, 512, 1024  ]
+# n_mpi_list = [ 8, 64, 512, 1024  ]
 # n_mpi_list = [ 1024 ]
-# n_mpi_list = [ 2048, 4096  ]
-# n_mpi_list = [ 8192, 16384  ]
+n_mpi_list = [ 2048,   ]
+# n_mpi_list = [ 4096, 8192, 16384  ]
 
 for n_mpi_total in n_mpi_list:
   
