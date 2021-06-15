@@ -34,7 +34,7 @@ cd {root_dir}
 
 date
 export OMP_NUM_THREADS=7
-jsrun --smpiargs="-gpu" -n{n_mpi_tasks} -a1 -c7 -g1 --bind packed:7 $CHOLLA_HOME/cholla.FOM.summit $WORK_DIR/param.txt > $WORK_DIR/run_output.log |sort
+jsrun --smpiargs="-gpu" -n{n_mpi_tasks} -a1 -c7 -g1 --bind packed:7 $CHOLLA_HOME/cholla.paris.summit $WORK_DIR/param.txt > $WORK_DIR/run_output.log |sort
 """
 # jsrun -n {n_mpi_tasks} -a 1 -c 7 -g 1 -l CPU-CPU -d packed -b packed:7 $CHOLLA_HOME/cholla $WORK_DIR/param.txt > $WORK_DIR/output.log |sort
 # module load xl cuda fftw hdf5

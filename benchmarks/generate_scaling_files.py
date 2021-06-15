@@ -34,8 +34,8 @@ for n_mpi_total in n_mpi_list:
   xlen, ylen, zlen = n_mpi_x*tile_length, n_mpi_y*tile_length, n_mpi_z*tile_length  
 
   # Directories
+  # root_dir = '/gpfs/alpine/csc434/proj-shared/cholla/scaling_2021/'
   root_dir = '/gpfs/alpine/csc434/scratch/bvilasen/scaling_2021/'
-  root_dir = '/gpfs/alpine/csc434/proj-shared/cholla/scaling_2021/'
   simulation_dir = root_dir + f'scale_{n_per_gpu}/n_gpus_{n_mpi_total}'
   input_dir      = root_dir + f'scale_{n_per_gpu}/ics/'
   output_dir     = root_dir + f'scale_{n_per_gpu}/output_files/'
