@@ -38,7 +38,7 @@ n_sims = 400
 sim_ids = list( range( n_sims ) )
 np.random.shuffle( sim_ids )
 
-n_sims_y, n_sims_x = 10, 10
+n_sims_y, n_sims_x = 8, 8
 
 
 have_slice_extended = False
