@@ -96,7 +96,6 @@ for sim_id in sim_ids_local:
   outfile.close()
   print( f'Saved File: {out_file_name}' )
   
-  # break
   
 
   # src = input_dir  + 'data_sim.pkl'
