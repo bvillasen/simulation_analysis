@@ -14,7 +14,7 @@ sys.path.extend(subDirectories)
 from load_data import load_snapshot_data_distributed
 from tools import *
 
-use_mpi = False
+use_mpi = True
 if use_mpi :
   from mpi4py import MPI
   comm = MPI.COMM_WORLD
