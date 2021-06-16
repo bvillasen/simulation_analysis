@@ -71,33 +71,33 @@ for sim_id in sim_ids_local:
   data_gas = load_snapshot_data_distributed( 'hydro', fields, n_snap, input_dir, box_size, grid_size,  precision, show_progess=show_progess )
   current_z = data_gas['Current_z']
   
-  # slice_depth = 64
-  # n_slices = n_points // slice_depth
-  # # if rank == 0: print( f'N slices: {n_slices}' )
-  # 
-  # 
-  # # for slice_id in range( n_slices ): 
-  # slice_id = 3
-  # slice_start = slice_id * slice_depth
-  # 
-  # start = max( 0, slice_start )
-  # end   = min( n_points, slice_start+slice_depth )
-  # # print( f' Slice:  start:{start}   end:{end}' )
-  # 
-  # out_file_name = output_dir + f'slice_{n_snap}_start{slice_start}_depth{slice_depth}.h5'
-  # outfile = h5.File( out_file_name, 'w' )
-  # outfile.attrs['current_z'] = current_z
-  # 
-  # for field in fields:
-  #   data = data_gas[field]
-  #   data_slice = data[slice_start:end, :, :] 
-  #   outfile.create_dataset( field, data=data_slice )
-  # 
-  # outfile.close()
-  # print( f'Saved File: {out_file_name}' )
-  # 
-  # break
-  # 
+  slice_depth = 64
+  n_slices = n_points // slice_depth
+  # if rank == 0: print( f'N slices: {n_slices}' )
+  
+  
+  # for slice_id in range( n_slices ): 
+  slice_id = 3
+  slice_start = slice_id * slice_depth
+  
+  start = max( 0, slice_start )
+  end   = min( n_points, slice_start+slice_depth )
+  # print( f' Slice:  start:{start}   end:{end}' )
+  
+  out_file_name = output_dir + f'slice_{n_snap}_start{slice_start}_depth{slice_depth}.h5'
+  outfile = h5.File( out_file_name, 'w' )
+  outfile.attrs['current_z'] = current_z
+  
+  for field in fields:
+    data = data_gas[field]
+    data_slice = data[slice_start:end, :, :] 
+    outfile.create_dataset( field, data=data_slice )
+  
+  outfile.close()
+  print( f'Saved File: {out_file_name}' )
+  
+  break
+  
 
   # src = input_dir  + 'data_sim.pkl'
   # dst = output_dir + 'data_sim.pkl'
