@@ -30,12 +30,14 @@ if rank == 0: show_progess = True
 sim_id = rank
 
 params_type = 'He'
-params_type = 'H'
+# params_type = 'H'
 
 # data_dir = '/raid/bruno/data/'
 data_dir = '/data/groups/comp-astro/bruno/'
-input_dir  = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/selected_snapshot_files_params_{params_type}/sim_{sim_id}/'
-output_dir = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/selected_snapshot_files_params_{params_type}/slices/sim_{sim_id}/'
+input_dir  = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/sim_{sim_id}/'
+output_dir = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/slices_params_{params_type}/sim_{sim_id}/'
+# input_dir  = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/selected_snapshot_files_params_{params_type}/sim_{sim_id}/'
+# output_dir = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/selected_snapshot_files_params_{params_type}/slices/sim_{sim_id}/'
 create_directory( output_dir )
 
 n_points = 1024
@@ -45,7 +47,7 @@ grid_size = [ n_points, n_points, n_points ]
 precision = np.float32
 
 
-n_snap = 2
+n_snap = 8
 if params_type == 'He': fields =  ['temperature']  
 if params_type == 'H': fields =  ['density', 'HI_density']  
 data_gas = load_snapshot_data_distributed( 'hydro', fields, n_snap, input_dir, box_size, grid_size,  precision, show_progess=show_progess )
@@ -76,10 +78,10 @@ for field in fields:
 outfile.close()
 print( f'Saved File: {out_file_name}' )
 
-
-src = input_dir  + 'data_sim.pkl'
-dst = output_dir + 'data_sim.pkl'
-copyfile(src, dst)
+ 
+# src = input_dir  + 'data_sim.pkl'
+# dst = output_dir + 'data_sim.pkl'
+# copyfile(src, dst)
 
 
 

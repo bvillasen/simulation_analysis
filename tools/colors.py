@@ -20,3 +20,5 @@ purples = palettable.colorbrewer.sequential.Purples_9.mpl_colors
 yellows = palettable.colorbrewer.sequential.YlOrRd_9.mpl_colors
 greens = palettable.colorbrewer.sequential.YlGn_9.mpl_colors 
 blues = palettable.colorbrewer.sequential.Blues_9.mpl_colors 
+reds = palettable.colorbrewer.sequential.Reds_9.mpl_colors 
+yellow_green_blues =  palettable.colorbrewer.sequential.YlGnBu_5.mpl_colors 
