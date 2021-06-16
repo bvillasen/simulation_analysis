@@ -33,8 +33,9 @@ params_type = 'He'
 # params_type = 'H'
 
 # data_dir = '/raid/bruno/data/'
-data_dir = '/data/groups/comp-astro/bruno/'
-root_dir = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/'
+# data_dir = '/data/groups/comp-astro/bruno/'
+data_dir = '/gpfs/alpine/csc434/scratch/bvilasen/'
+root_dir = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/snapshot_files_hydro/'
 files_in_root = os.listdir( root_dir )
 sim_files = [ file for file in files_in_root if file[0] == 'S' ] 
 sim_files.sort()
