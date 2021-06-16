@@ -35,7 +35,7 @@ params_type = 'He'
 # data_dir = '/raid/bruno/data/'
 data_dir = '/data/groups/comp-astro/bruno/'
 root_dir = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/'
-files_in root = os.listdir( root_dir )
+files_in_root = os.listdir( root_dir )
 sim_ids = [ file.split('_')[0] for file in files_in_root   ]
 if rank == 0: print( sim_ids )
 
