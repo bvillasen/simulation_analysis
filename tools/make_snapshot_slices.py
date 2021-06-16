@@ -39,7 +39,11 @@ files_in_root = os.listdir( root_dir )
 sim_ids = np.array([ int((file.split('_')[0])[1:]) for file in files_in_root if file[0] == 'S'   ] )
 sim_ids.sort()
 n_sims = len(sim_ids)
-if rank == 0: print( sim_ids )
+if rank == 0: print( f'N Sims: {n_sims}' )
+
+
+sim_ids_local = split_indices( sim_ids, rank, nprocs )
+if rank == 0: print( f'N Sims Local: {len(sim_ids_local)}' )
 
 
 # 
