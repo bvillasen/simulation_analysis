@@ -27,7 +27,7 @@ module load xl cuda fftw hdf5 python
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/ccs/home/bvilasen/code/fftw/lib
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/ccs/home/bvilasen/code/grackle/lib
 
-export CHOLLA_HOME=/ccs/home/bvilasen/cholla/bin
+export CHOLLA_HOME=/gpfs/alpine/csc434/scratch/bvilasen/scaling_2021/bin
 export WORK_DIR={sim_directory}
 cd {root_dir}
 

@@ -65,14 +65,20 @@ for i in range( n_sims_y ):
     d, h, w = slice_size
     slice_extended[:, i*h:(i+1)*h,  j*w:(j+1)*w] = slice 
     
-    break
-  break
-    
+  #   break
+  # break
+  # 
      
     
 
     
-out_file_name = 
+out_file_name = output_dir + f'slice_extended_{n_sims_y}_{n_sims_x}_{n_snap}_start{slice_start}_depth{slice_depth}.h5'
+out_file = h5.File( out_file_name, 'w' )
+out_file.create_dataset( field, data=slice_extended )
+out_file.close()
+print( f'Saved File: {out_file_name }' )
+
+
 
 
 
