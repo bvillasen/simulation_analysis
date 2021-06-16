@@ -36,7 +36,9 @@ params_type = 'He'
 data_dir = '/data/groups/comp-astro/bruno/'
 root_dir = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/'
 files_in_root = os.listdir( root_dir )
-sim_ids = [ int((file.split('_')[0])[1:]) for file in files_in_root if file[0] == 'S'   ]
+sim_ids = np.array([ int((file.split('_')[0])[1:]) for file in files_in_root if file[0] == 'S'   ] )
+sim_ids.sort()
+n_sims = len(sim_ids)
 if rank == 0: print( sim_ids )
 
 
