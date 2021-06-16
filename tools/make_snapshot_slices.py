@@ -47,6 +47,9 @@ sim_ids_local = split_indices( sim_files, rank, nprocs )
 if rank == 0: print( f'N Sims Local: {len(sim_ids_local)}' )
 if rank == 0: print( f'Sims Local: {sim_ids_local}' )
 
+for sim_id in sim_ids_local:
+  sim_file = sim_files[sim_id]
+  if rank == 0: print( sim_file ) 
 
 # 
 # input_dir  = data_dir + f'cosmo_sims/sim_grid/1024_P19m_np4_nsim400/sim_{sim_id}/'
