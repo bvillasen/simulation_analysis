@@ -44,7 +44,8 @@ n_sims = len(sim_files)
 if rank == 0: print( f'N Sims: {n_sims}' )
 
 sim_files_local = split_indices( sim_files, rank, nprocs )
-if rank == 0: print( f'N Sims Local: {len(sim_ids_local)}' )
+if rank == 0: print( f'N Sims Local: {len(sim_files_local)}' )
+if rank == 0: print( f'Sims Local: {sim_files_local}' )
 
 
 # 
