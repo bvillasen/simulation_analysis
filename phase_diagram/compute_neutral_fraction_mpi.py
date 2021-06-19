@@ -44,12 +44,12 @@ dens_max = 3 * rho_gas_mean
 
 
 
-# 
-# files_per_snapshot = 512
-# if n_procs > files_per_snapshot: 
-#   print( f'ERROR: Number of MPI procs must be {files_per_snapshot}' )
-#   exit(-1)
-# 
+
+files_per_snapshot = 512
+if n_procs > files_per_snapshot: 
+  print( f'ERROR: Number of MPI procs must be {files_per_snapshot}' )
+  exit(-1)
+
   
 
 chem_type = 'HI'
@@ -66,30 +66,30 @@ in_file_name = input_dir + f'{n_snap}.h5.{n_file}'
 in_file = h5.File( in_file_name, 'r' )
 print( in_file.keys( ) )
 current_z = in_file.attrs['Current_z'][0]
-# 
-# density = in_file['density'][...]
-# n_cells_local = np.prod( density.shape )
-# chem_density = in_file[chem_dens_name][...]
-# indices = density <= dens_max
-# n_samples_local =  indices.sum()
-# density = density[indices] * chem_fraction
-# chem_density = chem_density[indices]
-# dens_fraction = chem_density / density 
-# fraction_sum = dens_fraction.sum()
-# 
-# #Send the phase diagram to root process
-# fraction_all = comm.gather( fraction_sum, root=0 )
-# n_local_all = comm.gather( n_samples_local, root=0 )
-# 
-# 
-# if rank == 0:
-#   fraction_all = np.array( fraction_all )
-#   n_local_all = np.array( n_local_all )
-#   fraction_sum_global = fraction_all.sum()
-#   n_total_global = n_local_all.sum()
-#   chem_fraction_global = fraction_sum_global / n_total_global
-#   print( f'{chem_type} Fraction: {chem_fraction_global} ' )
-# 
+
+density = in_file['density'][...]
+n_cells_local = np.prod( density.shape )
+chem_density = in_file[chem_dens_name][...]
+indices = density <= dens_max
+n_samples_local =  indices.sum()
+density = density[indices] * chem_fraction
+chem_density = chem_density[indices]
+dens_fraction = chem_density / density 
+fraction_sum = dens_fraction.sum()
+
+#Send the phase diagram to root process
+fraction_all = comm.gather( fraction_sum, root=0 )
+n_local_all = comm.gather( n_samples_local, root=0 )
+
+
+if rank == 0:
+  fraction_all = np.array( fraction_all )
+  n_local_all = np.array( n_local_all )
+  fraction_sum_global = fraction_all.sum()
+  n_total_global = n_local_all.sum()
+  chem_fraction_global = fraction_sum_global / n_total_global
+  print( f'{chem_type} Fraction: {chem_fraction_global} ' )
+
 
 
 
