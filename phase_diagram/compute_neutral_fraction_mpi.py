@@ -100,7 +100,7 @@ for n_snap in snapshots:
       n_local_global = n_local_all.sum()
       chem_fraction_global = fraction_sum_global / n_local_global
       n_total_global = n_total_all.sum()
-      print( f'{chem_type} N_total:{n_total_global}    N_samples:{n_local_global}   Fraction:{n_local_global/n_total_global:.2f}  ' )  
+      if chem_indx == 0: print( f'{chem_type} N_total:{n_total_global}    N_samples:{n_local_global}   Fraction:{n_local_global/n_total_global:.2f}  ' )  
       print( f'{chem_type} Fraction: {chem_fraction_global} ' )
 
       chem_data = { 'n_total':n_total_global, 'n_samples':n_local_global, 'dens_fraction':chem_fraction_global }
@@ -110,7 +110,7 @@ for n_snap in snapshots:
 
   if rank == 0:
     output_file_name = output_dir + f'fraction_{n_snap}.pkl'
-    print( data_out )
+    # print( data_out )
     Write_Pickle_Directory( data_out, output_file_name )
 
 
