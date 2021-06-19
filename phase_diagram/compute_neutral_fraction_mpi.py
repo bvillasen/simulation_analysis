@@ -106,10 +106,10 @@ for chem_type in chem_types:
     data_out[chem_type] = chem_data
 
 
+if rank == 0:
+  output_file_name = output_dir + f'fraction_{n_snap}.pkl'
+  Write_Pickle_Directory( data_out, output_file_name )
 
- 
-# neutral_fraction = { 'local_sum':dens_fraction.sum(), 'n_samples_local':    }
- 
 
 
 
