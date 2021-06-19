@@ -31,7 +31,6 @@ output_dir = data_dir + 'cosmo_sims/2048_hydro_50Mpc/neutral_fraction_pchw18/'
 if rank == 0: create_directory( output_dir )
 
 
-n_snap = 169
 
 H0 = 67.66
 Omega_b =  0.0497 
@@ -47,68 +46,74 @@ files_per_snapshot = 512
 indices_local = split_indices( range(files_per_snapshot), rank, n_procs )
 
 
-if rank == 0: data_out = {}
-
-chem_types = [ 'HI', 'HeI', 'HeII'  ]
-for chem_type in chem_types:
-  chem_dens_name = f'{chem_type}_density'
-
-  if chem_type == 'HI': chem_fraction = X 
-  else: chem_fraction = 1 - X
+snapshots = [80]
 
 
+for n_snap in snapshots:
 
+  if rank == 0: data_out = {}
 
-  n_total_local = 0
-  n_samples_local = 0
-  fraction_sum = 0  
+  chem_types = [ 'HI', 'HeI', 'HeII'  ]
+  for chem_type in chem_types:
+    chem_dens_name = f'{chem_type}_density'
 
-  for indx in indices_local:
-
-    n_file = indx
-    in_file_name = input_dir + f'{n_snap}.h5.{n_file}'
-    in_file = h5.File( in_file_name, 'r' )
-    # print( in_file.keys( ) )
-    current_z = in_file.attrs['Current_z'][0]
-
-    density = in_file['density'][...]
-    n_cells_local = np.prod( density.shape )
-    chem_density = in_file[chem_dens_name][...]
-    indices = density <= dens_max
-    density = density[indices] * chem_fraction
-    chem_density = chem_density[indices]
-    dens_fraction = chem_density / density 
-    fraction_sum += dens_fraction.sum()
-    n_samples_local +=  indices.sum()
-    n_total_local += n_cells_local
+    if chem_type == 'HI': chem_fraction = X 
+    else: chem_fraction = 1 - X
 
 
 
-  #Send the phase diagram to root process
-  fraction_all = comm.gather( fraction_sum, root=0 )
-  n_local_all  = comm.gather( n_samples_local, root=0 )
-  n_total_all  = comm.gather( n_total_local, root=0 )
+
+    n_total_local = 0
+    n_samples_local = 0
+    fraction_sum = 0  
+
+    for indx in indices_local:
+
+      n_file = indx
+      in_file_name = input_dir + f'{n_snap}.h5.{n_file}'
+      in_file = h5.File( in_file_name, 'r' )
+      # print( in_file.keys( ) )
+      current_z = in_file.attrs['Current_z'][0]
+      if rank == 0: print( f'\nn_sanp: {n_snap}    z:{current_z}' )
+
+      density = in_file['density'][...]
+      n_cells_local = np.prod( density.shape )
+      chem_density = in_file[chem_dens_name][...]
+      indices = density <= dens_max
+      density = density[indices] * chem_fraction
+      chem_density = chem_density[indices]
+      dens_fraction = chem_density / density 
+      fraction_sum += dens_fraction.sum()
+      n_samples_local +=  indices.sum()
+      n_total_local += n_cells_local
+
+
+
+    #Send the phase diagram to root process
+    fraction_all = comm.gather( fraction_sum, root=0 )
+    n_local_all  = comm.gather( n_samples_local, root=0 )
+    n_total_all  = comm.gather( n_total_local, root=0 )
+
+
+    if rank == 0:
+      fraction_all = np.array( fraction_all )
+      n_local_all = np.array( n_local_all )
+      n_total_all = np.array( n_total_all )
+      fraction_sum_global = fraction_all.sum()
+      n_local_global = n_local_all.sum()
+      chem_fraction_global = fraction_sum_global / n_local_global
+      n_total_global = n_total_all.sum()
+      print( f'{chem_type} N_total:{n_total_global}    N_samples:{n_local_global}   Fraction:{n_local_global/n_total_global:.2f}  ' )  
+      print( f'{chem_type} Fraction: {chem_fraction_global} ' )
+
+      chem_data = { 'n_total':n_total_global, 'n_samples':n_local_global, 'dens_fraction':chem_fraction_global }
+      data_out['current_z'] = current_z
+      data_out[chem_type] = chem_data
 
 
   if rank == 0:
-    fraction_all = np.array( fraction_all )
-    n_local_all = np.array( n_local_all )
-    n_total_all = np.array( n_total_all )
-    fraction_sum_global = fraction_all.sum()
-    n_local_global = n_local_all.sum()
-    chem_fraction_global = fraction_sum_global / n_local_global
-    n_total_global = n_total_all.sum()
-    print( f'{chem_type} N_total:{n_total_global}    N_samples:{n_local_global}   Fraction:{n_local_global/n_total_global:.2f}  ' )  
-    print( f'{chem_type} Fraction: {chem_fraction_global} ' )
-
-    chem_data = { 'n_total':n_total_global, 'n_samples':n_local_global, 'dens_fraction':chem_fraction_global }
-    data_out['current_z'] = current_z
-    data_out[chem_type] = chem_data
-
-
-if rank == 0:
-  output_file_name = output_dir + f'fraction_{n_snap}.pkl'
-  Write_Pickle_Directory( data_out, output_file_name )
+    output_file_name = output_dir + f'fraction_{n_snap}.pkl'
+    Write_Pickle_Directory( data_out, output_file_name )
 
 
 
