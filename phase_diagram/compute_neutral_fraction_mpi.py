@@ -46,7 +46,7 @@ files_per_snapshot = 512
 indices_local = split_indices( range(files_per_snapshot), rank, n_procs )
 
 
-snapshots = range( 0, 2 )
+snapshots = range( 0, 169 )
 
 
 for n_snap in snapshots:
@@ -110,6 +110,7 @@ for n_snap in snapshots:
 
   if rank == 0:
     output_file_name = output_dir + f'fraction_{n_snap}.pkl'
+    print( data_out )
     Write_Pickle_Directory( data_out, output_file_name )
 
 
