@@ -46,7 +46,7 @@ files_per_snapshot = 512
 indices_local = split_indices( range(files_per_snapshot), rank, n_procs )
 
 
-snapshots = [80]
+snapshots = range( 50, 60 )
 
 
 for n_snap in snapshots:
