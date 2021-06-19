@@ -17,6 +17,7 @@ from data_photoionization_HI import data_photoionization_HI_becker_bolton_2013, 
 
 
 data_name = 'fit_results_P(k)+tau_HeII_Boss'
+data_name = 'fit_results_P(k)+tau_HeII_Boss_Irsic_Boera'
 
 
 

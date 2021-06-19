@@ -838,7 +838,7 @@ def Plot_Comparable_Data( field, comparable_data, comparable_grid, output_dir, l
   print( f'Saved Figure: {figure_name}' )
 
 
-def Plot_Corner( samples, data_label, labels, output_dir, n_bins_1D=20, n_bins_2D=30,  lower_mask_factor=50, multiple=False, system='Shamrock'  ):
+def Plot_Corner( samples, data_label, labels, output_dir, n_bins_1D=20, n_bins_2D=30,  lower_mask_factor=50, multiple=False, system='Shamrock', show_label=True  ):
   
   
   from scipy import interpolate as interp 
@@ -981,8 +981,8 @@ def Plot_Corner( samples, data_label, labels, output_dir, n_bins_1D=20, n_bins_2
           ax.imshow( hist_2D_masked[::-1], cmap=hist_2D_colormap, extent=extent, aspect='auto', interpolation='bilinear' )
           ax.contour( hist, [hist_sigma, 2* hist_sigma], extent=extent, colors= contour_colors, linewidths=2 )
         
-        if add_data_label:
-          leg = ax.legend( loc=0, frameon=False, fontsize=font_size, prop=prop )
+        if add_data_label and show_label:
+          leg = ax.legend( loc=1, frameon=False, fontsize=font_size, prop=prop )
           for text in leg.get_texts():
             plt.setp(text, color = text_color)
             

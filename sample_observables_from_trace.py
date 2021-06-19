@@ -16,15 +16,15 @@ from mcmc_plotting_functions import *
 from mcmc_sampling_functions import *
 
 
-data_name = 'fit_results_P(k)+tau_HeII_Boss'
+# data_name = 'fit_results_P(k)+tau_HeII_Boss'
 # data_name = 'fit_results_P(k)+tau_HeII_Boss_Irsic'
 # data_name = 'fit_results_P(k)+tau_HeII_Boss_Boera'
-# data_name = 'fit_results_P(k)+tau_HeII_Boss_Irsic_Boera'
+data_name = 'fit_results_P(k)+tau_HeII_Boss_Irsic_Boera'
 
-data_labels = 'BOSS'
+# data_labels = 'BOSS'
 # data_labels = 'BOSS + Irsic'
 # data_labels = 'BOSS + Boera'
-# data_labels = 'BOSS + Irsic + Boera'
+data_labels = 'BOSS + Irsic + Boera'
 
 ps_data_dir = 'lya_statistics/data/'
 mcmc_dir = root_dir + 'fit_mcmc/'

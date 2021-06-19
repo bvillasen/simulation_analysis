@@ -14,6 +14,7 @@ from generate_grackle_uvb_file import Load_Grackle_File, Modify_UVB_Rates, Exten
 
 
 data_name = 'fit_results_P(k)+tau_HeII_Boss'
+data_name = 'fit_results_P(k)+tau_HeII_Boss_Irsic_Boera'
 # data_name = 'fit_results_P(k)+tau_HeII_Walther_kmax0.02_rescaleTauHeII1.0'
 # data_name = 'fit_results_P(k)+tau_HeII_Walther_kmax0.10_rescaleTauHeII0.8'
 # data_name = 'fit_results_P(k)+tau_HeII_Boss_Walther_kmax0.10_rescaleTauHeII0.3'

@@ -30,8 +30,11 @@ data_boss_irsic_boera = 'fit_results_P(k)+tau_HeII_Boss_Irsic_Boera'
 # data_sets = [ data_boss, data_boss_irsic, data_boss_boera, data_boss_irsic_boera ]
 # data_labels = [ 'BOSS', 'BOSS + Irsic', 'BOSS + Boera', 'BOSS + Irsic + Boera'  ]
 
-data_sets = [ data_boss ]
-data_labels = [ 'BOSS' ]
+# data_sets = [ data_boss ]
+# data_labels = [ 'BOSS' ]
+
+data_sets = [ data_boss_irsic_boera ]
+data_labels = [ r'$P(k)\,+\, \mathrm{HeII} \tau_{eff}$' ]
 
 samples_all = {}
 samples_all['param'] = {}
@@ -78,7 +81,7 @@ for data_id, data_name in enumerate(data_sets):
 
 
 corner_labels = { 'scale_He':r'$\beta_{\mathrm{He}}$', 'scale_H':r'$\beta_{\mathrm{H}}$', 'deltaZ_He':r'$\Delta z_{\mathrm{He}}$', 'deltaZ_H':r'$\Delta z_{\mathrm{H}}$'    }
-Plot_Corner( samples_all['param'], data_labels, corner_labels, output_dir, n_bins_1D=40, n_bins_2D=40, lower_mask_factor=500, multiple=True  )
+Plot_Corner( samples_all['param'], data_labels, corner_labels, output_dir, n_bins_1D=40, n_bins_2D=40, lower_mask_factor=500, multiple=True, show_label=False  )
 
 
 data_labels = [ 'This Work' ]
