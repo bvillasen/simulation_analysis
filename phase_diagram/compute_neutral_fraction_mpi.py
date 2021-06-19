@@ -97,7 +97,7 @@ for chem_type in chem_types:
     n_local_global = n_local_all.sum()
     chem_fraction_global = fraction_sum_global / n_local_global
     n_total_global = n_total_all.sum()
-    print( f'{chem_type} N_total:{n_total_global}    N_samples:{n_local_global}   {n_local_global/n_total_global}  ' )  
+    print( f'{chem_type} N_total:{n_total_global}    N_samples:{n_local_global}   Fraction:{n_local_global/n_total_global:.2f}  ' )  
     print( f'{chem_type} Fraction: {chem_fraction_global} ' )
 
 
