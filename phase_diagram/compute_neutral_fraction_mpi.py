@@ -47,8 +47,9 @@ files_per_snapshot = 512
 indices_local = split_indices( range(files_per_snapshot), rank, n_procs )
 
 
-chem_types = [ 'HI', 'HeI', 'HeII'  ]
+if rank == 0: data_out = {}
 
+chem_types = [ 'HI', 'HeI', 'HeII'  ]
 for chem_type in chem_types:
   chem_dens_name = f'{chem_type}_density'
 
@@ -100,7 +101,9 @@ for chem_type in chem_types:
     print( f'{chem_type} N_total:{n_total_global}    N_samples:{n_local_global}   Fraction:{n_local_global/n_total_global:.2f}  ' )  
     print( f'{chem_type} Fraction: {chem_fraction_global} ' )
 
-
+    chem_data = { 'n_total':n_total_global, 'n_samples':n_local_global, 'dens_fraction':chem_fraction_global }
+    data_out['current_z'] = current_z
+    data_out[chem_type] = chem_data
 
 
 
