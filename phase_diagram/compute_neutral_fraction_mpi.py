@@ -29,8 +29,8 @@ else:
 data_dir = '/gpfs/alpine/csc434/scratch/bvilasen/'
 # input_dir = data_dir + 'cosmo_sims/2048_hydro_50Mpc/output_files_pchw18/'
 # output_dir = data_dir + 'cosmo_sims/2048_hydro_50Mpc/neutral_fraction_pchw18/'
-input_dir = data_dir + 'cosmo_sims/rescaled_P19/2048_50Mpc/snapshot_files/'
-input_dir = data_dir + 'cosmo_sims/rescaled_P19/2048_50Mpc/neutral_fraction_P19m'
+input_dir  = data_dir + 'cosmo_sims/rescaled_P19/2048_50Mpc/snapshot_files/'
+output_dir = data_dir + 'cosmo_sims/rescaled_P19/2048_50Mpc/neutral_fraction_P19m/'
 if rank == 0: create_directory( output_dir )
 
 
