@@ -26,8 +26,8 @@ else:
 # data_dir = '/home/bruno/Desktop/ssd_0/data/'
 # data_dir = '/raid/bruno/data/'
 data_dir = '/data/groups/comp-astro/bruno/'
-input_dir = data_dir + 'cosmo_sims/2848_hydro_50Mpc/output_files_pchw18/'
-output_dir = input_dir + 'neutral_fraction/'
+input_dir = data_dir + 'cosmo_sims/2048_hydro_50Mpc/output_files_pchw18/'
+output_dir = data_dir + 'cosmo_sims/2048_hydro_50Mpc/neutral_fraction_pchw18/'
 if rank == 0: create_directory( output_dir )
 
 
