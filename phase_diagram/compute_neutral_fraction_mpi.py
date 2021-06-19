@@ -46,7 +46,7 @@ files_per_snapshot = 512
 indices_local = split_indices( range(files_per_snapshot), rank, n_procs )
 
 
-snapshots = range( 50, 60 )
+snapshots = range( 0, 2 )
 
 
 for n_snap in snapshots:
@@ -54,14 +54,11 @@ for n_snap in snapshots:
   if rank == 0: data_out = {}
 
   chem_types = [ 'HI', 'HeI', 'HeII'  ]
-  for chem_type in chem_types:
+  for chem_indx, chem_type in enumerate(chem_types):
     chem_dens_name = f'{chem_type}_density'
 
     if chem_type == 'HI': chem_fraction = X 
     else: chem_fraction = 1 - X
-
-
-
 
     n_total_local = 0
     n_samples_local = 0
@@ -74,7 +71,7 @@ for n_snap in snapshots:
       in_file = h5.File( in_file_name, 'r' )
       # print( in_file.keys( ) )
       current_z = in_file.attrs['Current_z'][0]
-      if rank == 0: print( f'\nn_sanp: {n_snap}    z:{current_z}' )
+      if rank == 0 and chem_indx == 0 and indx==0: print( f'\nn_sanp: {n_snap}    z:{current_z}' )
 
       density = in_file['density'][...]
       n_cells_local = np.prod( density.shape )
