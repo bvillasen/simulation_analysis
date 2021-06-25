@@ -75,3 +75,18 @@ data_photoionization_HI_wyithe_2011 = {
 'low': data_wyithe[:,3],
 'name':"Wyithe et al. 2011"
 } 
+
+data_gaikwad = np.array([
+[ 0.0992, 0.06607, 0.06038, 0.0721 ],  
+[ 0.2014, 0.10401, 0.09616, 0.1128 ],  
+[ 0.2999, 0.13673, 0.12228, 0.1529 ],  
+[ 0.3985, 0.20001, 0.17503, 0.2255 ] ])
+
+
+data_photoionization_HI_gaikwad_2017 = {
+'z': data_gaikwad[:,0] ,
+'mean': data_gaikwad[:,1],
+'high': data_gaikwad[:,3],
+'low': data_gaikwad[:,2],
+'name':"Gaikwad et al. 2017"
+} 

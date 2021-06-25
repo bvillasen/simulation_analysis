@@ -13,7 +13,7 @@ from mcmc_functions import *
 from mcmc_data_functions import *
 from mcmc_plotting_functions import *
 from mcmc_sampling_functions import *
-from data_photoionization_HI import data_photoionization_HI_becker_bolton_2013, data_photoionization_HI_dalosio_2018, data_photoionization_HI_gallego_2021, data_photoionization_HI_calverley_2011, data_photoionization_HI_wyithe_2011
+from data_photoionization_HI import data_photoionization_HI_gaikwad_2017, data_photoionization_HI_becker_bolton_2013, data_photoionization_HI_dalosio_2018, data_photoionization_HI_gallego_2021, data_photoionization_HI_calverley_2011, data_photoionization_HI_wyithe_2011
 from colors import *
 
 data_name = 'fit_results_P(k)+tau_HeII_Boss'
@@ -199,8 +199,20 @@ yerr = [  data_mean-data_low, data_high-data_mean ]
 ax.errorbar( data_z, data_mean, yerr=yerr, fmt='o', uplims=True, c=color_gallego, zorder=2, )
 
 
+color_gaikwad = 'C4'
+data_set = data_photoionization_HI_gaikwad_2017
+data_z = data_set['z']
+data_mean = data_set['mean']
+data_high = data_set['high']
+data_low  = data_set['low']
+data_name = data_set['name']
+yerr = [  data_mean-data_low, data_high-data_mean ]
+color_data = colors_data[i]
+ax.errorbar( data_z, data_mean, yerr=yerr, fmt='o',  c= color_gaikwad, zorder=2, label=data_name)
+
+
 # ax.text(0.8, 0.95, text, horizontalalignment='center',  verticalalignment='center', transform=ax.transAxes, fontsize=font_size )
-legend_loc = 3
+legend_loc = 0
 leg = ax.legend(  loc=legend_loc, frameon=False, prop=prop    )
 for text in leg.get_texts():
   plt.setp(text, color = text_color)
@@ -213,8 +225,8 @@ ax.tick_params(axis='both', which='major', direction='in', color=text_color, lab
 ax.tick_params(axis='both', which='minor', direction='in', color=text_color, labelcolor=text_color, labelsize=tick_label_size_minor, size=tick_size_minor, width=tick_width_minor  )
 
 
-ax.set_xlim(2, 6.2)
-ax.set_ylim(0.09, 2.0)
+ax.set_xlim(0.05, 6.5)
+ax.set_ylim(0.02, 2.0)
 
 if black_background: 
   fig.patch.set_facecolor('black') 
@@ -222,7 +234,7 @@ if black_background:
   [ spine.set_edgecolor(text_color) for spine in list(ax.spines.values()) ]
 
 
-figure_name = output_dir + 'fig_phothoionization_HI_black.png'
+figure_name = output_dir + 'fig_phothoionization_HI_black_new.png'
 fig.savefig( figure_name, bbox_inches='tight', dpi=300, facecolor=fig.get_facecolor() )
 print( f'Saved Figure: {figure_name}' )
 
